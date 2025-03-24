@@ -5,6 +5,7 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
+    overflow-x:hidden;
   --font-roboto: "Roboto", sans-serif;
   --radius: 0.625rem;
   --background: oklch(1 0 0);

@@ -5,9 +5,9 @@ interface BodyContainerProps {
   className?: string
 }
 
-export const BodyContainer = ({ children, className }: BodyContainerProps) => {
+export const BodyContainer = ({ children, className="mt-[10px]" }: BodyContainerProps) => {
   return (
-    <div className={`container mx-auto mt-[100px] px-4 ${className || ''}`}>
+    <div className={`min-h-[500px] ${className} `}>
       {children}
     </div>
   )

@@ -3,6 +3,7 @@
 "use client";
 import { ArrowDownRight } from "lucide-react";
 import Image from "next/image";
+import TileComponent from "./TileComponent";
 
 type Props = {
   id?: string;
@@ -11,7 +12,7 @@ type Props = {
 const itemServices = [
   {
     num: "01",
-    title: "Máy Hàn Hồng Ký PRO",
+    title: "tủ quần áo",
     description: "lorem ipsum dolor sit amet",
     image: "/images/mayhanhongkyPro/1.webp",
     href: "",
@@ -19,7 +20,7 @@ const itemServices = [
   },
   {
     num: "02",
-    title: "Que hàn Kim Tín",
+    title: "giường ngủ",
     description: "lorem ipsum dolor sit amet",
     image: "/images/quehankimtin/1.png",
     href: "",
@@ -27,7 +28,7 @@ const itemServices = [
   },
   {
     num: "03",
-    title: "Máy hàn jasic",
+    title: "tủ bếp",
     description: "lorem ipsum dolor sit amet",
     image: "/images/mayhanJasic/1.png",
     href: "",
@@ -35,41 +36,19 @@ const itemServices = [
   },
   {
     num: "04",
-    title: "Máy hàn cơ Hồng Ký - Tiến Đạt",
+    title: "combo phòng bếp",
     description: "lorem ipsum dolor sit amet",
 
     href: "",
     image: "/images/mayhanhongkyHK/1.png",
     idTarget: "mayhan_hongky",
   },
-  {
-    num: "05",
-    title: "Makita",
-    description: "lorem ipsum dolor sit amet",
-
-    href: "",
-    idTarget: "mayhanco_hongky",
-
-    image: "/images/dungcupin_makita/2.png",
-  },
-  {
-    num: "06",
-    title: "Máy nén khí",
-    description: "lorem ipsum dolor sit amet",
-    image: "/images/maynenkhi/1.png",
-    href: "",
-    idTarget: "maynenkhi",
-  },
 ];
 
 const Services = ({ id }: Props) => {
   return (
-    <section
-      className="flex flex-col gap-4 px-2 mt-[40px] sm:mt-[100px]"
-      id={id}>
-      <h2 className="text-xl md:text-2xl lg:text-4xl font-bold mb-4 md:mb-6 text-center">
-        Các sản phẩm chính
-      </h2>
+    <section className="flex flex-col gap-4" id={id}>
+      <TileComponent title={"Sản phẩm chủ đạo "} />
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 text-accent">
         {itemServices.map((service) => (
           <div
@@ -80,7 +59,7 @@ const Services = ({ id }: Props) => {
                 <p className="text-2xl md:text-3xl lg:text-4xl italic font-semibold">
                   {service.num}
                 </p>
-                <p className="text-sm md:text-base lg:text-lg font-semibold italic text-accent/90">
+                <p className="capitalize text-sm md:text-base lg:text-lg font-semibold italic text-accent/90">
                   {service.title}
                 </p>
               </div>
