@@ -3,7 +3,7 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import TileComponent from "./TileComponent";
 import { Hotel, School, House, Bed, Disc, Presentation } from "lucide-react";
-import PreviewArtileComponent from "@/components/PreviewArticle";
+import PreviewArtileComponent from "@/components/article/PreviewArticle";
 
 export function TabsLayout() {
   return (

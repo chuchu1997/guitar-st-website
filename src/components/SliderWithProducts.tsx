@@ -2,7 +2,7 @@
 import React, { useRef, useState, useEffect } from 'react';
 import Image from 'next/image';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { ProductInterface } from '@/types/ProductInterface';
+import { ProductInterface } from '@/types/ProjectInterface';
 import Link from 'next/link';
 
 interface SliderWithProductsProps { 

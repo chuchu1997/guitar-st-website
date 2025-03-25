@@ -17,7 +17,7 @@ import Banner from "@/components/Banner";
 import Services from "@/components/layouts/Services";
 import TileComponent from "@/components/layouts/TileComponent";
 import { TabsLayout } from "@/components/layouts/Tabs";
-import PreviewProduct from "@/components/PreviewProduct";
+import PreviewProduct from "@/components/product/PreviewProduct";
 const VideoDescription = dynamic(() => import("@/components/layouts/Videos"), {
   ssr: false,
 });

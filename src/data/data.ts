@@ -1,4 +1,4 @@
-import { ProductInterface } from "@/types/ProductInterface";
+import { ProductInterface } from "@/types/ProjectInterface";
 
 
 
