@@ -8,6 +8,7 @@ const nextConfig: NextConfig = {
   }
   ,
   images: {
+    domains:["res.cloudinary.com"],
     formats: ['image/avif', 'image/webp'],
     // Optimize more aggressively in production
     minimumCacheTTL: 60,

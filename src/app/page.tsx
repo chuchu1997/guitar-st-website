@@ -1,7 +1,5 @@
 /** @format */
 
-"use client";
-
 import {
   honda,
   makita,
@@ -18,26 +16,29 @@ import Services from "@/components/layouts/Services";
 import TileComponent from "@/components/layouts/TileComponent";
 import { TabsLayout } from "@/components/layouts/Tabs";
 import PreviewProduct from "@/components/product/PreviewProduct";
-const VideoDescription = dynamic(() => import("@/components/layouts/Videos"), {
-  ssr: false,
-});
-const SliderWithProducts = dynamic(
-  () => import("@/components/SliderWithProducts"),
-  { ssr: false }
-);
+// const VideoDescription = dynamic(() => import("@/components/layouts/Videos"), {
+//   ssr: false,
+// });
+// const SliderWithProducts = dynamic(
+//   () => import("@/components/SliderWithProducts"),
+//   { ssr: false }
+// );
 import SectionComponent from "@/components/layouts/SectionComponent";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import getBillboard from "@/actions/get-billboard";
 
-export default function Home() {
+export default async function Home() {
+  const banners = await getBillboard("65ef27af-3792-4dd6-9473-3a6a363919e7");
+
   return (
     <div>
       <SectionComponent className="my-[0px]">
-        <Banner></Banner>
+        <Banner images={[banners]}></Banner>
       </SectionComponent>
 
-      <div className="wrapper-content-container container mx-auto">
+      {/* <div className="wrapper-content-container container mx-auto">
         <SectionComponent>
           <Services />
         </SectionComponent>
@@ -91,7 +92,7 @@ export default function Home() {
             <PreviewProduct />
           </div>
         </SectionComponent>
-      </div>
+      </div> */}
 
       <div className="bg-[#dfdfdf73] py-8">
         <div className="container mx-auto">
@@ -122,7 +123,7 @@ export default function Home() {
                 </div>
               </div>
             </div>
-            <div className="md:w-1/2 mt-6 md:mt-0 md:ml-6">
+            {/* <div className="md:w-1/2 mt-6 md:mt-0 md:ml-6">
               <iframe
                 className="rounded-xl"
                 width="520px"
@@ -133,7 +134,7 @@ export default function Home() {
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                 referrerPolicy="strict-origin-when-cross-origin"
                 allowFullScreen></iframe>
-            </div>
+            </div> */}
           </div>
         </div>
       </div>
