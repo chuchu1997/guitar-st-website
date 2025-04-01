@@ -60,6 +60,9 @@ export default function SearchWithSuggestions() {
             <p className="text-sm font-semibold py-2">Search Results :</p>
             {products.map((product) => (
               <AlertSearch
+                onViewProduct={() => {
+                  setQuery("");
+                }}
                 imageUrl={product.images[0].url}
                 key={product.id}
                 slug={product.slug}
