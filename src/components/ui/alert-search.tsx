@@ -23,6 +23,7 @@ const AlertSearch: React.FC<AlertSearchProps> = ({
   return (
     <Link
       href={`/san-pham/${slug}`}
+      legacyBehavior
       onClick={() => {
         onViewProduct();
       }}>

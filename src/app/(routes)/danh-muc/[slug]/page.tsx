@@ -4,6 +4,7 @@ import { getCategoryWithSlug } from "@/actions/get-categories";
 import { getProducts } from "@/actions/get-products";
 import TileComponent from "@/components/layouts/TileComponent";
 import PreviewProductComponent from "@/components/product/PreviewProduct";
+import ProductList from "@/components/product/product-list";
 import BillboardLayout from "@/components/ui/billboard";
 
 interface DanhMucPageWithIdProps {
@@ -25,11 +26,12 @@ const DanhMucPageWithID = async (props: DanhMucPageWithIdProps) => {
       <BillboardLayout data={category.billboard} />
       <section className="list-products">
         <TileComponent title="Sản phẩm thuộc category này" />
-        <div className=" grid grid-cols-2  md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-2">
+        <ProductList title="" products={products} />
+        {/* <div className=" grid grid-cols-2  md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-2">
           {products.map((product) => (
             <PreviewProductComponent key={product.id} data={product} />
           ))}
-        </div>
+        </div> */}
       </section>
     </div>
   );

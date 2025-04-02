@@ -15,6 +15,7 @@ const PreviewProductComponent = (props:PreviewProductProps) => {
     return (
         <Link
             href={`/san-pham/${data.slug}`}
+          prefetch = {false}
             className="w-full flex-shrink-0 cursor-pointer"
         >
             <div className="border rounded-lg p-3 md:p-4 h-full">

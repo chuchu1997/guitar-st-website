@@ -28,7 +28,7 @@ const getProducts = async(query:Query):Promise<Product[]>=>{
     return res.json();
 
 }
-const getProductBySlug = async (slug:string)=>{
+const getProductBySlug = async (slug:string):Promise<Product>=>{
     const res = await fetch(`${URL}/${slug}`)
     return res.json();
 
