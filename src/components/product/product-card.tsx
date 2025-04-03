@@ -57,24 +57,17 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
           <div className="text-base md:text-lg lg:text-xl font-bold text-red-500">
             {product.price ?? "Liên hệ"}
           </div>
-          {/* {productPreview.oldPrice && (
-                        <div className="text-xs md:text-sm text-gray-500 line-through">
-                            {productPreview.oldPrice}
-                        </div>
-                    )}
-                    {productPreview.discount && (
-                        <div className="text-xs md:text-sm text-green-500">
-                            {productPreview.discount}
-                        </div>
-                    )}
-                    <div className="text-xs md:text-sm text-gray-500">
-                        Member giảm thêm {productPreview.memberDiscount}
-                    </div> */}
-          {/* {productPreview.studentDiscount && (
-                        <div className="text-xs md:text-sm text-gray-500">
-                            S-Student giảm thêm {productPreview.studentDiscount}
-                        </div>
-                    )} */}
+
+          <div className="text-xs md:text-sm text-gray-500 line-through">
+            GIA CU
+          </div>
+
+          <div className="text-xs md:text-sm text-green-500">GIA MOI</div>
+
+          <div className="text-xs md:text-sm text-gray-500">
+            Member giảm thêm
+          </div>
+
           <div className="flex text-sm md:text-base">
             {Array.from({ length: product.ratingCount ?? 5 }).map((_, i) => (
               <span key={i} className="text-yellow-500">

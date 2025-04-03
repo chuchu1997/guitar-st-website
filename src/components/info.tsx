@@ -20,8 +20,11 @@ const Info: React.FC<InfoProps> = ({ data }) => {
       <hr className="my-4" />
 
       <div className="flex items-center gap-x-4">
-        <h3 className="font-semibold text-black">{data.shortDescription}</h3>
+        <h3 className="font-semibold text-black">
+          day la description :{data.description}
+        </h3>
       </div>
+
       <div className="mt-10 flex items-center gap-x-3">
         <Button className="flex items-center gap-x-2">
           Add to cart

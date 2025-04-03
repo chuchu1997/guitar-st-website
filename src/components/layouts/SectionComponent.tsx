@@ -6,7 +6,7 @@ interface SectionComponentInterface {
 
 }
 
-const SectionComponent = ({children,className="my-[40px]",...props}:SectionComponentInterface)=>{
+const SectionComponent = ({children,className="my-[20px]",...props}:SectionComponentInterface)=>{
     return <section className = {` ${className} ${props}`}>{children}</section>
 }
 

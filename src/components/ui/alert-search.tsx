@@ -1,7 +1,7 @@
 /** @format */
 "use client";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Terminal } from "lucide-react";
+
 import Image from "next/image";
 import Link from "next/link";
 
@@ -23,7 +23,6 @@ const AlertSearch: React.FC<AlertSearchProps> = ({
   return (
     <Link
       href={`/san-pham/${slug}`}
-      legacyBehavior
       onClick={() => {
         onViewProduct();
       }}>
