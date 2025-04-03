@@ -29,7 +29,20 @@ export enum MainCategoryEnum {
     name:string;
     slug:string;
     products:Product[];
+    subcategories:SubCategory[]
   }
+
+  export interface SubCategory{
+    id:string;
+    billboard:Billboard
+    name:string;
+    slug:string;
+    products:Product[];
+    categoryId:string;
+
+  }
+
+
 
   export interface Product {
     id:string;

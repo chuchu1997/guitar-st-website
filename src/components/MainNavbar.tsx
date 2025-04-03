@@ -68,27 +68,74 @@ const MainNavbar = (props: MainNavbarProps) => {
     href: `/danh-muc/${route.slug}`,
     label: route.name,
     active: pathname === `/danh-muc/${route.slug}`,
+    parentCategorySlug: route.slug,
+    subCategories: route.subcategories,
   }));
 
   const onMoveCart = () => {
     router.push("/gio-hang");
   };
 
+  // Handle mouse enter and leave events for dropdown visibility
+
   return (
     <>
       <div className="flex-1 ml-[40px] flex items-center relative">
         {/* Navigation cho màn hình lớn */}
+
         <nav className="hidden md:flex mx-6 space-x-4 items-center lg:space-x-6">
-          {routes.map((route) => (
-            <Link
-              key={route.href}
-              href={route.href}
-              className={cn(
-                "text-sm font-medium transition-colors hover:text-black",
-                route.active ? "text-black" : "text-neutral-500"
-              )}>
-              {route.label}
-            </Link>
+          {routes.map((route, index) => (
+            <div key={route.href} className="relative group">
+              <Link
+                href={route.href}
+                className={cn(
+                  "text-sm font-medium transition-colors hover:text-black",
+                  route.active ? "text-black" : "text-neutral-500"
+                )}>
+                {route.label}
+              </Link>
+
+              {/* Mega Menu Dropdown */}
+              {route.subCategories.length > 0 && (
+                <div className=" hidden group-hover:block absolute left-0 min-w-[500px] bg-white shadow-2xl rounded-lg  py-6 px-4 z-50">
+                  <div className="grid grid-cols-3 gap-x-2">
+                    {/* Column 1 */}
+                    {route.subCategories.map((subCategory) => (
+                      <Link
+                        key={subCategory.id}
+                        href={`/danh-muc/${route.parentCategorySlug}/${subCategory.slug}`}>
+                        {subCategory.name}
+                      </Link>
+                      // <div>
+                      //   <ul>
+                      //     <li>
+                      //       <Link
+                      //         href="/category1/option1"
+                      //         className="text-sm text-gray-600 hover:text-black">
+                      //         Option 1
+                      //       </Link>
+                      //     </li>
+                      //     <li>
+                      //       <Link
+                      //         href="/category1/option2"
+                      //         className="text-sm text-gray-600 hover:text-black">
+                      //         Option 2
+                      //       </Link>
+                      //     </li>
+                      //     <li>
+                      //       <Link
+                      //         href="/category1/option3"
+                      //         className="text-sm text-gray-600 hover:text-black">
+                      //         Option 3
+                      //       </Link>
+                      //     </li>
+                      //   </ul>
+                      // </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
           ))}
         </nav>
 

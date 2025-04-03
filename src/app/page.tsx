@@ -16,7 +16,7 @@ import { Product } from "@/types/ProjectInterface";
 import ReadMoreButton from "@/components/ui/read-more-btn";
 
 export default async function Home() {
-  const banners = await getBillboard("65ef27af-3792-4dd6-9473-3a6a363919e7");
+  // const banners = await getBillboard("65ef27af-3792-4dd6-9473-3a6a363919e7");
 
   const productWithFeatures = await getProducts({
     isFeatured: true,
@@ -48,7 +48,8 @@ export default async function Home() {
     <Suspense fallback={<CircleLoading />}>
       <div>
         <SectionComponent className="my-[0px]">
-          <Banner images={[banners]}></Banner>
+          HEHEH
+          {/* <Banner images={[banners]}></Banner> */}
         </SectionComponent>
         <div className="container mx-auto flex flex-col gap-y-4">
           <SectionComponent>
