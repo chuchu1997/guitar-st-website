@@ -2,7 +2,6 @@
 "use client";
 import { Product } from "@/types/ProjectInterface";
 import Image from "next/image";
-import Link from "next/link";
 import IconButton from "../ui/icon-button";
 import { ShoppingCartIcon } from "lucide-react";
 import { useRouter } from "next/navigation";

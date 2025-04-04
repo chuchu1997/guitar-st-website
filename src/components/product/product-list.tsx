@@ -13,7 +13,7 @@ const ProductList: React.FC<ProductListProps> = ({ title, products }) => {
     <div className="wrapper-product-list space-y-2">
       <div className="flex items-center relative">
         <div className="bg-orange-500 w-2 h-full absolute"></div>
-        <div className="bg-gray-100 px-4 py-2 text-black font-bold text-sm">
+        <div className="bg-gray-100 px-4 py-2 text-black font-bold text-sm italic capitalize">
           {title}
         </div>
       </div>

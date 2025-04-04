@@ -39,6 +39,11 @@ export enum MainCategoryEnum {
     slug:string;
     products:Product[];
     categoryId:string;
+    
+    parentCategorySlug:string;
+ 
+
+
 
   }
 

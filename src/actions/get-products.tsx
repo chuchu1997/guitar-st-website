@@ -14,6 +14,8 @@ interface Query {
     isFeatured?:boolean;
     limit?:number;
     currentPage?:number;
+    subCategoryId?:string;
+
 
 }
 const getProducts = async(query:Query):Promise<Product[]>=>{
@@ -24,7 +26,8 @@ const getProducts = async(query:Query):Promise<Product[]>=>{
             categoryId:query.categoryId,
             isFeatured:query.isFeatured,
             limit:query.limit,
-            currentPage:query.currentPage
+            currentPage:query.currentPage,
+            subCategoryId:query.subCategoryId
         }
     })
     const res = await fetch(url)

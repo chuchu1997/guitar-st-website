@@ -15,8 +15,8 @@ const DanhMucPageWithID = async (props: DanhMucPageWithIdProps) => {
   const { params } = props;
   const { slug } = await params;
 
-  const category = await getCategoryWithSlug(slug);
-
+  const encodedSlug = encodeURIComponent(`danh-muc/${slug}`);
+  const category = await getCategoryWithSlug(encodedSlug);
   const products = await getProducts({
     categoryId: category.id,
   });
@@ -26,8 +26,10 @@ const DanhMucPageWithID = async (props: DanhMucPageWithIdProps) => {
       <Suspense fallback={<CircleLoading />}>
         <BillboardLayout data={category.billboard} />
         <section className="list-products">
-          <TileComponent title="Sản phẩm thuộc category này" />
-          <ProductList title="" products={products} />
+          <TileComponent
+            title={`Các sản phẩm thuộc danh mục :(${category.name}) `}
+          />
+          <ProductList title={category.name} products={products} />
         </section>
       </Suspense>
     </div>

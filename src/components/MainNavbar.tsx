@@ -10,6 +10,7 @@ import { usePathname, useRouter } from "next/navigation";
 import SearchWithSuggestions from "./ui/searchBar";
 import IconButton from "./ui/icon-button";
 import { Menu, ShoppingBag, X } from "lucide-react";
+import Image from "next/image";
 
 interface MainNavbarProps {
   data: Category[];
@@ -65,9 +66,9 @@ const MainNavbar = (props: MainNavbarProps) => {
   }, [isOpenMobileNav]);
 
   const routes = data.map((route) => ({
-    href: `/danh-muc/${route.slug}`,
+    href: `/${route.slug}`,
     label: route.name,
-    active: pathname === `/danh-muc/${route.slug}`,
+    active: pathname === `/${route.slug}`,
     parentCategorySlug: route.slug,
     subCategories: route.subcategories,
   }));
@@ -84,12 +85,12 @@ const MainNavbar = (props: MainNavbarProps) => {
         {/* Navigation cho màn hình lớn */}
 
         <nav className="hidden md:flex mx-6 space-x-4 items-center lg:space-x-6">
-          {routes.map((route, index) => (
+          {routes.map((route) => (
             <div key={route.href} className="relative group">
               <Link
                 href={route.href}
                 className={cn(
-                  "text-sm font-medium transition-colors hover:text-black",
+                  "text-sm font-medium transition-colors hover:text-black capitalize",
                   route.active ? "text-black" : "text-neutral-500"
                 )}>
                 {route.label}
@@ -97,40 +98,25 @@ const MainNavbar = (props: MainNavbarProps) => {
 
               {/* Mega Menu Dropdown */}
               {route.subCategories.length > 0 && (
-                <div className=" hidden group-hover:block absolute left-0 min-w-[500px] bg-white shadow-2xl rounded-lg  py-6 px-4 z-50">
-                  <div className="grid grid-cols-3 gap-x-2">
-                    {/* Column 1 */}
+                <div className="hidden group-hover:block absolute left-0 min-w-[800px] bg-white shadow-2xl rounded-lg py-8 px-6 z-50 transition-all duration-300 ease-in-out">
+                  <div className="grid grid-cols-3 gap-x-6 gap-y-4">
                     {route.subCategories.map((subCategory) => (
-                      <Link
-                        key={subCategory.id}
-                        href={`/danh-muc/${route.parentCategorySlug}/${subCategory.slug}`}>
-                        {subCategory.name}
-                      </Link>
-                      // <div>
-                      //   <ul>
-                      //     <li>
-                      //       <Link
-                      //         href="/category1/option1"
-                      //         className="text-sm text-gray-600 hover:text-black">
-                      //         Option 1
-                      //       </Link>
-                      //     </li>
-                      //     <li>
-                      //       <Link
-                      //         href="/category1/option2"
-                      //         className="text-sm text-gray-600 hover:text-black">
-                      //         Option 2
-                      //       </Link>
-                      //     </li>
-                      //     <li>
-                      //       <Link
-                      //         href="/category1/option3"
-                      //         className="text-sm text-gray-600 hover:text-black">
-                      //         Option 3
-                      //       </Link>
-                      //     </li>
-                      //   </ul>
-                      // </div>
+                      <div key={subCategory.id} className="flex  space-y-1">
+                        <Link
+                          href={`${route.href}/${subCategory.slug}`}
+                          className="font-medium text-gray-800 hover:text-blue-600 transition-colors duration-200 capitalize text-base pb-2 border-b border-gray-100">
+                          <div className="flex gap-x-4 items-center">
+                            <div className="relative w-10 h-10">
+                              <Image
+                                fill
+                                src={subCategory.billboard.imageUrl}
+                                alt={subCategory.name}
+                                className="object-cover rounded-md"></Image>
+                            </div>
+                            <span className="">{subCategory.name}</span>
+                          </div>
+                        </Link>
+                      </div>
                     ))}
                   </div>
                 </div>
@@ -189,7 +175,7 @@ const MainNavbar = (props: MainNavbarProps) => {
               key={route.href}
               href={route.href}
               className={cn(
-                "text-sm font-medium transition-colors hover:text-black",
+                " text-sm font-medium transition-colors hover:text-black capitalize",
                 route.active ? "text-black" : "text-neutral-500"
               )}>
               {route.label}
