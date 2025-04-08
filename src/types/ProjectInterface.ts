@@ -30,25 +30,11 @@ export enum MainCategoryEnum {
     slug:string;
     products:Product[];
     subcategories:SubCategory[]
-  }
-
-  export interface SubCategory{
-    id:string;
-    billboard:Billboard
-    name:string;
-    slug:string;
-    products:Product[];
-    categoryId:string;
-    
-    parentCategorySlug:string;
- 
-
-
+    services:Service[];
 
   }
 
-
-
+  
   export interface Product {
     id:string;
     name:string;
@@ -66,6 +52,36 @@ export enum MainCategoryEnum {
    
     
   }
+
+  export interface Service { 
+     id:string;
+     name:string;
+     description:string;
+     slug:string;
+     images: Image[];
+     price:number;
+     category:Category;
+     subcategory:SubCategory;
+   
+  }
+
+  export interface SubCategory{
+    id:string;
+    billboard:Billboard
+    name:string;
+    slug:string;
+    products:Product[];
+    categoryId:string;
+    services:Service[];
+    parentCategorySlug:string;
+
+ 
+
+
+
+  }
+
+
 
   export interface Image {
     id:string;

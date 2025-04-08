@@ -22,9 +22,9 @@ const getSubCategoriesWithSlug= async(slug:string):Promise<SubCategory>=>{
 //             subCategoryId:query.subCategoryId
 //         }
 //     })
-    const encodedSlug = encodeURIComponent(slug);
+    // const encodedSlug = encodeURIComponent(slug);
     
-    const res = await fetch(`${URL}/${encodedSlug}`);
+    const res = await fetch(`${URL}/${slug}`);
 
     return res.json();
 

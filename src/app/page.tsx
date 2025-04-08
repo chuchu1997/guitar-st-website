@@ -19,24 +19,33 @@ export default async function Home() {
   );
 
   // Create a map for subcategory lookups
-  const getSubcategoryId = (slug: string) =>
-    subcategories.find((sub) => sub.slug === slug)?.id;
+  const getSubCategoryWithSlug = (slug: string) => {
+    console.log("slug", slug);
+    const match = subcategories.find((sub) => sub.slug === slug);
+
+    return match?.id;
+  };
 
   // Parallel fetching of all data
   const [
     productWithFeatures,
     banners,
     tuquanaoProducts,
-    giuongnguProducts,
-    tubepProducts,
-    tuRuouProducts,
+    // tuquanaoProducts,
+    // giuongnguProducts,
+    // tubepProducts,
+    // tuRuouProducts,
   ] = await Promise.all([
     getProducts({ isFeatured: true, limit: 4 }),
     getBanners(),
-    getProducts({ limit: 4, subCategoryId: getSubcategoryId("/tu-quan-ao") }),
-    getProducts({ limit: 4, subCategoryId: getSubcategoryId("/giuong-ngu") }),
-    getProducts({ limit: 4, subCategoryId: getSubcategoryId("/tu-bep") }),
-    getProducts({ limit: 4, subCategoryId: getSubcategoryId("/tu-ruou") }),
+
+    getProducts({
+      subCategoryId: getSubCategoryWithSlug("tu-quan-ao"),
+    }),
+
+    // getProducts({ limit: 4, subCategoryId: getSubcategoryId("/giuong-ngu") }),
+    // getProducts({ limit: 4, subCategoryId: getSubcategoryId("/tu-bep") }),
+    // getProducts({ limit: 4, subCategoryId: getSubcategoryId("/tu-ruou") }),
   ]);
 
   // Helper function to render product sections
@@ -71,10 +80,12 @@ export default async function Home() {
               products={productWithFeatures}
             />
           </SectionComponent>
+
           {renderProductSection("Tủ quần áo", tuquanaoProducts, "tu-quan-ao")}
+          {/* {renderProductSection("Tủ quần áo", tuquanaoProducts, "tu-quan-ao")}
           {renderProductSection("Giường ngủ", giuongnguProducts, "giuong-ngu")}
           {renderProductSection("Tủ bếp", tubepProducts, "tu-bep")}
-          {renderProductSection("Tủ rượu", tuRuouProducts, "tu-ruou")}
+          {renderProductSection("Tủ rượu", tuRuouProducts, "tu-ruou")} */}
         </div>
       </div>
     </Suspense>
