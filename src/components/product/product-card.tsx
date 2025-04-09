@@ -13,7 +13,7 @@ interface ProductCardProps {
 const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   const router = useRouter();
   const moveDetailsProduct = () => {
-    router.push(`/san-pham/${product.slug}`);
+    router.push(`/san-pham/thong-tin/${product.slug}`);
   };
   return (
     <div

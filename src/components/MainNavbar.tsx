@@ -163,7 +163,7 @@ const MainNavbar = (props: MainNavbarProps) => {
       {isOpenMobileNav && (
         <div
           ref={mobileMenuRef} // Gán ref vào menu để kiểm tra sự kiện click outside
-          className={`w-full bg-white shadow-2xl border rounded-md z-50 absolute top-[66px] left-0 flex items-center flex-col p-4 gap-y-2
+          className={`w-full bg-white shadow-2xl border rounded-md z-50 absolute top-[66px] left-0 flex flex-col p-4 gap-y-2
             transition-all duration-700 ease-in-out transform origin-top 
             ${
               isOpenMobileNav

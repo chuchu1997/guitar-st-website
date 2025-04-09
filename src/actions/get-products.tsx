@@ -15,8 +15,6 @@ interface Query {
     limit?:number;
     currentPage?:number;
     subCategoryId?:string;
-
-
 }
 const getProducts = async(query:Query):Promise<Product[]>=>{
 

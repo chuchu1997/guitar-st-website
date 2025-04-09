@@ -74,13 +74,6 @@ export default async function Home() {
           <Banner images={banners} />
         </SectionComponent>
         <div className="container mx-auto flex flex-col gap-y-4">
-          <SectionComponent>
-            <ProductList
-              title="Các sản phẩm nổi bật"
-              products={productWithFeatures}
-            />
-          </SectionComponent>
-
           {renderProductSection("Tủ quần áo", tuquanaoProducts, "tu-quan-ao")}
           {/* {renderProductSection("Tủ quần áo", tuquanaoProducts, "tu-quan-ao")}
           {renderProductSection("Giường ngủ", giuongnguProducts, "giuong-ngu")}

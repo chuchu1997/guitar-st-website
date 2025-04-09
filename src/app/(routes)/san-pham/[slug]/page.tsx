@@ -1,56 +1,43 @@
-/** @format */
-
-import { getProductBySlug, getProducts } from "@/actions/get-products";
-import Gallery from "@/components/gallery";
-import Info from "@/components/info";
+import { getSubCategoriesWithSlug } from "@/actions/get-subcategories";
+import TileComponent from "@/components/layouts/TileComponent";
 import ProductList from "@/components/product/product-list";
-import Image from "next/image";
-import TabPrivacy from "./components/tab-product-privacy";
-import { Suspense } from "react";
+import BillboardLayout from "@/components/ui/billboard";
 import CircleLoading from "@/components/ui/circle-loading";
+import { Suspense } from "react";
 
-interface ProductPageWithSlugProps {
-  params: Promise<{ slug: string }>;
+
+interface DichVuPageWithProps {  
+    params:Promise<{slug:string}>
+
 }
 
-const SanPhamWithId = async (props: ProductPageWithSlugProps) => {
-  const { params } = props;
-  const { slug } = await params;
 
-  const product = await getProductBySlug(slug);
 
-  const suggestProductWithSameCategogy = await getProducts({
-    categoryId: product.category.id,
-  });
-  // const suggestProductWithSameCategogy = await getProducts({
-  //   categoryId: product.category,
-  // });
+const SanPhamPageWithSlug  = async (props:DichVuPageWithProps) =>{
+    const {params} = props;
+    const {slug} = await params;
+    //GET SERVICE WITH SLUG  ;
+    //GET SERVICE ITEM 
+    const subCategories = await getSubCategoriesWithSlug(slug);
 
-  return (
+    return <div className = "container mx-auto">
+
+
     <Suspense fallback={<CircleLoading />}>
-      <div className="bg-white">
-        <div className="container mx-auto">
-          <div className="px-4 py-10 sm:px-6 lg:px-8">
-            <div className="lg:grid lg:grid-cols-2 lg:items-start lg:gap-x-8 ">
-              <Gallery images={product.images}></Gallery>
-              <div className="mt-10 px-4 sm:mt-16 sm:px-0 lg:mt-0">
-                <Info data={product}></Info>
-                <hr className="my-4" />
-
-                <TabPrivacy />
-              </div>
-            </div>
-          </div>
-          <hr className="my-10" />
-
-          <ProductList
-            title="Đây là gợi ý các sản phẩm liên quan "
-            products={suggestProductWithSameCategogy}
+        <BillboardLayout data={subCategories.billboard} />
+        <section className="list-products">
+          <TileComponent
+            title={`Các sản phẩm thuộc danh mục :(${subCategories.name}) `}
           />
-        </div>
-      </div>
-    </Suspense>
-  );
-};
+         <ProductList title = {subCategories.name} products={subCategories.products} />
+        </section>
+      </Suspense> 
+    
+    
+    </div>
+    
 
-export default SanPhamWithId;
+}
+
+
+export default SanPhamPageWithSlug;
