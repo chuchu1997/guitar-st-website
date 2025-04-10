@@ -1,7 +1,8 @@
 import { getServices, getServiceWithSlug } from "@/actions/get-services";
 import TabPrivacy from "@/app/(routes)/san-pham/thong-tin/[slug]/components/tab-product-privacy";
 import Gallery from "@/components/gallery";
-import Info from "@/components/info";
+import Info from "@/components/info/infoProduct";
+import InfoService from "@/components/info/infoService";
 import TileComponent from "@/components/layouts/TileComponent";
 import LexicalViewer from "@/components/LoadLexicalJsonString";
 import ServiceList from "@/components/service/service-list";
@@ -43,7 +44,7 @@ const ThongTinPage =  async (props:ThongTinPageProps) => {
             <div className="lg:grid lg:grid-cols-2 lg:items-start lg:gap-x-8 ">
               <Gallery images={service.images}></Gallery>
               <div className="mt-10 px-4 sm:mt-16 sm:px-0 lg:mt-0">
-                <Info data={service } isProduct = {false}></Info>
+                <InfoService data={service } ></InfoService>
                 <hr className="my-4" />
                 {/* <TabPrivacy /> */}
               </div>

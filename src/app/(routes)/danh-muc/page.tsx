@@ -10,6 +10,8 @@ import { Suspense } from "react";
 
 const DanhMucPage = async () => {
     const category = await getCategoryWithSlug('danh-muc');
+
+    if (!category) return null;
     const products = await getProducts({
         categoryId: category.id,
         isFeatured: true,
@@ -19,6 +21,7 @@ const DanhMucPage = async () => {
 
   return (
     <div className="container mx-auto">
+
         <Suspense fallback={<CircleLoading />}>
         <BillboardLayout data={category.billboard} />
         <section className="list-products">

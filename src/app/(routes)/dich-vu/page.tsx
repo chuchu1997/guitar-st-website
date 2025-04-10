@@ -10,8 +10,10 @@ import { Suspense } from "react"
 const DichVuPage = async  ()=>{
 
     const category = await getCategoryWithSlug('dich-vu');
+    if (!category) return null;
 
     return <div className = "container mx-auto">
+  
          <Suspense fallback={<CircleLoading />}>
         <BillboardLayout data={category.billboard} />
         <section className="list-products">

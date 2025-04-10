@@ -64,7 +64,7 @@ export default function LexicalViewer({ jsonContent }: LexicalViewerProps) {
   };
 
   return (
-    <LexicalComposer initialConfig={initialConfig}>
+    <LexicalComposer initialConfig={initialConfig} >
       <ContentLoader jsonContent={jsonContent} />
     </LexicalComposer>
   );

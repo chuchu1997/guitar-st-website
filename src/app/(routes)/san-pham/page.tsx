@@ -16,7 +16,7 @@ const SanPhamPage = async ()=>{
 
 
     const category = await getCategoryWithSlug("san-pham");
-
+    if (!category) return null;
 
 
     return <div className = "container mx-auto">
