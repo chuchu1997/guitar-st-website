@@ -5,6 +5,7 @@ import Image from "next/image";
 import IconButton from "../ui/icon-button";
 import { ShoppingCartIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { formatCurrency } from "@/utils/utils";
 
 interface ProductCardProps {
   product: Product;
@@ -54,7 +55,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
             {product.name}
           </h3>
           <div className="text-base md:text-lg lg:text-xl font-bold text-red-500">
-            {product.price ?? "Liên hệ"}
+            {formatCurrency(product.price) ?? "Liên hệ"}
           </div>
 
           <div className="text-xs md:text-sm text-gray-500 line-through">

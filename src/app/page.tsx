@@ -31,6 +31,10 @@ export default async function Home() {
     productWithFeatures,
     banners,
     tuquanaoProducts,
+    giuongnguProducts,
+    tubepProducts,
+    comboPhongNguProducts,
+
     // tuquanaoProducts,
     // giuongnguProducts,
     // tubepProducts,
@@ -38,9 +42,17 @@ export default async function Home() {
   ] = await Promise.all([
     getProducts({ isFeatured: true, limit: 4 }),
     getBanners(),
-
     getProducts({
       subCategoryId: getSubCategoryWithSlug("tu-quan-ao"),
+    }),
+    getProducts({
+      subCategoryId: getSubCategoryWithSlug("giuong-ngu"),
+    }),
+    getProducts({
+      subCategoryId: getSubCategoryWithSlug("tu-bep"),
+    }),
+    getProducts({
+      subCategoryId: getSubCategoryWithSlug("combo-phong-ngu"),
     }),
 
     // getProducts({ limit: 4, subCategoryId: getSubcategoryId("/giuong-ngu") }),
@@ -52,15 +64,16 @@ export default async function Home() {
   const renderProductSection = (
     title: string,
     products: Product[],
-    slug: string
+    linkReadmore?: string
   ) => (
     <SectionComponent>
       <ProductList title={title} products={products} />
-      {products.length !== 0 && (
+
+      {linkReadmore && products.length > 0 && (
         <div className="flex justify-center">
           <ReadMoreButton
             title={`Xem thêm ${title.toLowerCase()}`}
-            href={`/danh-muc/noi-that/${slug}`}
+            href={linkReadmore}
           />
         </div>
       )}
@@ -74,7 +87,25 @@ export default async function Home() {
           <Banner images={banners} />
         </SectionComponent>
         <div className="container mx-auto flex flex-col gap-y-4">
-          {renderProductSection("Tủ quần áo", tuquanaoProducts, "tu-quan-ao")}
+          {renderProductSection("Sản phẩm nổi bật", productWithFeatures, "")}
+          {renderProductSection(
+            "Tủ quần áo",
+            tuquanaoProducts,
+            "/san-pham/tu-quan-ao"
+          )}
+          {renderProductSection(
+            "Giường ngủ ",
+            giuongnguProducts,
+            "/san-pham/giuong-ngu"
+          )}
+          {renderProductSection("Tủ bếp", tubepProducts, "/san-pham/tu-bep")}
+          {renderProductSection(
+            "Combo phòng ngủ ",
+            comboPhongNguProducts,
+            "/san-pham/combo-phong-ngu"
+          )}
+
+          {/* {renderProductSection("Tin tức  ", tuquanaoProducts)} */}
           {/* {renderProductSection("Tủ quần áo", tuquanaoProducts, "tu-quan-ao")}
           {renderProductSection("Giường ngủ", giuongnguProducts, "giuong-ngu")}
           {renderProductSection("Tủ bếp", tubepProducts, "tu-bep")}

@@ -11,6 +11,8 @@ import SearchWithSuggestions from "./ui/searchBar";
 import IconButton from "./ui/icon-button";
 import { Menu, ShoppingBag, X } from "lucide-react";
 import Image from "next/image";
+import { SidebarTrigger } from "./ui/sidebar";
+import { CartIconButton } from "./ui/cart-icon-btn";
 
 interface MainNavbarProps {
   data: Category[];
@@ -81,7 +83,7 @@ const MainNavbar = (props: MainNavbarProps) => {
 
   return (
     <>
-      <div className="flex-1 ml-[40px] flex items-center relative">
+      <div className="flex-1 ml-[40px] flex items-center justify-end relative">
         {/* Navigation cho màn hình lớn */}
 
         <nav className="hidden md:flex mx-6 space-x-4 items-center lg:space-x-6">
@@ -130,86 +132,10 @@ const MainNavbar = (props: MainNavbarProps) => {
           <SearchWithSuggestions />
         </div>
         <div className="ml-auto hidden md:block">
-          <div className="flex items-center w-full justify-center relative">
-            <div
-              className="h-5 w-5 absolute top-[-8px] bg-red-500 text-white rounded-full right-[-10px] text-sm font-semibold
-            text-center
-            ">
-              1
-            </div>
-            <IconButton
-              icon={
-                <ShoppingBag
-                  size={16}
-                  onClick={() => {
-                    onMoveCart();
-                  }}
-                />
-              }
-            />
-          </div>
+          <CartIconButton />
         </div>
-
-        {/* Nút mở menu mobile */}
-        <div className="ml-auto block md:hidden">
-          <IconButton
-            icon={isOpenMobileNav ? <X size={16} /> : <Menu size={16} />}
-            onClick={onToggleMobileMenuBtn}
-          />
-        </div>
+        <SidebarTrigger className="block sm:hidden" />
       </div>
-
-      {/* Mobile Menu */}
-      {isOpenMobileNav && (
-        <div
-          ref={mobileMenuRef} // Gán ref vào menu để kiểm tra sự kiện click outside
-          className={`w-full bg-white shadow-2xl border rounded-md z-50 absolute top-[66px] left-0 flex flex-col p-4 gap-y-2
-            transition-all duration-700 ease-in-out transform origin-top 
-            ${
-              isOpenMobileNav
-                ? "opacity-100 scale-100 max-h-[300px]"
-                : "opacity-0 scale-95 max-h-0 overflow-hidden"
-            }`}>
-          {routes.map((route) => (
-            <Link
-              key={route.href}
-              href={route.href}
-              className={cn(
-                " text-sm font-medium transition-colors hover:text-black capitalize",
-                route.active ? "text-black" : "text-neutral-500"
-              )}>
-              {route.label}
-            </Link>
-          ))}
-
-          <div className="flex items-center w-full justify-center">
-            <SearchWithSuggestions />
-          </div>
-
-          <div className="flex items-center w-full justify-center mt-[10px]">
-            <div className="">
-              <div className="flex items-center w-full justify-center relative">
-                <div
-                  className="h-5 w-5 absolute top-[-8px] bg-red-500 text-white rounded-full right-[-10px] text-sm font-semibold
-            text-center
-            ">
-                  1
-                </div>
-                <IconButton
-                  icon={
-                    <ShoppingBag
-                      size={16}
-                      onClick={() => {
-                        onMoveCart();
-                      }}
-                    />
-                  }
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
     </>
   );
 };

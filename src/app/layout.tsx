@@ -8,6 +8,8 @@ import { BodyContainer } from "@/components/BodyContainer";
 import { Footer } from "@/components/layouts/Footer";
 import BlockSidebar from "@/components/layouts/BlockSidebar";
 import { MobileGroupButton } from "@/components/layouts/MobileGroupButton";
+import { SidebarProvider } from "@/components/ui/sidebar";
+import { AppSidebar } from "@/components/app-sidebar";
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -134,13 +136,17 @@ export default function RootLayout({
     <html lang="en">
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${roboto.variable} antialiased relative `}>
-        <Navbar />
-        <BodyContainer>{children}</BodyContainer>
+        <SidebarProvider>
+          <div className="flex flex-col  w-full">
+            <Navbar />
+            <BodyContainer>{children}</BodyContainer>
 
-        <BlockSidebar />
-        <MobileGroupButton />
+            <BlockSidebar />
+            <MobileGroupButton />
 
-        <Footer />
+            <Footer />
+          </div>
+        </SidebarProvider>
       </body>
     </html>
   );
