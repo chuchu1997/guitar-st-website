@@ -8,9 +8,90 @@ import TabPrivacy from "./components/tab-product-privacy";
 import { Suspense } from "react";
 import CircleLoading from "@/components/ui/circle-loading";
 import LexicalViewer from "@/components/LoadLexicalJsonString";
+import { Metadata } from "next";
 
 interface ProductPageWithSlugProps {
   params: Promise<{ slug: string }>;
+}
+
+const baseUrl =
+  process.env.NEXT_PUBLIC_BASE_URL || "https://happyfurniture.logtech.vn";
+
+export async function generateMetadata(
+  props: ProductPageWithSlugProps
+): Promise<Metadata> {
+  const { params } = props;
+  const { slug } = await params;
+
+  const product = await getProductBySlug(slug);
+
+  if (!product) {
+    return {
+      title: "Sản Phẩm Không Tồn Tại | Happy Furniture",
+      description: "Không tìm thấy thông tin sản phẩm phù hợp.",
+      metadataBase: new URL(baseUrl),
+    };
+  }
+
+  const title = `${product.name} - Sản Phẩm Nội Thất | Happy Furniture`;
+  const description = `Tìm hiểu chi tiết về sản phẩm ${product.name} – thiết kế tinh tế, chất liệu cao cấp từ Happy Furniture.`;
+
+  return {
+    title,
+    description,
+    metadataBase: new URL(baseUrl),
+    alternates: {
+      canonical: `${baseUrl}/san-pham/thong-tin/${slug}`,
+      languages: {
+        "vi-VN": `${baseUrl}/san-pham/thong-tin/${slug}`,
+      },
+    },
+    openGraph: {
+      locale: "vi_VN",
+      url: `${baseUrl}/san-pham/thong-tin/${slug}`,
+      siteName: "Happy Furniture",
+      title,
+      description,
+      images: [
+        {
+          url: product.images?.[0]?.url || ``,
+          width: 1200,
+          height: 630,
+          alt: `${product.name} - Hình ảnh sản phẩm`,
+        },
+      ],
+    },
+    applicationName: "Happy Furniture",
+    keywords: [
+      product.name.toLowerCase(),
+      "nội thất cao cấp",
+      "mua nội thất",
+      product.category.name.toLowerCase(),
+      "happy furniture",
+    ],
+    authors: [{ name: "Happy Furniture Team" }],
+    creator: "Happy Furniture",
+    publisher: "Happy Furniture Việt Nam",
+    formatDetection: {
+      telephone: true,
+      date: true,
+      address: true,
+      email: true,
+      url: true,
+    },
+    robots: {
+      index: true,
+      follow: true,
+      googleBot: {
+        index: true,
+        follow: true,
+        "max-image-preview": "large",
+        "max-snippet": -1,
+        "max-video-preview": -1,
+      },
+    },
+    category: "shopping",
+  };
 }
 
 const SanPhamWithId = async (props: ProductPageWithSlugProps) => {
@@ -18,7 +99,6 @@ const SanPhamWithId = async (props: ProductPageWithSlugProps) => {
   const { slug } = await params;
 
   const product = await getProductBySlug(slug);
-  console.log("PRODUCT", product);
 
   const allProductInSameCategory = await getProducts({
     categoryId: product.category.id,

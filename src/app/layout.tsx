@@ -25,18 +25,17 @@ const roboto = Roboto({
   subsets: ["latin"],
 });
 
-const baseUrl = "https://www.suachuamayhan.com";
+const baseUrl = "https://happyfurniture.logtech.vn/";
+
 export const metadata: Metadata = {
-  // Basic metadata
   title: {
     default:
-      "Máy Hàn Hồng Ký Chính Hãng - Sửa Chữa & Phụ Kiện Máy Hàn | Giá Tốt",
-    template: "",
+      "Nội Thất Đẹp - Nội Thất Gỗ Cao Cấp | Thiết Kế & Thi Công Trọn Gói",
+    template: "%s | Nội Thất Đẹp",
   },
   description:
-    "🔧 Chuyên cung cấp Máy Hàn Hồng Ký PRO, Máy Hàn Jasic, Que Hàn Kim Tín, Máy Nén Khí, Dụng Cụ Cầm Tay Makita. Bảo hành chính hãng, giá cạnh tranh. Dịch vụ sửa chữa máy hàn tận nơi!.",
+    "Chuyên cung cấp nội thất gỗ cao cấp: sofa, bàn ghế, tủ, giường, kệ TV... Thiết kế và thi công nội thất trọn gói cho căn hộ, nhà phố, biệt thự. Uy tín - chất lượng - giá tốt.",
 
-  // Canonical URL
   metadataBase: new URL(baseUrl),
   alternates: {
     canonical: "/",
@@ -45,49 +44,42 @@ export const metadata: Metadata = {
     },
   },
 
-  // Open Graph metadata for social sharing
   openGraph: {
     type: "website",
     locale: "vi_VN",
     url: baseUrl,
-    siteName: "Sửa chữa máy hàn ",
-    title: "Máy Hàn Hồng Ký Chính Hãng - Sửa Chữa & Phụ Kiện Máy Hàn | Giá Tốt",
+    siteName: "Nội Thất Đẹp",
+    title: "Nội Thất Đẹp - Nội Thất Gỗ Cao Cấp | Thiết Kế & Thi Công Trọn Gói",
     description:
-      "🔧 Chuyên cung cấp Máy Hàn Hồng Ký PRO, Máy Hàn Jasic, Que Hàn Kim Tín, Máy Nén Khí, Dụng Cụ Cầm Tay Makita. Bảo hành chính hãng, giá cạnh tranh. Dịch vụ sửa chữa máy hàn tận nơi!.",
+      "Chuyên cung cấp nội thất gỗ cao cấp: sofa, bàn ăn, tủ bếp, giường ngủ... Dịch vụ thiết kế & thi công nội thất chuyên nghiệp. Cam kết uy tín, giá tốt, bảo hành dài hạn.",
     images: [
-      {
-        url: `${baseUrl}/images/banner/14.png`,
-        width: 1200,
-        height: 630,
-        alt: "Máy Hàn Hồng Ký Chính Hãng - Sửa Chữa & Phụ Kiện Máy Hàn | Giá Tốt",
-      },
+      // {
+      //   url: `${baseUrl}/og-image.jpg`,
+      //   width: 1200,
+      //   height: 630,
+      //   alt: "Nội Thất Gỗ Cao Cấp - Thiết Kế & Thi Công Nội Thất Trọn Gói",
+      // },
     ],
   },
 
-  // Icons
-  // Application metadata
-  applicationName: "Sửa chữa máy hàn",
+  applicationName: "Nội Thất Đẹp",
   keywords: [
-    "máy hàn hồng ký",
-    "máy hàn jasic",
-    "que hàn kim tín",
-    "máy nén khí",
-    "dụng cụ makita",
-    "sửa chữa máy hàn",
-    "máy hàn điện tử",
-    "máy hàn mig",
-    "máy hàn tig",
-    "máy hàn giá rẻ",
-    "máy bơm hơi",
-    "máy bơm chính hãng",
-    "dụng cụ xây dựng",
-    "thiết bị xây dựng",
+    "nội thất",
+    "nội thất gỗ",
+    "thiết kế nội thất",
+    "thi công nội thất",
+    "sofa gỗ",
+    "bàn ăn",
+    "giường ngủ",
+    "tủ quần áo",
+    "nội thất căn hộ",
+    "nội thất nhà phố",
+    "nội thất biệt thự",
   ],
-  authors: [{ name: "Cường" }],
-  creator: "cường",
-  publisher: "Vercel",
+  authors: [{ name: "Nội Thất Đẹp" }],
+  creator: "Nội Thất Đẹp Team",
+  publisher: "Nội Thất Đẹp Co., Ltd",
 
-  // Mobile app configuration
   formatDetection: {
     telephone: true,
     date: true,
@@ -96,30 +88,23 @@ export const metadata: Metadata = {
     url: true,
   },
 
-  // Verification for search engines
   verification: {
-    google: "yDzcBZrLnnzmVf-g5JWvsvEMRhifOUM-9Dm9Y1jmQ8U",
+    google: "GOOGLE_VERIFICATION_CODE_HERE",
   },
 
-  // Robot directives
   robots: {
     index: true,
     follow: true,
     googleBot: {
       index: true,
       follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
       "max-video-preview": -1,
-      "max-image-preview": "standard",
-      "max-snippet": 1,
     },
   },
 
-  // Region and language
   category: "shopping",
-
-  // Viewport settings
-
-  // Theme color
 };
 export const viewport = {
   width: "device-width",
