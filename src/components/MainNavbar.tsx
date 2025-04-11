@@ -86,7 +86,7 @@ const MainNavbar = (props: MainNavbarProps) => {
       <div className="flex-1 ml-[40px] flex items-center justify-end relative">
         {/* Navigation cho màn hình lớn */}
 
-        <nav className="hidden md:flex mx-6 space-x-4 items-center lg:space-x-6">
+        <nav className="hidden lg:flex mx-6 space-x-4 items-center lg:space-x-6">
           {routes.map((route) => (
             <div key={route.href} className="relative group">
               <Link

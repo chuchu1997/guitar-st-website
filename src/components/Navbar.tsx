@@ -20,8 +20,8 @@ const Navbar = async () => {
         <div className="flex items-center h-16">
           <div className="flex">
             <div className="flex-shrink-0 flex items-center">
-              <Link href="/" legacyBehavior className="text-2xl font-bold">
-                Logo
+              <Link href="/" className="text-2xl font-bold  ">
+                Logo 11
               </Link>
             </div>
           </div>

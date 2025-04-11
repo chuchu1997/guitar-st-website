@@ -22,7 +22,7 @@ const AlertSearch: React.FC<AlertSearchProps> = ({
 }) => {
   return (
     <Link
-      href={`/san-pham/${slug}`}
+      href={`/san-pham/thong-tin/${slug}`}
       onClick={() => {
         onViewProduct();
       }}>

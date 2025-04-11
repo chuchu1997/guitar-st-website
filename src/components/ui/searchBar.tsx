@@ -40,7 +40,7 @@ export default function SearchWithSuggestions() {
   }, [query]);
 
   return (
-    <div className="relative  min-[200px]  ">
+    <div className="relative md:w-[300px] lg:w-[600px]  ">
       <Command className="rounded-lg border shadow-md w-full">
         <CommandInput
           placeholder="Search products..."
