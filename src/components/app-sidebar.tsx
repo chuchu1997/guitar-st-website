@@ -78,6 +78,8 @@ export function AppSidebar({ categories }: AppSidebarProps) {
           <SidebarGroupLabel>Danh mục sản phẩm</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
+              <SearchWithSuggestions />
+
               {categories.map((category) => {
                 const isActive =
                   pathname === `/${params.storeId}/categories/${category.slug}`;
@@ -146,7 +148,6 @@ export function AppSidebar({ categories }: AppSidebarProps) {
           <SidebarGroupLabel>Khác</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              <SearchWithSuggestions />
               <div className="text-center">
                 <div className="w-fit  inline-block my-[10px] text-center">
                   <CartIconButton />

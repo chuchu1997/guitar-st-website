@@ -2,7 +2,7 @@
 
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   Command,
   CommandInput,
@@ -17,10 +17,16 @@ import { getSearchs } from "@/actions/get-searchs";
 import AlertSearch from "./alert-search";
 
 export default function SearchWithSuggestions() {
+  const inputRef = useRef<HTMLInputElement | null>(null);
+
   const [query, setQuery] = useState("");
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(false); // For loading state
-
+  useEffect(() => {
+    if (inputRef.current) {
+      inputRef.current.blur();
+    }
+  }, []); // Run once on mount
   const fetchSearchResults = async (query: string) => {
     setLoading(true);
     try {
@@ -43,6 +49,7 @@ export default function SearchWithSuggestions() {
     <div className="relative md:w-[300px] lg:w-[600px]  ">
       <Command className="rounded-lg border shadow-md w-full">
         <CommandInput
+          autoFocus={false}
           placeholder="Search products..."
           value={query}
           onValueChange={setQuery}
