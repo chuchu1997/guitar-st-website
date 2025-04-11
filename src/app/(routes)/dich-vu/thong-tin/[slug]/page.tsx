@@ -1,7 +1,7 @@
 import { getServices, getServiceWithSlug } from "@/actions/get-services";
 import TabPrivacy from "@/app/(routes)/san-pham/thong-tin/[slug]/components/tab-product-privacy";
 import Gallery from "@/components/gallery";
-import Info from "@/components/info/infoProduct";
+import Info from "@/components/info/product/infoProduct";
 import InfoService from "@/components/info/infoService";
 import TileComponent from "@/components/layouts/TileComponent";
 import LexicalViewer from "@/components/LoadLexicalJsonString";

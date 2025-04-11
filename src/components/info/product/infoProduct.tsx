@@ -1,11 +1,12 @@
 /** @format */
-
-import { Product, Service } from "@/types/ProjectInterface";
-import CurrencyComponent from "../currencyComponent";
-import { Button } from "../ui/button";
+"use client";
+import { Product } from "@/types/ProjectInterface";
+import CurrencyComponent from "../../currencyComponent";
+import { Button } from "../../ui/button";
 import { ShoppingCart } from "lucide-react";
-import LexicalViewer from "../LoadLexicalJsonString";
-import FreeConsultation from "../freeConsultationForm";
+import FreeConsultation from "../../freeConsultationForm";
+import ProductSizeSelector from "./selectSizes";
+import ProductPriceBox from "./priceUI";
 
 interface InfoProps {
   data: Product;
@@ -17,9 +18,13 @@ const Info: React.FC<InfoProps> = ({ data }) => {
       <h1 className="text-3xl font-semibold text-gray-900 capitalize">
         {data.name}
       </h1>
-      <div className="mt-3 flex items-end justify-between">
-        <CurrencyComponent price={data.price}></CurrencyComponent>
-      </div>
+
+      <ProductPriceBox
+        originalPrice={data.price}
+        salePrice={data.price * 0.7}
+      />
+
+      <ProductSizeSelector onChangeSize={() => {}} />
 
       <hr className="my-4" />
 

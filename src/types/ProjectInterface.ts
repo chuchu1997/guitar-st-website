@@ -49,9 +49,24 @@ export enum MainCategoryEnum {
     viewCount:number;
     ratingCount:number;
     stockQuantity:number;
-   
-    
+    productSizes:ProductSize[]
   }
+  interface ProductSize{
+    productId:string;
+    sizeId:string;
+    size:Size;
+    stockQuantity:number;
+    price:number;
+
+  }
+  interface Size { 
+    id:string;
+    description:string;
+    name:string;
+
+  }
+
+
 
   export interface Service { 
      id:string;

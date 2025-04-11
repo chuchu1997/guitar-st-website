@@ -2,7 +2,7 @@
 
 import { getProductBySlug, getProducts } from "@/actions/get-products";
 import Gallery from "@/components/gallery";
-import Info from "@/components/info/infoProduct";
+import Info from "@/components/info/product/infoProduct";
 import ProductList from "@/components/product/product-list";
 import TabPrivacy from "./components/tab-product-privacy";
 import { Suspense } from "react";
@@ -26,6 +26,8 @@ const SanPhamWithId = async (props: ProductPageWithSlugProps) => {
   const suggestProduct = allProductInSameCategory.filter(
     (s) => s.id !== product.id
   );
+
+  console.log("PRODUCT", product);
 
   return (
     <Suspense fallback={<CircleLoading />}>
