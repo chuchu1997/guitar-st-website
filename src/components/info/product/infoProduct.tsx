@@ -1,18 +1,21 @@
 /** @format */
 "use client";
-import { Product } from "@/types/ProjectInterface";
+import { Product, ProductSize } from "@/types/ProjectInterface";
 import CurrencyComponent from "../../currencyComponent";
 import { Button } from "../../ui/button";
 import { ShoppingCart } from "lucide-react";
 import FreeConsultation from "../../freeConsultationForm";
 import ProductSizeSelector from "./selectSizes";
 import ProductPriceBox from "./priceUI";
+import { useEffect, useState } from "react";
 
 interface InfoProps {
   data: Product;
 }
 
 const Info: React.FC<InfoProps> = ({ data }) => {
+  const [sizeSelect, setSizeSelect] = useState<ProductSize>();
+
   return (
     <div className="flex flex-col gap-y-4">
       <h1 className="text-3xl font-semibold text-gray-900 capitalize">
@@ -20,11 +23,16 @@ const Info: React.FC<InfoProps> = ({ data }) => {
       </h1>
 
       <ProductPriceBox
-        originalPrice={data.price}
-        salePrice={data.price * 0.7}
+        originalPrice={sizeSelect ? sizeSelect.price : data.price}
+        salePrice={sizeSelect ? sizeSelect.price * 0.7 : data.price * 0.7}
       />
 
-      <ProductSizeSelector onChangeSize={() => {}} />
+      <ProductSizeSelector
+        onChangeSize={(data: ProductSize) => {
+          setSizeSelect(data);
+        }}
+        productSizeOptions={data.productSizes}
+      />
 
       <hr className="my-4" />
 

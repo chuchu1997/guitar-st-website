@@ -51,7 +51,7 @@ export enum MainCategoryEnum {
     stockQuantity:number;
     productSizes:ProductSize[]
   }
-  interface ProductSize{
+ export interface ProductSize{
     productId:string;
     sizeId:string;
     size:Size;
@@ -59,7 +59,7 @@ export enum MainCategoryEnum {
     price:number;
 
   }
-  interface Size { 
+  export interface Size { 
     id:string;
     description:string;
     name:string;

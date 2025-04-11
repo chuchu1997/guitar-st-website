@@ -18,6 +18,7 @@ const SanPhamWithId = async (props: ProductPageWithSlugProps) => {
   const { slug } = await params;
 
   const product = await getProductBySlug(slug);
+  console.log("PRODUCT", product);
 
   const allProductInSameCategory = await getProducts({
     categoryId: product.category.id,
@@ -26,8 +27,6 @@ const SanPhamWithId = async (props: ProductPageWithSlugProps) => {
   const suggestProduct = allProductInSameCategory.filter(
     (s) => s.id !== product.id
   );
-
-  console.log("PRODUCT", product);
 
   return (
     <Suspense fallback={<CircleLoading />}>
