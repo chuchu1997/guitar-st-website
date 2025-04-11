@@ -10,6 +10,8 @@ import CircleLoading from "@/components/ui/circle-loading";
 import { Product } from "@/types/ProjectInterface";
 import { Suspense } from "react";
 import { Metadata } from "next";
+import GalleryClientWrapper from "@/components/gallery/gallery-wrapper";
+import EditorClientWrapper from "@/components/editor/editor-wrapper";
 
 
 
@@ -121,8 +123,8 @@ const ThongTinPage =  async (props:ThongTinPageProps) => {
         <div className="container mx-auto">
           <div className="px-4 py-10 sm:px-6 lg:px-8">
             <div className="lg:grid lg:grid-cols-2 lg:items-start lg:gap-x-8 ">
-              <Gallery images={service.images}></Gallery>
-              <div className="mt-10 px-4 sm:mt-16 sm:px-0 lg:mt-0">
+            <GalleryClientWrapper images={service.images} />
+            <div className="mt-10 px-4 sm:mt-16 sm:px-0 lg:mt-0">
                 <InfoService data={service } ></InfoService>
                 <hr className="my-4" />
                 {/* <TabPrivacy /> */}
@@ -133,7 +135,7 @@ const ThongTinPage =  async (props:ThongTinPageProps) => {
                 Đây là phần mô tả của sản phẩm :
               </h1>
               <div className="flex gap-10 ">
-                <LexicalViewer jsonContent={service.description} />
+              <EditorClientWrapper jsonString={service.description} />
               </div>
             </div>
           </div>
