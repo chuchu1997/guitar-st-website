@@ -10,6 +10,8 @@ import { getCategories } from "@/actions/get-categories";
 import ReadMoreButton from "@/components/ui/read-more-btn";
 import getBanners from "@/actions/get-banner";
 import { Product } from "@/types/ProjectInterface";
+export const dynamic = "force-dynamic";
+export const revalidate = 60;
 
 export default async function Home() {
   // Fetch categories and banners first
