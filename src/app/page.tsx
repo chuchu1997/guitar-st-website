@@ -12,55 +12,39 @@ import getBanners from "@/actions/get-banner";
 import { Product } from "@/types/ProjectInterface";
 
 export default async function Home() {
-  // const banners = await getBillboard("65ef27af-3792-4dd6-9473-3a6a363919e7");
-  const categories = await getCategories();
+  // Fetch categories and banners first
+  const [categories, banners] = await Promise.all([
+    getCategories(),
+    getBanners(),
+  ]);
+
   const subcategories = categories.flatMap(
     (category) => category.subcategories
   );
 
-  // Create a map for subcategory lookups
-  const getSubCategoryWithSlug = (slug: string) => {
-    console.log("slug", slug);
-    const match = subcategories.find((sub) => sub.slug === slug);
+  // Lookup subcategory IDs safely
+  const tuquanaoId = subcategories.find((s) => s.slug === "tu-quan-ao")?.id;
+  const giuongnguId = subcategories.find((s) => s.slug === "giuong-ngu")?.id;
+  const tubepId = subcategories.find((s) => s.slug === "tu-bep")?.id;
+  const comboPhongNguId = subcategories.find(
+    (s) => s.slug === "combo-phong-ngu"
+  )?.id;
 
-    return match?.id;
-  };
-
-  // Parallel fetching of all data
+  // Fetch products in parallel
   const [
     productWithFeatures,
-    banners,
     tuquanaoProducts,
     giuongnguProducts,
     tubepProducts,
     comboPhongNguProducts,
-
-    // tuquanaoProducts,
-    // giuongnguProducts,
-    // tubepProducts,
-    // tuRuouProducts,
   ] = await Promise.all([
     getProducts({ isFeatured: true, limit: 4 }),
-    getBanners(),
-    getProducts({
-      subCategoryId: getSubCategoryWithSlug("tu-quan-ao"),
-    }),
-    getProducts({
-      subCategoryId: getSubCategoryWithSlug("giuong-ngu"),
-    }),
-    getProducts({
-      subCategoryId: getSubCategoryWithSlug("tu-bep"),
-    }),
-    getProducts({
-      subCategoryId: getSubCategoryWithSlug("combo-phong-ngu"),
-    }),
-
-    // getProducts({ limit: 4, subCategoryId: getSubcategoryId("/giuong-ngu") }),
-    // getProducts({ limit: 4, subCategoryId: getSubcategoryId("/tu-bep") }),
-    // getProducts({ limit: 4, subCategoryId: getSubcategoryId("/tu-ruou") }),
+    getProducts({ subCategoryId: tuquanaoId }),
+    getProducts({ subCategoryId: giuongnguId }),
+    getProducts({ subCategoryId: tubepId }),
+    getProducts({ subCategoryId: comboPhongNguId }),
   ]);
 
-  // Helper function to render product sections
   const renderProductSection = (
     title: string,
     products: Product[],
@@ -68,7 +52,6 @@ export default async function Home() {
   ) => (
     <SectionComponent>
       <ProductList title={title} products={products} />
-
       {linkReadmore && products.length > 0 && (
         <div className="flex justify-center">
           <ReadMoreButton
@@ -104,12 +87,6 @@ export default async function Home() {
             comboPhongNguProducts,
             "/san-pham/combo-phong-ngu"
           )}
-
-          {/* {renderProductSection("Tin tức  ", tuquanaoProducts)} */}
-          {/* {renderProductSection("Tủ quần áo", tuquanaoProducts, "tu-quan-ao")}
-          {renderProductSection("Giường ngủ", giuongnguProducts, "giuong-ngu")}
-          {renderProductSection("Tủ bếp", tubepProducts, "tu-bep")}
-          {renderProductSection("Tủ rượu", tuRuouProducts, "tu-ruou")} */}
         </div>
       </div>
     </Suspense>
