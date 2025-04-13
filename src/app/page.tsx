@@ -10,6 +10,8 @@ import { getCategories } from "@/actions/get-categories";
 import ReadMoreButton from "@/components/ui/read-more-btn";
 import getBanners from "@/actions/get-banner";
 import { Product } from "@/types/ProjectInterface";
+import Link from "next/link";
+import Image from "next/image";
 export const dynamic = "force-dynamic";
 export const revalidate = 60;
 
@@ -20,32 +22,50 @@ export default async function Home() {
     getBanners(),
   ]);
 
-  const subcategories = categories.flatMap(
-    (category) => category.subcategories
-  );
+  const tuquanaoSubcategory = categories
+    .flatMap((category) => category.subcategories)
+    .find((sub) => sub.slug === "tu-quan-ao");
 
-  // Lookup subcategory IDs safely
-  const tuquanaoId = subcategories.find((s) => s.slug === "tu-quan-ao")?.id;
-  const giuongnguId = subcategories.find((s) => s.slug === "giuong-ngu")?.id;
-  const tubepId = subcategories.find((s) => s.slug === "tu-bep")?.id;
-  const comboPhongNguId = subcategories.find(
-    (s) => s.slug === "combo-phong-ngu"
-  )?.id;
+  const giuongnguSubcategory = categories
+    .flatMap((category) => category.subcategories)
+    .find((sub) => sub.slug === "giuong-ngu");
+
+  const comboPhongNguSubcategory = categories
+    .flatMap((category) => category.subcategories)
+    .find((sub) => sub.slug === "combo-phong-ngu");
+
+  const tubepSubcategory = categories
+    .flatMap((category) => category.subcategories)
+    .find((sub) => sub.slug === "tu-bep");
 
   // Fetch products in parallel
-  const [
-    productWithFeatures,
-    tuquanaoProducts,
-    giuongnguProducts,
-    tubepProducts,
-    comboPhongNguProducts,
-  ] = await Promise.all([
+  const [productWithFeatures] = await Promise.all([
     getProducts({ isFeatured: true, limit: 4 }),
-    getProducts({ subCategoryId: tuquanaoId }),
-    getProducts({ subCategoryId: giuongnguId }),
-    getProducts({ subCategoryId: tubepId }),
-    getProducts({ subCategoryId: comboPhongNguId }),
   ]);
+
+  const subcategories = [
+    {
+      subcategory: tuquanaoSubcategory,
+      alt: "Tủ quần áo",
+      href: "/san-pham/tu-quan-ao",
+    },
+    {
+      subcategory: giuongnguSubcategory,
+      alt: "Giường ngủ",
+      href: "/san-pham/giuong-ngu",
+    },
+    {
+      subcategory: comboPhongNguSubcategory,
+      alt: "Combo Phòng Ngủ",
+
+      href: "/san-pham/combo-phong-ngu",
+    },
+    {
+      subcategory: tubepSubcategory,
+      alt: "Tủ Bếp",
+      href: "/san-pham/tu-bep",
+    },
+  ];
 
   const renderProductSection = (
     title: string,
@@ -71,23 +91,28 @@ export default async function Home() {
         <SectionComponent className="my-[0px]">
           <Banner images={banners} />
         </SectionComponent>
-        <div className="container mx-auto flex flex-col gap-y-4">
+        <div className="container mx-auto flex flex-col gap-y-4 py-4">
           {renderProductSection("Sản phẩm nổi bật", productWithFeatures, "")}
-          {renderProductSection(
-            "Tủ quần áo",
-            tuquanaoProducts,
-            "/san-pham/tu-quan-ao"
-          )}
-          {renderProductSection(
-            "Giường ngủ ",
-            giuongnguProducts,
-            "/san-pham/giuong-ngu"
-          )}
-          {renderProductSection("Tủ bếp", tubepProducts, "/san-pham/tu-bep")}
-          {renderProductSection(
-            "Combo phòng ngủ ",
-            comboPhongNguProducts,
-            "/san-pham/combo-phong-ngu"
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mx-2 my-4">
+          {subcategories.map(
+            ({ subcategory, alt, href }, index) =>
+              subcategory && (
+                <div key={index} className="relative w-full">
+                  <Link
+                    href={href}
+                    className="relative block h-[500px] md:h-[600px] w-full overflow-hidden rounded-lg shadow-lg transform transition-transform duration-300 hover:scale-101 hover:shadow-lg hover:shadow-gray-600/40"
+                  >
+                    <Image
+                      priority
+                      src={subcategory?.billboard?.imageUrl ?? ""}
+                      alt={alt}
+                      fill
+                      className="object-cover"
+                    />
+                  </Link>
+                </div>
+              )
           )}
         </div>
       </div>
