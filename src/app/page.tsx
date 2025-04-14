@@ -12,6 +12,7 @@ import getBanners from "@/actions/get-banner";
 import { Product } from "@/types/ProjectInterface";
 import Link from "next/link";
 import Image from "next/image";
+import RenderSubCateForRoot, { SubType } from "./components/renderSubcateRoot";
 export const dynamic = "force-dynamic";
 export const revalidate = 60;
 
@@ -43,7 +44,7 @@ export default async function Home() {
     getProducts({ isFeatured: true, limit: 4 }),
   ]);
 
-  const subcategories = [
+  const subcategories: SubType[] = [
     {
       subcategory: tuquanaoSubcategory,
       alt: "Tủ quần áo",
@@ -89,32 +90,12 @@ export default async function Home() {
     <Suspense fallback={<CircleLoading />}>
       <div>
         <SectionComponent className="my-[0px]">
-          <Banner images={banners} />
+          <Banner images={banners} minHeight="850px" />
         </SectionComponent>
         <div className="container mx-auto flex flex-col gap-y-4 py-4">
           {renderProductSection("Sản phẩm nổi bật", productWithFeatures, "")}
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mx-2 my-4">
-          {subcategories.map(
-            ({ subcategory, alt, href }, index) =>
-              subcategory && (
-                <div key={index} className="relative w-full">
-                  <Link
-                    href={href}
-                    className="relative block h-[500px] md:h-[600px] w-full overflow-hidden rounded-lg shadow-lg transform transition-transform duration-300 hover:scale-101 hover:shadow-lg hover:shadow-gray-600/40"
-                  >
-                    <Image
-                      priority
-                      src={subcategory?.billboard?.imageUrl ?? ""}
-                      alt={alt}
-                      fill
-                      className="object-cover"
-                    />
-                  </Link>
-                </div>
-              )
-          )}
-        </div>
+        <RenderSubCateForRoot subcategories={subcategories} />
       </div>
     </Suspense>
   );

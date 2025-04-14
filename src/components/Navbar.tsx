@@ -11,7 +11,6 @@ export const revalidate = 60;
 
 const Navbar = async () => {
   const categories = await getCategories();
-  console.log("CATE", categories);
   if (!categories) {
     return <>Không có danh mục vui lòng tạo ....</>;
   }

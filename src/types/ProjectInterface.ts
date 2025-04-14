@@ -22,6 +22,8 @@ export enum MainCategoryEnum {
     id:string;
     label:string;
     imageUrl:string;
+    linkHref?:string;
+    
   }
   export interface Category {
     id:string;
