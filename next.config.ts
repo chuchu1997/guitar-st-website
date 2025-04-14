@@ -1,6 +1,10 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  experimental: {
+    // Nếu bạn đang dev trên happyfurniture.logtech.vn
+    allowedDevOrigins: ['https://happyfurniture.logtech.vn'],
+  },
   reactStrictMode:true,
   compress:true,
  compiler: {
