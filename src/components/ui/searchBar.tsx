@@ -46,8 +46,8 @@ export default function SearchWithSuggestions() {
   }, [query]);
 
   return (
-    <div className="relative md:w-[300px] lg:w-[600px]  ">
-      <Command className="rounded-lg border shadow-md w-full">
+    <div className="relative w-full md:w-[400px]">
+      <Command className="rounded-lg shadow-md w-full bg-transparent text-white">
         <CommandInput
           autoFocus={false}
           placeholder="Search products..."
@@ -56,26 +56,28 @@ export default function SearchWithSuggestions() {
         />
 
         {loading && query && (
-          <div className="absolute top-full mt-[5px] left-0 w-full bg-white p-2 text-center z-50">
+          <div className="absolute top-full mt-[5px] left-0 w-full bg-white rounded-md p-2 text-center z-50">
             Loading...
           </div>
         )}
 
         {query && !loading && products.length > 0 && (
-          <CommandList className="absolute top-full mt-[5px] left-0 w-full bg-white border rounded-md shadow-lg max-h-[200px] p-4 overflow-y-auto z-50">
+          <CommandList className="absolute top-full mt-[5px] left-0 w-full border rounded-md shadow-lg max-h-[200px] p-4 overflow-y-auto z-50">
             {/* Products */}
-            <p className="text-sm font-semibold py-2">Search Results :</p>
+            <p className="text-sm font-semibold ">Search Results :</p>
             {products.map((product) => (
-              <AlertSearch
-                onViewProduct={() => {
-                  setQuery("");
-                }}
-                imageUrl={product.images[0].url}
-                key={product.id}
-                slug={product.slug}
-                shortDescription={product.shortDescription}
-                name={product.name}
-              />
+              <div key={product.id} className=" my-2">
+                <AlertSearch
+                  onViewProduct={() => {
+                    setQuery("");
+                  }}
+                  imageUrl={product.images[0].url}
+                  slug={product.slug}
+                  shortDescription={product.shortDescription}
+                  name={product.name}
+                />
+              </div>
+
               //   <div key={product.id}>{product.name}</div>
             ))}
 

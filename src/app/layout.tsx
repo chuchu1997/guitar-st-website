@@ -124,7 +124,7 @@ export default function RootLayout({
         <SidebarProvider>
           <div className="flex flex-col  w-full">
             <Navbar />
-            <BodyContainer>{children}</BodyContainer>
+            <BodyContainer className="mt-[45px]">{children}</BodyContainer>
 
             <BlockSidebar />
             <MobileGroupButton />

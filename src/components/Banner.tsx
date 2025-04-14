@@ -7,41 +7,30 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Billboard } from "@/types/ProjectInterface";
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import clsx from "clsx";
+
 interface Props {
   images: Billboard[];
   autoplayInterval?: number;
   minHeight: "500px" | "700px" | "850px";
 }
-const getResponsiveHeight = (minHeight: Props["minHeight"]) => {
+
+// Trả về class tailwind tường minh (không dùng string template)
+const getHeightClass = (minHeight: Props["minHeight"]) => {
   switch (minHeight) {
     case "850px":
-      return {
-        sm: "300px",
-        md: "500px",
-        xl: "850px",
-      };
+      return "min-h-[300px] h-[300px] md:min-h-[500px] md:h-[500px] xl:min-h-[850px] xl:h-[850px]";
     case "700px":
-      return {
-        sm: "250px",
-        md: "400px",
-        xl: "700px",
-      };
+      return "min-h-[250px] h-[250px] md:min-h-[400px] md:h-[400px] xl:min-h-[700px] xl:h-[700px]";
     case "500px":
     default:
-      return {
-        sm: "200px",
-        md: "300px",
-        xl: "500px",
-      };
+      return "min-h-[200px] h-[200px] md:min-h-[300px] md:h-[300px] xl:min-h-[500px] xl:h-[500px]";
   }
 };
+
 const Banner = ({ images, autoplayInterval = 5000, minHeight }: Props) => {
-  const { sm, md, xl } = getResponsiveHeight(minHeight);
-  const heightClass = `
-  min-h-[${sm}] h-[${sm}]
-  md:min-h-[${md}] md:h-[${md}]
-  xl:min-h-[${xl}] xl:h-[${xl}]
-`;
+  const heightClass = getHeightClass(minHeight);
+
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isMounted, setIsMounted] = useState(false);
 
@@ -66,13 +55,17 @@ const Banner = ({ images, autoplayInterval = 5000, minHeight }: Props) => {
     <div className="relative w-full">
       {/* Banner Container */}
       <div
-        className={`relative w-full ${heightClass} rounded-lg overflow-hidden`}>
+        className={clsx(
+          "relative w-full rounded-lg overflow-hidden",
+          heightClass
+        )}>
         {images.map((image, index) => (
           <div
             key={index}
-            className={`absolute inset-0 transition-opacity duration-500 ${
+            className={clsx(
+              "absolute inset-0 transition-opacity duration-500",
               index === currentIndex ? "opacity-100" : "opacity-0"
-            }`}>
+            )}>
             <Image
               src={image.imageUrl}
               alt={image.label}
@@ -123,9 +116,10 @@ const Banner = ({ images, autoplayInterval = 5000, minHeight }: Props) => {
               <button
                 key={index}
                 onClick={() => goToSlide(index)}
-                className={`w-2.5 h-2.5 rounded-full transition-colors ${
+                className={clsx(
+                  "w-2.5 h-2.5 rounded-full transition-colors",
                   index === currentIndex ? "bg-white" : "bg-white/50"
-                }`}
+                )}
                 aria-label={`Go to slide ${index + 1}`}
               />
             ))}

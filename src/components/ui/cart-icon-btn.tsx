@@ -9,7 +9,7 @@ const CartIconButton = () => {
   return (
     <div className="relative">
       <div
-        className="h-5 w-5 absolute top-[-8px] bg-red-500 text-white rounded-full right-[-10px] text-sm font-semibold
+        className="h-5 w-5 absolute top-[-6px] bg-red-500 text-white rounded-full right-[-10px] text-sm font-semibold
             text-center
             ">
         1
@@ -17,7 +17,7 @@ const CartIconButton = () => {
       <IconButton
         icon={
           <ShoppingBag
-            size={16}
+            size={12}
             onClick={() => {
               // onMoveCart();
             }}

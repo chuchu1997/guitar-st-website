@@ -16,21 +16,10 @@ const Navbar = async () => {
   }
 
   return (
-    <nav className="bg-white shadow-md">
+    <nav className="bg-white ">
       <AppSidebar categories={categories} />
-      <div className="container mx-auto">
-        <div className="flex items-center h-16">
-          <div className="flex">
-            <div className="flex-shrink-0 flex items-center">
-              <Link href="/" className="text-2xl font-bold  ">
-                Logo 11
-              </Link>
-            </div>
-          </div>
 
-          <MainNavbar data={categories} />
-        </div>
-      </div>
+      <MainNavbar data={categories} />
     </nav>
   );
 };

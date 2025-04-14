@@ -75,11 +75,9 @@ export function AppSidebar({ categories }: AppSidebarProps) {
     <Sidebar className="top-0 h-screen w-64 z-50 shadow-md md:hidden">
       <SidebarContent className="">
         <SidebarGroup>
-          <SidebarGroupLabel>Danh mục sản phẩm</SidebarGroupLabel>
+          <SidebarGroupLabel>Menu Website</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              <SearchWithSuggestions />
-
               {categories.map((category) => {
                 const isActive =
                   pathname === `/${params.storeId}/categories/${category.slug}`;
@@ -146,7 +144,7 @@ export function AppSidebar({ categories }: AppSidebarProps) {
 
         <SidebarGroup>
           <SidebarGroupLabel>Khác</SidebarGroupLabel>
-          <SidebarGroupContent>
+          {/* <SidebarGroupContent>
             <SidebarMenu>
               <div className="text-center">
                 <div className="w-fit  inline-block my-[10px] text-center">
@@ -154,7 +152,7 @@ export function AppSidebar({ categories }: AppSidebarProps) {
                 </div>
               </div>
             </SidebarMenu>
-          </SidebarGroupContent>
+          </SidebarGroupContent> */}
         </SidebarGroup>
       </SidebarContent>
     </Sidebar>
