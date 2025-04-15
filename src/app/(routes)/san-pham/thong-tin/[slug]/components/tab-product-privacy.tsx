@@ -71,20 +71,20 @@ export default function TabPrivacy() {
           </TabList>
           <TabPanels className="mt-3">
             {categories.map(({ name, posts }) => (
-              <TabPanel key={name} className="rounded-xl bg-black p-3">
-                <ul>
-                  {posts.map((post) => (
-                    <li
-                      key={post.id}
-                      className="relative rounded-md p-3 text-sm/6 transition hover:bg-white/5">
-                      <div className="font-semibold text-white items-start flex gap-x-4">
-                        <div>{post.icon}</div>
-                        <div> {post.title}</div>
-                      </div>
-                    </li>
-                  ))}
-                </ul>
-              </TabPanel>
+             <TabPanel key={name} className="rounded-xl bg-white p-3 shadow-md border border-gray-200">
+             <ul>
+               {posts.map((post) => (
+                 <li
+                   key={post.id}
+                   className="relative rounded-md p-3 text-sm/6 transition hover:bg-gray-100">
+                   <div className="font-semibold text-gray-800 items-start flex gap-x-4">
+                     <div className="text-green-600">{post.icon}</div>
+                     <div>{post.title}</div>
+                   </div>
+                 </li>
+               ))}
+             </ul>
+           </TabPanel>
             ))}
           </TabPanels>
         </TabGroup>

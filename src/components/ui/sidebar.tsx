@@ -262,13 +262,11 @@ function SidebarTrigger({
 
   return (
     <Button
-
       data-sidebar="trigger"
       data-slot="sidebar-trigger"
       variant="ghost"
-      style= {{display:'flex'}}
       size="icon"
-      className={cn("size-7 ", className)}
+      className={cn("size-7", className)} 
       onClick={(event) => {
         onClick?.(event)
         toggleSidebar()

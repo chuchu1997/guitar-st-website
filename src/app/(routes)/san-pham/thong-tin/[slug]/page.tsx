@@ -11,6 +11,7 @@ import { Metadata } from "next";
 import dynamic from "next/dynamic";
 import GalleryClientWrapper from "@/components/gallery/gallery-wrapper";
 import EditorClientWrapper from "@/components/editor/editor-wrapper";
+import ToggleGroupComponent from "./components/toggle-group";
 
 interface ProductPageWithSlugProps {
   params: Promise<{ slug: string }>;
@@ -123,23 +124,27 @@ const SanPhamWithId = async (props: ProductPageWithSlugProps) => {
                 <TabPrivacy />
               </div>
             </div>
-
-            <div className="mt-10">
-              <h1 className="text-xl sm:text-2xl md:text-3xl font-bold italic mb-4 capitalize">
-                Đây là phần mô tả của sản phẩm:
-              </h1>
-              <div className="flex  gap-2">
-                <EditorClientWrapper jsonString={product.description} />
-              </div>
-            </div>
           </div>
 
+          <hr className="" />
+          <div className="">
+            <ToggleGroupComponent />
+          </div>
+          <div className="mt-10" id="product-description">
+            <h1 className="text-xl sm:text-2xl md:text-3xl font-bold italic mb-4 capitalize">
+              Mô tả sản phẩm
+            </h1>
+            <div className="flex  gap-2">
+              <EditorClientWrapper jsonString={product.description} />
+            </div>
+          </div>
           <hr className="my-10" />
-
-          <ProductList
-            title="Đây là gợi ý các sản phẩm liên quan"
-            products={suggestProduct}
-          />
+          <div id="products-suggest">
+            <ProductList
+              title="Đây là gợi ý các sản phẩm liên quan"
+              products={suggestProduct}
+            />
+          </div>
         </div>
       </div>
     </Suspense>
