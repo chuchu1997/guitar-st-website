@@ -4,10 +4,11 @@
 
 import { ShoppingBag } from "lucide-react";
 import IconButton from "./icon-button";
+import Link from "next/link";
 
 const CartIconButton = () => {
   return (
-    <div className="relative">
+    <Link className="relative" href="/gio-hang">
       <div
         className="h-5 w-5 absolute top-[-6px] bg-red-500 text-white rounded-full right-[-10px] text-sm font-semibold
             text-center
@@ -24,7 +25,7 @@ const CartIconButton = () => {
           />
         }
       />
-    </div>
+    </Link>
   );
 };
 
