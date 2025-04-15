@@ -90,7 +90,7 @@ export default async function Home() {
     <Suspense fallback={<CircleLoading />}>
       <div>
         <SectionComponent className="my-[0px]">
-          <Banner images={banners} minHeight="850px" />
+          <Banner images={banners} minHeight="lg" />
         </SectionComponent>
         <div className="container mx-auto flex flex-col gap-y-4 py-4">
           {renderProductSection("Sản phẩm nổi bật", productWithFeatures, "")}

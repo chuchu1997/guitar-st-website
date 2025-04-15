@@ -177,7 +177,9 @@ const MainNavbar = (props: MainNavbarProps) => {
                 <SearchIcon color="white" size={18} />
               </button>
               <CartIconButton />
-              <SidebarTrigger className="block sm:hidden text-white opacity-70 hover:opacity-100 transition-opacity" />
+              <div className="block sm:hidden">
+                <SidebarTrigger className=" text-white opacity-70 hover:opacity-100 transition-opacity" />
+              </div>
               <div
                 ref={searchRef}
                 className={`w-full absolute left-0 top-12 bg-black/60 px-6 shadow-lg transition-all duration-300 ease-in-out 
