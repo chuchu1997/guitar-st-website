@@ -2,6 +2,7 @@
 
 import { Product } from "@/types/ProjectInterface";
 import qs from "query-string";
+import axios from "axios";
 
 const URL = `${process.env.NEXT_PUBLIC_API}searchs`;
 
@@ -13,9 +14,9 @@ const getSearchs = async (query: string): Promise<Product[]> => {
     },
   });
 
-  const res = await fetch(url);
+  const res = await axios.get(url);
 
-  return res.json();
+  return res.data;
 };
 
 export { getSearchs };

@@ -2,8 +2,9 @@
 
 import { Service } from "@/types/ProjectInterface";
 import qs from "query-string";
-
+import axios from "axios"
 const URL = `${process.env.NEXT_PUBLIC_API}/services`
+
 
 
 interface Query { 
@@ -14,9 +15,8 @@ interface Query {
 }
 
 const getServiceWithSlug = async(slug:string):Promise<Service>=>{
-    const res = await fetch(`${URL}/${slug}`);
-    return res.json();
-
+    const res = await axios.get(`${URL}/${slug}`);
+    return res.data;
 }
 
 const getServices = async (query:Query):Promise<Service[]>=>{
@@ -30,9 +30,9 @@ const getServices = async (query:Query):Promise<Service[]>=>{
               subCategoryId:query.subCategoryId
           }
       })
-      const res = await fetch(url)
+      const res = await axios.get(url)
       
-      return res.json();
+      return res.data;
 }
 
 

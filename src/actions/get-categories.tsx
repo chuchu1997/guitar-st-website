@@ -1,17 +1,20 @@
 import { Category } from "@/types/ProjectInterface";
+import axios from "axios"
 
 const URL = `${process.env.NEXT_PUBLIC_API}/categories`;
 
 const getCategories = async (): Promise<Category[]> => {
-  const res = await fetch(URL);
+  const res = await axios.get(URL);
 
-  return res.json();
+  return res.data;
+  
 };
 
 const getCategoryWithSlug = async (slug: string): Promise<Category> => {
-  const res = await fetch(`${URL}/${slug}`);
+  const res = await axios.get(`${URL}/${slug}`);
 
-  return res.json();
+  return res.data;
+
 };
 
 export { getCategories, getCategoryWithSlug };
