@@ -118,18 +118,21 @@ const MainNavbar = (props: MainNavbarProps) => {
               <nav className="hidden lg:flex items-center gap-4">
                 <ul className="flex items-center gap-4">
                   {routes.map((route, index) => (
-                    <li key={route.href} className="relative">
-                      <button
+                    <div
+                      key={route.href}
+                      className="relative"
+                      onMouseEnter={() => setOpenMegaMenu(index)}
+                      onMouseLeave={() => setOpenMegaMenu(null)}>
+                      <Link
+                        href={route.href}
                         className={cn(
-                          "px-4 py-2 text-xs text-white font-medium transition-opacity capitalize",
+                          "px-4 py-2 text-xs text-white font-medium transition-opacity capitalize inline-block",
                           route.active
                             ? "opacity-100"
                             : "opacity-70 hover:opacity-100"
-                        )}
-                        onMouseEnter={() => setOpenMegaMenu(index)}
-                        onMouseLeave={() => setOpenMegaMenu(null)}>
+                        )}>
                         {route.label}
-                      </button>
+                      </Link>
 
                       {/* Mega Menu Dropdown */}
                       {route.subCategories.length > 0 && (
@@ -139,9 +142,7 @@ const MainNavbar = (props: MainNavbarProps) => {
                             openMegaMenu === index
                               ? "opacity-100 visible"
                               : "opacity-0 invisible pointer-events-none"
-                          )}
-                          onMouseEnter={() => setOpenMegaMenu(index)}
-                          onMouseLeave={() => setOpenMegaMenu(null)}>
+                          )}>
                           <div className="grid grid-cols-3 gap-x-8 gap-y-6">
                             {route.subCategories.map((subCategory) => (
                               <Link
@@ -164,7 +165,7 @@ const MainNavbar = (props: MainNavbarProps) => {
                           </div>
                         </div>
                       )}
-                    </li>
+                    </div>
                   ))}
                 </ul>
               </nav>

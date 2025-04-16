@@ -127,22 +127,20 @@ export default function RootLayout({
     <html lang="en">
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${roboto.variable} antialiased relative `}>
-        <CookiesClientWrapper>
-          {/* Bọc toàn bộ ứng dụng với CookiesProvider */}
-          <CartProvider>
-            <SidebarProvider>
-              <Toaster position="top-center" reverseOrder={false} />
-              <div className="flex flex-col  w-full">
-                <Navbar />
-                <BodyContainer className="mt-[45px]">{children}</BodyContainer>
-                <BlockSidebar />
-                <MobileGroupButton />
+        {/* Bọc toàn bộ ứng dụng với CookiesProvider */}
+        <CartProvider>
+          <SidebarProvider>
+            <Toaster position="top-center" reverseOrder={false} />
+            <div className="flex flex-col  w-full">
+              <Navbar />
+              <BodyContainer className="mt-[45px]">{children}</BodyContainer>
+              <BlockSidebar />
+              <MobileGroupButton />
 
-                <Footer />
-              </div>
-            </SidebarProvider>
-          </CartProvider>
-        </CookiesClientWrapper>
+              <Footer />
+            </div>
+          </SidebarProvider>
+        </CartProvider>
       </body>
     </html>
   );

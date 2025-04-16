@@ -7,9 +7,9 @@ import { ShoppingCartIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { formatCurrency } from "@/utils/utils";
 import { useEffect, useState } from "react";
-import { useCart } from "@/provider/cart-provider";
 import toast from "react-hot-toast";
 import { motion } from "framer-motion"; // Import motion từ framer-motion
+import useCart from "@/hooks/use-cart";
 
 interface ProductCardProps {
   product: Product;
@@ -18,7 +18,8 @@ interface ProductCardProps {
 const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   const [isMounted, setIsMounted] = useState(false);
   const [isAdded, setIsAdded] = useState(false); // State để theo dõi khi sản phẩm đã được thêm vào giỏ hàng
-  const { addToCart } = useCart();
+
+  const cart = useCart();
 
   useEffect(() => {
     setIsMounted(true);
@@ -27,14 +28,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   const handleAddProductToCart = (event: React.MouseEvent) => {
     event.stopPropagation(); // Ngừng sự kiện click lan ra ngoài
     setIsAdded(true); // Khi bấm thêm vào giỏ hàng, set state là true
-    toast.success("Đã thêm sản phẩm vào giỏ hàng");
-    addToCart({
-      id: product.id,
-      name: product.name,
-      price: product.price,
-      image: product.images[0].url,
-      quantity: 1,
-    });
+    cart.addItem(product);
 
     // Reset lại trạng thái sau 1 giây để hiệu ứng animation có thể hoàn thành
     setTimeout(() => {

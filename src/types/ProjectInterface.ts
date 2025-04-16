@@ -105,3 +105,6 @@ export enum MainCategoryEnum {
     url:string;
 
   }
+
+
+  
