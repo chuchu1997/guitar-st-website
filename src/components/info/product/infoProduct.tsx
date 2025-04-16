@@ -8,14 +8,33 @@ import FreeConsultation from "../../freeConsultationForm";
 import ProductSizeSelector from "./selectSizes";
 import ProductPriceBox from "./priceUI";
 import { useEffect, useState } from "react";
+import useCart from "@/hooks/use-cart";
 
 interface InfoProps {
   data: Product;
 }
 
 const Info: React.FC<InfoProps> = ({ data }) => {
+  const [isMounted, setIsMounted] = useState(false);
   const [sizeSelect, setSizeSelect] = useState<ProductSize>();
+  const [isAdded, setIsAdded] = useState(false); // State để theo dõi khi sản phẩm đã được thêm vào giỏ hàng
 
+  const cart = useCart();
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+  const handleAddProductToCart = (event: React.MouseEvent) => {
+    event.stopPropagation(); // Ngừng sự kiện click lan ra ngoài
+    setIsAdded(true); // Khi bấm thêm vào giỏ hàng, set state là true
+    cart.addItem(data);
+
+    // Reset lại trạng thái sau 1 giây để hiệu ứng animation có thể hoàn thành
+    setTimeout(() => {
+      setIsAdded(false);
+    }, 1000);
+  };
+  if (!isMounted) return null;
   return (
     <div className="flex flex-col gap-y-4">
       <h1 className="text-3xl font-semibold text-gray-900 capitalize">
@@ -42,6 +61,7 @@ const Info: React.FC<InfoProps> = ({ data }) => {
       <div className=" overflow-hidden mt-10 flex flex-col sm:flex-row items-center justify-between gap-x-3 gap-y-3">
         <div className="w-full sm:flex-1">
           <Button
+            onClick={handleAddProductToCart}
             className="w-full h-auto flex flex-col items-center justify-center gap-y-1
     bg-orange-500 text-white
     hover:bg-orange-600 hover:shadow-lg hover:scale-[1.02]
