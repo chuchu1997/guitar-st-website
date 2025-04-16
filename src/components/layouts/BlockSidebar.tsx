@@ -1,5 +1,5 @@
 'use client';
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { AlignLeft, AlignRight } from "lucide-react";
 import Link from "next/link";
 import { PHONE_NUMBER } from "@/constants/phone";
@@ -12,6 +12,14 @@ const items = [
 ];
 const BlockSidebar = () => {
   const [sort, setSort] = useState(true);
+  const [isMounted,setIsMounted] = useState(false);
+  useEffect(()=>{
+    
+    setIsMounted(true);
+    
+  },[])
+  if (!isMounted) return null;
+
   return (
     <div
       className={`sort-dock bg-red fixed right-0 top-40 ${

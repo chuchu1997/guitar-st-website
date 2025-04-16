@@ -2,7 +2,6 @@
 
 // components/Navbar.jsx
 
-import Link from "next/link";
 import MainNavbar from "./MainNavbar";
 import { getCategories } from "@/actions/get-categories";
 import { AppSidebar } from "./app-sidebar";

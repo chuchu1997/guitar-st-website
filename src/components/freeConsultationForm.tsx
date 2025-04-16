@@ -29,7 +29,7 @@ const FreeConsultation: React.FC = () => {
           className="block text-sm font-medium text-gray-700 mb-2">
           Số điện thoại:
         </label>
-        <div className="flex items-center gap-2">
+        <div className="grid grid-cols-1 items-center gap-2">
           <input
             type="text"
             id="phone"

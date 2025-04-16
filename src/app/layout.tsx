@@ -10,6 +10,11 @@ import BlockSidebar from "@/components/layouts/BlockSidebar";
 import { MobileGroupButton } from "@/components/layouts/MobileGroupButton";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/app-sidebar";
+import { CartProvider } from "@/provider/cart-provider";
+import { Toaster } from "react-hot-toast";
+import { CookiesProvider } from "react-cookie"; // Import CookiesProvider
+import CookiesClientWrapper from "@/provider/cookie-provider-wrapper";
+
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -112,6 +117,7 @@ export const viewport = {
   maximumScale: 1,
   userScalable: false,
 };
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -121,17 +127,22 @@ export default function RootLayout({
     <html lang="en">
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${roboto.variable} antialiased relative `}>
-        <SidebarProvider>
-          <div className="flex flex-col  w-full">
-            <Navbar />
-            <BodyContainer className="mt-[45px]">{children}</BodyContainer>
+        <CookiesClientWrapper>
+          {/* Bọc toàn bộ ứng dụng với CookiesProvider */}
+          <CartProvider>
+            <SidebarProvider>
+              <Toaster position="top-center" reverseOrder={false} />
+              <div className="flex flex-col  w-full">
+                <Navbar />
+                <BodyContainer className="mt-[45px]">{children}</BodyContainer>
+                <BlockSidebar />
+                <MobileGroupButton />
 
-            <BlockSidebar />
-            <MobileGroupButton />
-
-            <Footer />
-          </div>
-        </SidebarProvider>
+                <Footer />
+              </div>
+            </SidebarProvider>
+          </CartProvider>
+        </CookiesClientWrapper>
       </body>
     </html>
   );

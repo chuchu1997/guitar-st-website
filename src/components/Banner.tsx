@@ -18,6 +18,8 @@ const Banner = ({
   useEffect(() => {
     setIsMounted(true);
   }, []);
+  if (!isMounted) return null;
+
   return (
     <GallerySlider
       images={images}

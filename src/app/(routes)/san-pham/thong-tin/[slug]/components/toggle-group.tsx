@@ -23,37 +23,41 @@ const ToggleGroupComponent = () => {
   if (!isMounted) return <>Chưa có dữ liệu</>;
 
   return (
-    <ToggleGroup type="single" className="w-full justify-center gap-2">
-      <ToggleGroupItem
-        className={`${selected === "a" ? "bg-orange-500 text-white" : ""} 
-                  hover:bg-orange-600 hover:text-white transition-all duration-300`}
-        value="a"
-        onClick={() => {
-          handleScrollTo("product-description", "a");
-        }}>
-        Thông tin sản phẩm
-      </ToggleGroupItem>
-
-      <ToggleGroupItem
-        className={`${selected === "b" ? "bg-orange-500 text-white" : ""} 
-                  hover:bg-orange-600 hover:text-white transition-all duration-300`}
-        value="b"
-        onClick={() => {
-          handleScrollTo("comments", "b");
-        }}>
-        Đánh giá và bình luận
-      </ToggleGroupItem>
-
-      <ToggleGroupItem
-        className={`${selected === "c" ? "bg-orange-500 text-white" : ""} 
-                  hover:bg-orange-600 hover:text-white transition-all duration-300`}
-        value="c"
-        onClick={() => {
-          handleScrollTo("products-suggest", "c");
-        }}>
-        Gợi ý sản phẩm tương tự
-      </ToggleGroupItem>
-    </ToggleGroup>
+    <div className="w-full overflow-x-auto px-4 py-2">
+      <ToggleGroup
+        type="single"
+        className="w-max min-w-full flex-nowrap flex justify-start md:justify-center gap-3">
+        {[
+          {
+            value: "a",
+            label: "Thông tin sản phẩm",
+            target: "product-description",
+          },
+          { value: "b", label: "Đánh giá và bình luận", target: "comments" },
+          {
+            value: "c",
+            label: "Gợi ý sản phẩm tương tự",
+            target: "products-suggest",
+          },
+        ].map(({ value, label, target }) => (
+          <ToggleGroupItem
+            key={value}
+            className={`
+            px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap
+            ${
+              selected === value
+                ? "bg-orange-500 text-white"
+                : "bg-white text-gray-800"
+            }
+            hover:bg-orange-600 hover:text-white transition-all duration-300 shadow-sm border
+          `}
+            value={value}
+            onClick={() => handleScrollTo(target, value)}>
+            {label}
+          </ToggleGroupItem>
+        ))}
+      </ToggleGroup>
+    </div>
   );
 };
 
