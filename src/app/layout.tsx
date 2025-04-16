@@ -128,19 +128,21 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${roboto.variable} antialiased relative `}>
         {/* Bọc toàn bộ ứng dụng với CookiesProvider */}
-        <CartProvider>
-          <SidebarProvider>
-            <Toaster position="top-center" reverseOrder={false} />
-            <div className="flex flex-col  w-full">
-              <Navbar />
-              <BodyContainer className="mt-[45px]">{children}</BodyContainer>
-              <BlockSidebar />
-              <MobileGroupButton />
+        <CookiesClientWrapper>
+          <CartProvider>
+            <SidebarProvider>
+              <Toaster position="top-center" reverseOrder={false} />
+              <div className="flex flex-col  w-full">
+                <Navbar />
+                <BodyContainer className="mt-[45px]">{children}</BodyContainer>
+                <BlockSidebar />
+                <MobileGroupButton />
 
-              <Footer />
-            </div>
-          </SidebarProvider>
-        </CartProvider>
+                <Footer />
+              </div>
+            </SidebarProvider>
+          </CartProvider>
+        </CookiesClientWrapper>
       </body>
     </html>
   );

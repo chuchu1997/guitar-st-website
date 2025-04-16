@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label";
 import Image from "next/image";
 import useCart from "@/hooks/use-cart";
 import { useState, useEffect } from "react";
+import { AddressSelectorWithSelect } from "@/components/AddressSelector";
 export default function CheckoutForm() {
   const [selected, setSelected] = useState("vietqr");
   const [isMounted, setIsMounted] = useState(false);
@@ -29,21 +30,20 @@ export default function CheckoutForm() {
       <Card className="md:col-span-2">
         <CardContent className="p-6 space-y-4">
           <h2 className="text-xl font-semibold">Thông tin nhận hàng</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="col-span-2 flex flex-col gap-4">
             <Input placeholder="Email" />
             <Input placeholder="Họ và tên" />
             <Input placeholder="Số điện thoại" />
-            <div className="grid grid-cols-3 gap-2 col-span-2">
-              <select className="border rounded-md p-2">
-                <option>Tỉnh thành</option>
-              </select>
-              <select className="border rounded-md p-2">
-                <option>Quận huyện</option>
-              </select>
-              <select className="border rounded-md p-2">
-                <option>Phường xã</option>
-              </select>
-            </div>
+            <AddressSelectorWithSelect
+              onChange={({ province, district, ward }) => {
+                console.log(
+                  "Địa chỉ:",
+                  province?.name,
+                  district?.name,
+                  ward?.name
+                );
+              }}
+            />{" "}
             <Input placeholder="Số nhà, tên đường" className="col-span-2" />
             <Textarea placeholder="Ghi chú (tùy chọn)" className="col-span-2" />
           </div>
