@@ -8,6 +8,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import CustomSkeleton from "../skeleton/custom-skeleton";
 
 export interface GalleryProps {
   images: Billboard[];
@@ -34,6 +35,14 @@ const GallerySlider: React.FC<GalleryProps> = ({
   const heightClass = getHeightClass(minHeight);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isMounted, setIsMounted] = useState(false);
+  const [imageLoaded, setImageLoaded] = useState<boolean[]>(
+    new Array(images.length).fill(false)
+  );
+  const handleImageLoad = (index: number) => {
+    const updatedLoaded = [...imageLoaded];
+    updatedLoaded[index] = true;
+    setImageLoaded(updatedLoaded);
+  };
 
   useEffect(() => {
     setIsMounted(true);
@@ -70,6 +79,7 @@ const GallerySlider: React.FC<GalleryProps> = ({
             <Image
               src={image.imageUrl}
               alt={image.label}
+              onLoad={() => handleImageLoad(index)} // Xử lý khi hình ảnh tải xong
               fill
               priority={index === 0}
               className="object-cover"
@@ -125,6 +135,7 @@ const GallerySlider: React.FC<GalleryProps> = ({
               />
             ))}
           </div>
+          <CustomSkeleton loading={true} option="image" />
         </>
       )}
     </div>
