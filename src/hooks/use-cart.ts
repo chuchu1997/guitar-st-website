@@ -10,14 +10,14 @@ interface CartItem extends Product {
 
 }
 
-interface CartStore {
+export interface CartStore {
   items: CartItem[];
   addItem: (data: Product) => void;
   removeItem: (id: string) => void;
   removeAll: () => void;
   updateQuantity: (id: string, quantity: number) => void;
   toggleSelectItem:(id:string) =>void;
-
+  cleanSelectedItems:()=>void
 
 }
 
@@ -90,6 +90,11 @@ const useCart = create(
 
         set({ items: updatedItems });
       },
+      cleanSelectedItems:()=>{
+        /// XÓA CÁC ITEM ĐƯỢC SELECT KHI NGƯỜI DÙNG ĐÃ ĐẶT HÀNG THÀNH CÔNG !!!!
+        const remainingItems = get().items.filter((item) => !item.isSelect);
+        set({ items: remainingItems });
+      }
     }),
     {
       name: "cart-storage",

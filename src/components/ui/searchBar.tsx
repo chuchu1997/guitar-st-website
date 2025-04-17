@@ -31,6 +31,7 @@ export default function SearchWithSuggestions() {
     setLoading(true);
     try {
       const data = await getSearchs(query);
+
       setProducts(data || []); // Set products from the API
     } catch (err) {
     } finally {
