@@ -101,3 +101,15 @@ export default interface OrderType {
   orderStatus?: string; // Trạng thái đơn hàng (e.g., pending, confirmed)
   createAt?: string; // Thời gian tạo đơn hàng
 }
+
+export  interface News { 
+   id?:string;
+   title:string;
+   slug:string;
+   content:string;
+   imageUrl:string;
+   createdAt:string;
+   updatedAt:string;
+
+
+}

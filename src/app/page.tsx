@@ -13,6 +13,7 @@ import { Product } from "@/types/ProjectInterface";
 import Link from "next/link";
 import Image from "next/image";
 import RenderSubCateForRoot, { SubType } from "./components/renderSubcateRoot";
+import GocCamHungView from "./components/gocamhung";
 export const dynamic = "force-dynamic";
 export const revalidate = 60;
 
@@ -97,6 +98,7 @@ export default async function Home() {
         </div>
         <RenderSubCateForRoot subcategories={subcategories} />
       </div>
+      <GocCamHungView />
     </Suspense>
   );
 }

@@ -8,12 +8,12 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import CustomSkeleton from "../skeleton/custom-skeleton";
 
 export interface GalleryProps {
   images: Billboard[];
   autoplayInterval?: number;
   minHeight: "lg" | "md" | "sm";
+  columns?: 1 | 2 | 3;
 }
 
 const getHeightClass = (minHeight: GalleryProps["minHeight"]) => {
@@ -27,43 +27,85 @@ const getHeightClass = (minHeight: GalleryProps["minHeight"]) => {
       return "min-h-[200px] h-[200px] md:min-h-[300px] md:h-[300px] xl:min-h-[500px] xl:h-[500px]";
   }
 };
+
+const getGridClass = (columns: number) => {
+  switch (columns) {
+    case 3:
+      return "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3";
+    case 2:
+      return "grid-cols-1 sm:grid-cols-2";
+    case 1:
+    default:
+      return ""; // Không dùng grid khi là slider
+  }
+};
+
 const GallerySlider: React.FC<GalleryProps> = ({
   images,
   autoplayInterval = 5000,
   minHeight,
-}: GalleryProps) => {
+  columns = 1,
+}) => {
   const heightClass = getHeightClass(minHeight);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isMounted, setIsMounted] = useState(false);
-  const [imageLoaded, setImageLoaded] = useState<boolean[]>(
-    new Array(images.length).fill(false)
-  );
-  const handleImageLoad = (index: number) => {
-    const updatedLoaded = [...imageLoaded];
-    updatedLoaded[index] = true;
-    setImageLoaded(updatedLoaded);
-  };
 
   useEffect(() => {
     setIsMounted(true);
   }, []);
 
   useEffect(() => {
-    if (!isMounted || images.length <= 1) return;
+    if (!isMounted || images.length <= 1 || columns > 1) return;
     const timer = setInterval(() => {
       setCurrentIndex((prev) => (prev + 1) % images.length);
     }, autoplayInterval);
     return () => clearInterval(timer);
-  }, [images.length, autoplayInterval, isMounted]);
+  }, [images.length, autoplayInterval, isMounted, columns]);
 
   const goToSlide = (index: number) => setCurrentIndex(index);
   const previousSlide = () =>
     setCurrentIndex((prev) => (prev - 1 + images.length) % images.length);
   const nextSlide = () => setCurrentIndex((prev) => (prev + 1) % images.length);
 
+  // ✅ Nếu >1 cột: Hiển thị dạng grid
+  if (columns > 1) {
+    return (
+      <div className={`grid gap-6 ${getGridClass(columns)}`}>
+        {images.map((image, index) => (
+          <div
+            key={index}
+            className={clsx(
+              "relative w-full rounded-lg overflow-hidden",
+              getHeightClass(minHeight)
+            )}>
+            <Image
+              src={image.imageUrl}
+              alt={image.label}
+              fill
+              className="object-cover"
+              sizes="100vw"
+            />
+            <div className="absolute inset-0 bg-black/30 flex flex-col items-center justify-center text-center px-4">
+              <h2 className="text-white text-xl font-bold italic drop-shadow">
+                {image.label || "Nội dung quảng cáo"}
+              </h2>
+              {image.linkHref && (
+                <Link
+                  href={image.linkHref}
+                  className="mt-4 bg-white text-black rounded-full py-1.5 px-4 text-sm font-medium hover:bg-gray-200 transition">
+                  Xem thêm
+                </Link>
+              )}
+            </div>
+          </div>
+        ))}
+      </div>
+    );
+  }
+
+  // ✅ Nếu là 1 cột: chạy slider như cũ
   return (
     <div className="relative w-full">
-      {/* Banner Container */}
       <div
         className={clsx(
           "relative w-full rounded-lg overflow-hidden",
@@ -79,18 +121,15 @@ const GallerySlider: React.FC<GalleryProps> = ({
             <Image
               src={image.imageUrl}
               alt={image.label}
-              onLoad={() => handleImageLoad(index)} // Xử lý khi hình ảnh tải xong
               fill
               priority={index === 0}
               className="object-cover"
-              sizes="(max-width: 640px) 100vw, (max-width: 768px) 100vw, (max-width: 1024px) 100vw, 100vw"
+              sizes="100vw"
             />
-            {/* Text & CTA Overlay */}
             <div className="absolute inset-0 bg-black/30 flex flex-col items-center justify-center text-center px-4">
               <h2 className="text-white text-2xl md:text-4xl font-bold italic leading-snug tracking-wide drop-shadow-md">
                 {image.label || "Nội dung quảng cáo"}
               </h2>
-
               {image.linkHref && (
                 <Link
                   href={image.linkHref}
@@ -103,7 +142,6 @@ const GallerySlider: React.FC<GalleryProps> = ({
         ))}
       </div>
 
-      {/* Navigation - only show if more than 1 image */}
       {images.length > 1 && (
         <>
           <button
@@ -120,7 +158,6 @@ const GallerySlider: React.FC<GalleryProps> = ({
             <ChevronRight className="w-6 h-6" />
           </button>
 
-          {/* Dots */}
           <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2">
             {images.map((_, index) => (
               <button
@@ -134,7 +171,6 @@ const GallerySlider: React.FC<GalleryProps> = ({
               />
             ))}
           </div>
-          <CustomSkeleton loading={true} option="image" />
         </>
       )}
     </div>

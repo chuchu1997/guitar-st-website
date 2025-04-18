@@ -96,16 +96,22 @@ import {
       };
   
       return (
+        // <img
+        //   src={this.__url}
+        //   alt={this.__altText}
+        //   style={{
+        //     width: `${this.__width}px`,
+        //     height: `${this.__height}px`,
+        //   }}
+        //   className={`my-2 rounded-md ${styleMap[this.__position]}`}
+        //   draggable={false}
+        // />
         <img
-          src={this.__url}
-          alt={this.__altText}
-          style={{
-            width: `${this.__width}px`,
-            height: `${this.__height}px`,
-          }}
-          className={`my-2 rounded-md ${styleMap[this.__position]}`}
-          draggable={false}
-        />
+        src={this.__url}
+        alt={this.__altText}
+        className={`w-full h-auto my-4 rounded-md object-contain ${styleMap[this.__position]}`}
+        draggable={false}
+      />
       );
     }
   

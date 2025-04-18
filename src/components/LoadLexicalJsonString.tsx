@@ -43,6 +43,8 @@ export default function LexicalViewer({ jsonContent }: LexicalViewerProps) {
     theme: {
         text: {
             underline: "underline",
+            italic: "italic",
+            bold: "font-bold",
           },
           heading: {
             h1: "text-3xl font-bold",

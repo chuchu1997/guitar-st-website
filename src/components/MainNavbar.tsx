@@ -143,12 +143,12 @@ const MainNavbar = (props: MainNavbarProps) => {
                               ? "opacity-100 visible"
                               : "opacity-0 invisible pointer-events-none"
                           )}>
-                          <div className="grid grid-cols-3 gap-x-8 gap-y-6">
+                          <div className="grid grid-cols-5 gap-x-2 gap-y-4">
                             {route.subCategories.map((subCategory) => (
                               <Link
                                 key={subCategory.id}
                                 href={`${route.href}/${subCategory.slug}`}
-                                className="group flex flex-col items-center text-center transition-transform hover:scale-105">
+                                className=" group flex flex-col items-center text-center transition-transform hover:scale-105">
                                 <div className="relative w-16 h-16 mb-3 overflow-hidden rounded-lg">
                                   <Image
                                     fill
