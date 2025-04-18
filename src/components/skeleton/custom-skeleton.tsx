@@ -10,7 +10,7 @@ const CustomSkeleton: React.FC<SkeletonProps> = ({ loading, option }) => {
   if (!loading) return null;
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 h-full">
       {option === 'image' ? (
         <div className="relative w-full h-64">
           <Skeleton className="absolute inset-0 w-full h-full" /> 12321

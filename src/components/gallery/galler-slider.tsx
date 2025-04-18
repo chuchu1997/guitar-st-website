@@ -85,7 +85,6 @@ const GallerySlider: React.FC<GalleryProps> = ({
               className="object-cover"
               sizes="(max-width: 640px) 100vw, (max-width: 768px) 100vw, (max-width: 1024px) 100vw, 100vw"
             />
-
             {/* Text & CTA Overlay */}
             <div className="absolute inset-0 bg-black/30 flex flex-col items-center justify-center text-center px-4">
               <h2 className="text-white text-2xl md:text-4xl font-bold italic leading-snug tracking-wide drop-shadow-md">
