@@ -22,7 +22,7 @@ const getSearchs = async (query: string): Promise<Product[]> => {
 
   
 
-  return result.json();
+ 
 };
 
 export { getSearchs };

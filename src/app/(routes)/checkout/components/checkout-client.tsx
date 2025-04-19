@@ -31,6 +31,7 @@ import { v4 as uuidv4 } from "uuid";
 import OrderType from "@/types/ProjectInterface";
 import { onCreateOrderAPI } from "@/actions/create-order";
 import { useRouter } from "next/navigation"; // Import useRouter từ next/router
+import toast from "react-hot-toast";
 
 // 🧩 Zod schema
 const checkoutSchema = z.object({
@@ -104,7 +105,8 @@ export default function CheckoutForm() {
       quantity: item.stockQuantity,
     }));
 
-   await checkSessionIDInCookie();
+    const customerID = await checkSessionIDInCookie(); // 👉 lấy giá trị mới
+
 
     const data: OrderType = {
       totalPrice: total,
@@ -114,14 +116,16 @@ export default function CheckoutForm() {
       isPaid: false,
       phone: values.phone ?? "",
       paymentMethod: values.paymentMethod,
-      customerID: cookies.customerID,
+      customerID: customerID,
       orderItems: orderItems,
     };
 
     if (data.paymentMethod === "cod") {
       console.log("GOI COD");
       let res = await onCreateOrderAPI(data);
+      toast.success("Đã đặt hàng thành công !!")
       if (res) {
+ 
         cart.cleanSelectedItems();
         setTimeout(() => {
           router.push("/gio-hang"); // Điều hướng người dùng đến trang giỏ hàng
