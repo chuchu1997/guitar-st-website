@@ -73,19 +73,25 @@ export default function CheckoutForm() {
   useEffect(() => {
     setIsMounted(true);
   }, []);
-  const checkSesstionIDInCookie = () => {
+  const checkSessionIDInCookie = async (): Promise<string> => {
     let customerID = cookies.customerID;
+  
     if (!customerID) {
+      // Tạo mới customerID và gán cookie
       customerID = uuidv4();
       const tenYearsFromNow = new Date();
       tenYearsFromNow.setFullYear(tenYearsFromNow.getFullYear() + 10);
+  
       setCookie("customerID", customerID, {
         path: "/",
         expires: tenYearsFromNow,
       });
-    } else {
-      console.log("CALL COOKIE", customerID);
+  
+      // Đợi cookie được set xong (delay nhẹ)
+      await new Promise((resolve) => setTimeout(resolve, 100)); // 100ms delay
     }
+  
+    return customerID;
   };
   const onSubmit = async (values: CheckoutFormValues) => {
     const address = values.address || "";
@@ -98,7 +104,7 @@ export default function CheckoutForm() {
       quantity: item.stockQuantity,
     }));
 
-    checkSesstionIDInCookie();
+   await checkSessionIDInCookie();
 
     const data: OrderType = {
       totalPrice: total,
