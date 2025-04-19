@@ -10,6 +10,7 @@ import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { motion } from "framer-motion"; // Import motion từ framer-motion
 import useCart from "@/hooks/use-cart";
+import SkeletonImage from "../skeleton/custom-skeleton";
 
 interface ProductCardProps {
   product: Product;
@@ -51,13 +52,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
       }}>
       <div className="border rounded-lg p-3 md:p-4 h-full">
         <div className="aspect-square rounded-xl bg-gray-100 relative ">
-          <Image
-            src={product.images[0].url}
-            alt={product.name}
-            fill
-            className="aspect-square object-cover rounded-md"
-            sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, (max-width: 1024px) 25vw, 20vw"
-          />
+          <SkeletonImage imageSrc={product.images[0].url} imageLabel={product.name} className="aspect-square object-cover rounded-md" sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, (max-width: 1024px) 25vw, 20vw" />
         </div>
         <div className="opacity-0 group-hover:opacity-100 transition absolute top-1/2 left-1/2 transform -translate-x-1/2  w-full  px-6 bottom-5 z-50">
           <div className="flex gap-x-6 justify-center">

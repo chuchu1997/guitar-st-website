@@ -8,6 +8,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import SkeletonImage from "../skeleton/custom-skeleton";
 
 export interface GalleryProps {
   images: Billboard[];
@@ -78,13 +79,8 @@ const GallerySlider: React.FC<GalleryProps> = ({
               "relative w-full rounded-lg overflow-hidden",
               getHeightClass(minHeight)
             )}>
-            <Image
-              src={image.imageUrl}
-              alt={image.label}
-              fill
-              className="object-cover"
-              sizes="100vw"
-            />
+         
+            <SkeletonImage   imageSrc={image.imageUrl} imageLabel={image.label} />
             <div className="absolute inset-0 bg-black/30 flex flex-col items-center justify-center text-center px-4">
               <h2 className="text-white text-xl font-bold italic drop-shadow">
                 {image.label || "Nội dung quảng cáo"}
@@ -118,14 +114,8 @@ const GallerySlider: React.FC<GalleryProps> = ({
               "absolute inset-0 transition-opacity duration-500",
               index === currentIndex ? "opacity-100" : "opacity-0"
             )}>
-            <Image
-              src={image.imageUrl}
-              alt={image.label}
-              fill
-              priority={index === 0}
-              className="object-cover"
-              sizes="100vw"
-            />
+            <SkeletonImage imageSrc={image.imageUrl} imageLabel={image.label} priority = {index === 1 } />
+          
             <div className="absolute inset-0 bg-black/30 flex flex-col items-center justify-center text-center px-4">
               <h2 className="text-white text-2xl md:text-4xl font-bold italic leading-snug tracking-wide drop-shadow-md">
                 {image.label || "Nội dung quảng cáo"}

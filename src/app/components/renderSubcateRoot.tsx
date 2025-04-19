@@ -1,6 +1,7 @@
 import { SubCategory } from "@/types/ProjectInterface";
 import Link from "next/link";
 import Image from "next/image";
+import SkeletonImage from "@/components/skeleton/custom-skeleton";
 
 
 export type SubType = {
@@ -25,13 +26,10 @@ const RenderSubCateForRoot = (props: RenderSubProps) => {
                   <Link
                     href={href}
                     className="relative block h-[400px] md:h-[580px] w-full overflow-hidden rounded-lg shadow-lg transform transition-transform duration-300 hover:scale-101 hover:shadow-lg hover:shadow-gray-600/40">
-                    <Image
-                      priority
-                      src={subcategory?.billboard?.imageUrl ?? ""}
-                      alt={alt}
-                      fill
-                      className="object-cover"
-                    />
+                 
+                    <SkeletonImage imageSrc={subcategory?.billboard?.imageUrl ?? ""} imageLabel={alt} priority  />
+
+
 
                     <div className="absolute inset-0 bg-black/30 flex flex-col items-center justify-center px-4 text-center">
                       <h2 className="text-white text-2xl md:text-4xl font-bold italic leading-snug tracking-wide drop-shadow-md">

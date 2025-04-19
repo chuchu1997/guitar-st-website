@@ -5,6 +5,7 @@ import { Image as ImageType } from "@/types/ProjectInterface";
 import { cn } from "@/lib/utils";
 import { Tab } from "@headlessui/react";
 import Image from "next/image";
+import SkeletonImage from "../skeleton/custom-skeleton";
 
 interface GalleryTabProps {
   image: ImageType;
@@ -16,11 +17,7 @@ const GalleryTab: React.FC<GalleryTabProps> = ({ image }) => {
       {({ selected }) => (
         <div>
           <span className="absolute h-full w-full aspect-square inset-0 overflow-hidden rounded-md">
-            <Image
-              src={image.url}
-              alt=""
-              fill
-              className="object-cover object-center"></Image>
+            <SkeletonImage imageSrc ={image.url} imageLabel = "" className="object-cover object-center" ></SkeletonImage>
           </span>
 
           <span

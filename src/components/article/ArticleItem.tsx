@@ -3,6 +3,7 @@
 import { News } from "@/types/ProjectInterface";
 import Link from "next/link";
 import Image from "next/image";
+import SkeletonImage from "../skeleton/custom-skeleton";
 interface ArticleListProps {
   articles: News[];
 }
@@ -17,13 +18,9 @@ const ArticleList: React.FC<ArticleListProps> = ({ articles }) => {
             key={article.id}
             className="group space-y-2 block">
             <div className="aspect-video relative overflow-hidden rounded-md">
-              <Image
-                src={article.imageUrl}
-                alt={article.title}
-                fill
-                className="object-cover transition-transform duration-300 group-hover:scale-[1.03]"
-                sizes="100vw"
-              />
+           
+            <SkeletonImage imageSrc={article.imageUrl} imageLabel={article.title} className="object-cover transition-transform duration-300 group-hover:scale-[1.03]"/>
+
             </div>
 
             <div className="space-y-1">
