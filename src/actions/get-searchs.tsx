@@ -14,9 +14,15 @@ const getSearchs = async (query: string): Promise<Product[]> => {
     },
   });
 
-  const res = await axios.get(url);
 
-  return res.data;
+  const result = await fetch(url);
+
+  return result.json();
+
+
+  
+
+  return result.json();
 };
 
 export { getSearchs };
