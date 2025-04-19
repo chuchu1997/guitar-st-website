@@ -8,7 +8,8 @@ import { Suspense } from "react";
 import type { Metadata } from "next";
 
 const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://happyfurniture.logtech.vn";
-
+export const dynamic = "force-dynamic";
+export const revalidate = 60;
 export async function generateMetadata(): Promise<Metadata> {
   const category = await getCategoryWithSlug("san-pham");
 
