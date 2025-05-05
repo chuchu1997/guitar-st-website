@@ -14,6 +14,7 @@ import Link from "next/link";
 import Image from "next/image";
 import RenderSubCateForRoot, { SubType } from "./components/renderSubcateRoot";
 import GocCamHungView from "./components/gocamhung";
+import HomePromotion from "./components/home-promotion";
 export const dynamic = "force-dynamic";
 export const revalidate = 60;
 
@@ -90,15 +91,20 @@ export default async function Home() {
   return (
     <Suspense fallback={<CircleLoading />}>
       <div>
-        <SectionComponent className="my-[0px]">
+        <HomePromotion />
+        {/* <SectionComponent className="my-[0px]">
           <Banner images={banners} minHeight="lg" />
-        </SectionComponent>
-        <div className="container mx-auto flex flex-col gap-y-4 py-4">
+        </SectionComponent> */}
+        {/* <div className="container mx-auto flex flex-col gap-y-4 py-4">
+          {renderProductSection("Sản phẩm nổi bật", productWithFeatures, "")}
+        </div> */}
+
+        {/* <div className="grid grid-cols-2 gap-4 ">
           {renderProductSection("Sản phẩm nổi bật", productWithFeatures, "")}
         </div>
-        <RenderSubCateForRoot subcategories={subcategories} />
+        <RenderSubCateForRoot subcategories={subcategories} /> */}
       </div>
-      <GocCamHungView />
+      {/* <GocCamHungView /> */}
     </Suspense>
   );
 }

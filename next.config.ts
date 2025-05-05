@@ -9,10 +9,16 @@ const nextConfig: NextConfig = {
     reactRemoveProperties: process.env.NODE_ENV === "production",
   },
   images: {
-    domains: [
-      "res.cloudinary.com",
-      "mekship-develop.s3.ap-southeast-1.amazonaws.com",
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "mekship-develop.s3.ap-southeast-1.amazonaws.com",
+      },
+      {
+        hostname: "res.cloudinary.com",
+      },
     ],
+
     formats: ["image/avif", "image/webp"],
     // Optimize more aggressively in production
     minimumCacheTTL: 60,

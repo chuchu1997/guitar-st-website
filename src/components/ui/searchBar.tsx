@@ -15,6 +15,7 @@ import { Calendar, Search } from "lucide-react";
 import { Product } from "@/types/ProjectInterface";
 import { getSearchs } from "@/actions/get-searchs";
 import AlertSearch from "./alert-search";
+import SearchBarComponent from "../SearchBar";
 
 // Debounce helper function
 const debounce = (fn: Function, delay: number) => {
@@ -42,7 +43,6 @@ export default function SearchWithSuggestions() {
   // Fetch search results function
   const fetchSearchResults = useCallback(async (query: string) => {
     if (!query.trim()) return; // Prevent empty queries
-
     setLoading(true);
     try {
       const data = await getSearchs(query);
@@ -73,12 +73,13 @@ export default function SearchWithSuggestions() {
   return (
     <div className="relative w-full md:w-[400px]">
       <Command className="rounded-lg shadow-md w-full bg-transparent text-white">
-        <CommandInput
+        <SearchBarComponent onChange={setQuery} value={query} />
+        {/* <CommandInput
           autoFocus={false}
           placeholder="Search products..."
           value={query}
           onValueChange={setQuery} // Update query on change
-        />
+        /> */}
 
         {loading && query && (
           <div className="absolute top-full mt-[5px] left-0 w-full bg-white rounded-md p-2 text-center z-50">

@@ -17,7 +17,6 @@ const Navbar = async () => {
   return (
     <nav className="bg-white ">
       <AppSidebar categories={categories} />
-
       <MainNavbar data={categories} />
     </nav>
   );
