@@ -9,15 +9,16 @@ export const dynamic = "force-dynamic";
 export const revalidate = 60;
 
 const Navbar = async () => {
-  const categories = await getCategories();
-  if (!categories) {
-    return <>Không có danh mục vui lòng tạo ....</>;
-  }
+  // const categories = await getCategories();
+  // if (!categories) {
+  //   return <>Không có danh mục vui lòng tạo ....</>;
+  // }
 
   return (
     <nav className="bg-white ">
       <AppSidebar categories={categories} />
       <MainNavbar data={categories} />
+      {/* This is navbar */}
     </nav>
   );
 };
