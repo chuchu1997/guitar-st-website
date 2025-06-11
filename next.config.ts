@@ -3,7 +3,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  reactStrictMode: true,
+  reactStrictMode: false,
   compress: true,
   compiler: {
     reactRemoveProperties: process.env.NODE_ENV === "production",
