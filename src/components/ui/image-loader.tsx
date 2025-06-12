@@ -93,6 +93,7 @@ export const ImageLoader: React.FC<ImageLoaderInterface> = ({
   const mergedImageClasses = 
     cn(
       `transition-opacity duration-${fadeInDuration}`,
+      'object-center',
       'object-cover', // default base
       'group-hover/item:scale-110 transition-transform transition-opacity',
       className // override từ props
