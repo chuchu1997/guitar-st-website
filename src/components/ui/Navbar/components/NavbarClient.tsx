@@ -157,17 +157,21 @@ const NavbarClient: React.FC<NavbarProps> = ({ categories }) => {
         <div className="flex items-center justify-between h-16 lg:h-20">
           {/* Logo */}
           <Link className="flex items-center" href="/">
-            <div className="flex-shrink-0">
-              <div className="flex items-center space-x-2">
-                <div className="w-10 h-10 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-xl flex items-center justify-center">
-                  <span className="text-white font-bold text-lg">M</span>
-                </div>
-                <span className="text-2xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
-                  MusicStore
-                </span>
-              </div>
-            </div>
+            <ImageLoader
+              className="scale-90 sm:scale-100 bg-transparent rounded-full overflow-hidden"
+              src="/logo.jpg"
+              alt="logo"
+              width={70}
+              height={70}
+            />
           </Link>
+          <button className="flex sm:hidden bg-[#f2f2f2] flex-1 p-2  items-center gap-x-2 rounded-lg cursor-pointer">
+            <Search className="h-5 w-5" />
+            <span className="text-[#9b9b9b]">Tìm kiếm</span>
+          </button>
+          {/* <button className="p-2 text-gray-500 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-all duration-200">
+            <Search className="h-5 w-5" />
+          </button> */}
 
           {/* Desktop Navigation - Centered */}
           <div className="hidden lg:block flex-1">
@@ -210,12 +214,11 @@ const NavbarClient: React.FC<NavbarProps> = ({ categories }) => {
           </div>
 
           {/* Right side actions */}
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-1 px-2">
             {/* Search */}
-            <button className="p-2 text-gray-500 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-all duration-200">
+            <button className="hidden sm:block p-2 text-gray-500 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-all duration-200">
               <Search className="h-5 w-5" />
             </button>
-
             {/* User */}
             <button className="p-2 text-gray-500 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-all duration-200">
               <User className="h-5 w-5" />
