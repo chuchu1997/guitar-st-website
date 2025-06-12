@@ -281,6 +281,7 @@ export const ProductWidgets = {
             {/* Pricing */}
             <div className="space-y-1">
               <div className="flex items-center gap-3">
+                1
                 <span className="text-2xl font-bold text-[#fb2150] tracking-tight">
                   {FormatUtils.formatPriceVND(product.price)}
                 </span>
