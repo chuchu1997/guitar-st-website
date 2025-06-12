@@ -5,7 +5,14 @@ import { FormatUtils } from "@/utils/format";
 import Image from "next/image";
 import { ImageLoader } from "../image-loader";
 import { Badge } from "../badge";
-import { Eye, Gift, Heart, ShoppingCart, Star } from "lucide-react";
+import {
+  Eye,
+  Gift,
+  Heart,
+  ShoppingBasket,
+  ShoppingCart,
+  Star,
+} from "lucide-react";
 import FlashSaleComponent from "../Flashsale/flashsale";
 import { Separator } from "../separator";
 
@@ -97,7 +104,7 @@ export const ProductWidgets = {
     return (
       <div>
         {/* PC DISPLAY */}
-        <div className="hidden sm:block group relative bg-white rounded-3xl shadow-lg border border-gray-100 overflow-hidden transition-all duration-700 hover:shadow-2xl hover:shadow-gray-900/15 hover:-translate-y-3 hover:border-gray-200">
+        <div className="hidden sm:block group relative  bg-white rounded-3xl shadow-lg border border-gray-100 overflow-hidden transition-all duration-700 hover:shadow-2xl hover:shadow-gray-900/15 hover:-translate-y-3 hover:border-gray-200">
           {/* Product Image */}
           <div className="relative aspect-square bg-gradient-to-br from-gray-50 to-gray-100 overflow-hidden">
             {/* Main Product Image */}
@@ -249,9 +256,9 @@ export const ProductWidgets = {
         </div>
 
         {/* MOBILE DISPLAY */}
-        <div className="flex flex-row sm:hidden relative bg-white rounded-md shadow-lg border border-gray-100 overflow-hidden transition-all duration-700 hover:shadow-2xl hover:shadow-gray-900/15 hover:-translate-y-3 hover:border-gray-200">
+        <div className=" flex flex-row sm:hidden relative bg-white rounded-md shadow-lg border border-gray-100 overflow-hidden transition-all duration-700 hover:shadow-2xl hover:shadow-gray-900/15 hover:-translate-y-3 hover:border-gray-200">
           {/* Product Image */}
-          <div className="relative aspect-square min-w-[160px] bg-gradient-to-br from-gray-50 to-gray-100 overflow-hidden">
+          <div className="relative aspect-square min-w-[140px] bg-gradient-to-br from-gray-50 to-gray-100 overflow-hidden">
             {/* Main Product Image */}
             <ImageLoader src={product.images[0].url} alt={product.name} fill />
 
@@ -273,38 +280,93 @@ export const ProductWidgets = {
           </div>
 
           {/* Product Information */}
-          <div className="p-6 pt-4 space-y-3">
-            <h3 className="font-semibold text-base text-gray-900  leading-tight line-clamp-2 group-hover:text-blue-600 transition-colors duration-300">
-              {product.name}
-            </h3>
+          <div className="p-6 pt-4 space-y-1 flex flex-col justify-between  w-full">
+            <div className="top-info space-y-1">
+              <div className="flex items-center">
+                <span className="inline-flex transform scale-75 origin-left">
+                  <Badge className=" bg-gradient-to-r from-green-600 via-green-500 to-green-400 text-white">
+                    HÀNG VIỆT
+                  </Badge>
+                </span>
+                <h3 className="max-w-[150px] ml-[-12px] font-semibold text-sm text-gray-900 leading-tight overflow-hidden text-ellipsis whitespace-nowrap group-hover:text-blue-600 transition-colors duration-300">
+                  {product.name}
+                </h3>
+              </div>
+              <span className="inline-flex transform scale-90 origin-left">
+                <Badge className=" bg-[#def6f6] text-[#248f8d]">Freeship</Badge>
+              </span>
+              <div className="rating flex gap-x-2">
+                <div className="flex items-center gap-1">
+                  {[...Array(5)].map((_, i) => (
+                    <Star
+                      key={i}
+                      className={`w-3 h-3 text-yellow-400 fill-current`}
+                    />
+                  ))}
+                </div>
+                <div>
+                  <p className="text-gray-400 text-[11px]">
+                    5 | Bán 19.3k trực tuyến
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div className="bottom-info space-y-1">
+              {/* Pricing */}
+              <div className="space-y-1">
+                <div className="flex items-center justify-between ">
+                  <div className="flex flex-col gap-1">
+                    <span className="text-base font-bold text-[#fb2150] tracking-tight">
+                      {FormatUtils.formatPriceVND(product.price)}
+                    </span>
+
+                    {product.originalPrice &&
+                      product.originalPrice > product.price && (
+                        <span className="text-sm text-gray-400 line-through font-semibold">
+                          {FormatUtils.formatPriceVND(product.price)}
+                        </span>
+                      )}
+                  </div>
+
+                  <div className=" rounded-sm overflow-hidden flex ">
+                    <button className="px-2 py-1 bg-[#fde6ee]">
+                      <ShoppingBasket className="text-[#ec5073]" size={20} />
+                    </button>
+                    <button className="px-4 bg-[#fe2b54] text-white text-sm font-bold">
+                      <span>Mua</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
 
             {/* Pricing */}
-            <div className="space-y-1">
+            {/* <div className="space-y-1">
               <div className="flex items-center gap-3">
-                <span className="text-2xl font-bold text-[#fb2150] tracking-tight">
+                <span className="text-base font-bold text-[#fb2150] tracking-tight">
                   {FormatUtils.formatPriceVND(product.price)}
                 </span>
                 {product.originalPrice &&
                   product.originalPrice > product.price && (
-                    <span className="text-lg text-gray-500 line-through">
+                    <span className="text-sm text-gray-500 line-through">
                       {FormatUtils.formatPriceVND(product.price)}
                     </span>
                   )}
               </div>
-            </div>
+            </div> */}
 
             {/* Flashsale Section */}
             {/* <FlashSaleComponent /> */}
 
             {/* { STAR} */}
-            <div className="flex items-center space-x-1">
+            {/* <div className="flex items-center space-x-1">
               <Star className="w-4 h-4 text-yellow-400 fill-current" />
               <div className="space-x-2 text-[#797979] text-sm font-semibold">
                 <span>5</span>
                 <span>|</span>
                 <span>Đã bán 90.0k</span>
               </div>
-            </div>
+            </div> */}
 
             {/* Add to Cart Button */}
             {/* <button className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 px-4 rounded-xl font-semibold transition-all duration-300 hover:from-blue-700 hover:to-purple-700 hover:shadow-lg hover:shadow-blue-500/25 transform hover:-translate-y-0.5 active:translate-y-0">

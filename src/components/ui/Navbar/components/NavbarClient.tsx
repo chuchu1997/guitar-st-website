@@ -7,6 +7,7 @@ import { CategoryInterface } from "@/types/category";
 import Link from "next/link";
 import { ImageLoader } from "../../image-loader";
 import { usePathname } from "next/navigation";
+import MenuBar from "./Menubar";
 
 // TypeScript Interfaces
 
@@ -229,7 +230,7 @@ const NavbarClient: React.FC<NavbarProps> = ({ categories }) => {
             </button>
 
             {/* Mobile menu button */}
-            <button
+            {/* <button
               onClick={toggleMobileMenu}
               className="lg:hidden p-2 text-gray-500 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-all duration-200">
               {isMobileMenuOpen ? (
@@ -237,13 +238,14 @@ const NavbarClient: React.FC<NavbarProps> = ({ categories }) => {
               ) : (
                 <Menu className="h-6 w-6" />
               )}
-            </button>
+            </button> */}
           </div>
         </div>
       </div>
 
+      <MenuBar />
       {/* Mobile menu */}
-      <div
+      {/* <div
         className={`lg:hidden transition-all duration-300 ease-in-out ${
           isMobileMenuOpen
             ? "max-h-screen opacity-100"
@@ -285,7 +287,7 @@ const NavbarClient: React.FC<NavbarProps> = ({ categories }) => {
             </Link>
           </div>
         </div>
-      </div>
+      </div> */}
     </nav>
   );
 };

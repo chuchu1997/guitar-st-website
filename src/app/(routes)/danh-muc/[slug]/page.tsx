@@ -1,120 +1,149 @@
 /** @format */
+"use client";
 
 import Link from "next/link";
-import Image from "next/image";
-
+import { useState, useEffect, useCallback, useRef } from "react";
 import { CategoryAPI } from "@/api/categories/category.api";
 import { CategoryInterface } from "@/types/category";
-import { Suspense } from "react";
 import { ProductWidgets } from "@/components/ui/product/product";
-import { ImageLoader } from "@/components/ui/image-loader";
+import { useParams } from "next/navigation";
 
-interface DanhMucPageProps {
-  params: Promise<{ slug: string }>;
-}
-
-const VariantCardSkeleton = () => (
-  <div className="group relative bg-gradient-to-br from-gray-100 to-gray-50 rounded-3xl overflow-hidden animate-pulse">
-    <div className="aspect-[4/3] bg-gray-200 relative"></div>
-    <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
-    <div className="absolute bottom-0 left-0 right-0 p-8 space-y-2">
-      <div className="h-6 bg-white/20 rounded w-2/3"></div>
-      <div className="h-4 bg-white/20 rounded w-1/2"></div>
-    </div>
+const LoadingSpinner = () => (
+  <div className="flex justify-center items-center py-8">
+    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
   </div>
 );
 
-const VariantCard = ({ variant }: { variant: any }) => (
-  <Link href={`/danh-muc/${variant.slug}`} className="block group">
-    <div className="relative bg-gradient-to-br from-gray-50 to-gray-100 rounded-3xl overflow-hidden transition-all duration-500 hover:shadow-2xl hover:shadow-gray-900/20 hover:scale-105">
-      {/* Background Image */}
-      <div className="aspect-[4/3] relative overflow-hidden">
-        {variant.image && (
-          <Image
-            src={variant.image}
-            alt={variant.name || "Category"}
-            fill
-            className="object-cover transition-transform duration-700 group-hover:scale-110"
-            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-          />
-        )}
+const DanhMucPage = () => {
+  const [category, setCategory] = useState<CategoryInterface | null>(null);
+  const [products, setProducts] = useState<any[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [loading, setLoading] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const { slug } = useParams();
 
-        {/* Gradient Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent group-hover:from-black/70 transition-all duration-500"></div>
+  // Fetch category data function
+  const fetchCategoryData = useCallback(
+    async (slug: string, page: number = 1) => {
+      try {
+        const response = await CategoryAPI.getCategoryWithSlug(slug, page);
+        if (response.status === 200) {
+          const categoryData = response.data as CategoryInterface;
 
-        {/* Animated Border */}
-        <div className="absolute inset-4 border-2 border-white/30 rounded-2xl opacity-0 group-hover:opacity-100 transition-all duration-500 group-hover:inset-2"></div>
-      </div>
+          if (page === 1) {
+            // Initial load
+            setCategory(categoryData);
+            setProducts(categoryData.products || []);
+            setHasMore((categoryData.products?.length || 0) >= 4);
+          } else {
+            // Load more products
+            const newProducts = categoryData.products || [];
+            setProducts((prev) => [...prev, ...newProducts]);
+            setHasMore(newProducts.length >= 4);
+          }
+          return categoryData;
+        } else {
+          throw new Error("Category not found");
+        }
+      } catch (err) {
+        console.error("Error fetching category:", err);
+        setError("Failed to load category");
+        return null;
+      }
+    },
+    []
+  );
 
-      {/* Content */}
-      <div className="absolute bottom-0 left-0 right-0 p-8 transform transition-transform duration-500 group-hover:translate-y-[-8px]">
-        <div className="space-y-3">
-          <h3 className="text-2xl font-bold text-white leading-tight">
-            {variant.name}
-          </h3>
+  // Load more products function
+  const loadMoreProducts = useCallback(async () => {
+    if (loadingMore || !hasMore || !slug) return;
 
-          {variant.description && (
-            <p className="text-white/80 text-sm leading-relaxed line-clamp-2">
-              {variant.description}
-            </p>
-          )}
+    setLoadingMore(true);
+    try {
+      const nextPage = currentPage + 1;
+      await fetchCategoryData(slug.toString(), nextPage);
+      setCurrentPage(nextPage);
+    } catch (err) {
+      console.error("Error loading more products:", err);
+    } finally {
+      setLoadingMore(false);
+    }
+  }, [currentPage, loadingMore, hasMore, slug, fetchCategoryData]);
 
-          {variant.productCount && (
-            <div className="flex items-center gap-2 text-white/70">
-              <svg
-                className="w-4 h-4"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24">
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"
-                />
-              </svg>
-              <span className="text-sm font-medium">
-                {variant.productCount} sản phẩm
-              </span>
-            </div>
-          )}
+  // Intersection Observer ref callback
+  const lastProductElementRef = useCallback(
+    (node: HTMLDivElement) => {
+      if (loadingMore) return;
+      if (observerRef.current) observerRef.current.disconnect();
 
-          {/* Call to action */}
-          <div className="flex items-center gap-2 text-white font-medium opacity-0 group-hover:opacity-100 transition-all duration-300 delay-200">
-            <span>Khám phá ngay</span>
-            <svg
-              className="w-4 h-4 transform group-hover:translate-x-1 transition-transform duration-300"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24">
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M17 8l4 4m0 0l-4 4m4-4H3"
-              />
-            </svg>
+      observerRef.current = new IntersectionObserver(
+        (entries) => {
+          if (entries[0].isIntersecting && hasMore && !loadingMore) {
+            loadMoreProducts();
+          }
+        },
+        {
+          threshold: 0.1,
+          rootMargin: "100px",
+        }
+      );
+
+      if (node) observerRef.current.observe(node);
+    },
+    [loadingMore, hasMore, loadMoreProducts]
+  );
+
+  const observerRef = useRef<IntersectionObserver | null>(null);
+
+  // Debug effect for currentPage changes
+
+  // Initialize data when slug changes
+  useEffect(() => {
+    const initializeData = async () => {
+      setLoading(true);
+      setCurrentPage(1);
+      setProducts([]);
+      setHasMore(true);
+      setError(null);
+
+      if (slug) {
+        const categoryData = await fetchCategoryData(slug.toString(), 1);
+        if (!categoryData) {
+          setError("Category not found");
+        }
+      }
+      setLoading(false);
+    };
+
+    initializeData();
+  }, [slug, fetchCategoryData]);
+
+  // Cleanup observer on unmount
+  useEffect(() => {
+    return () => {
+      if (observerRef.current) {
+        observerRef.current.disconnect();
+      }
+    };
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50/30">
+        <div className="container mx-auto px-4 py-12">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+            {Array.from({ length: 8 }).map((_, i) => (
+              <ProductWidgets.cardSkeleton key={i} />
+            ))}
           </div>
         </div>
       </div>
-    </div>
-  </Link>
-);
-
-const DanhMucPage = async (props: DanhMucPageProps) => {
-  const { params } = props;
-  const { slug } = await params;
-
-  let category: CategoryInterface | null = null;
-
-  let response = await CategoryAPI.getCategoryWithSlug(slug);
-  if (response.status === 200) {
-    console.log("ok", response.data);
-    category = response.data as CategoryInterface;
+    );
   }
 
-  // Handle category not found
-  if (!category) {
+  if (error || !category) {
     return (
       <div className="container mx-auto px-4 py-16">
         <div className="text-center space-y-6">
@@ -150,7 +179,7 @@ const DanhMucPage = async (props: DanhMucPageProps) => {
                 strokeLinecap="round"
                 strokeLinejoin="round"
                 strokeWidth={2}
-                d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
+                d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
               />
             </svg>
             Về trang chủ
@@ -162,102 +191,6 @@ const DanhMucPage = async (props: DanhMucPageProps) => {
 
   return (
     <div className="min-h-screen bg-gray-50/30">
-      {/* Header Section */}
-      <div className="bg-white border-b border-gray-100">
-        <div className="container mx-auto px-4 py-12">
-          {/* <div className="relative h-[400px] w-full ">
-            <ImageLoader
-              className="rounded-md"
-              src={category.imageUrl}
-              fill={true}
-              alt="Hình ảnh danh mục "
-            />
-          </div> */}
-          <div className="max-w-4xl mt-[10px]">
-            {/* Breadcrumb */}
-            <nav className="flex items-center gap-2 text-sm text-gray-500 mb-6">
-              <Link
-                href="/"
-                className="hover:text-blue-600 transition-colors duration-200">
-                Trang chủ
-              </Link>
-              <svg
-                className="w-4 h-4"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24">
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M9 5l7 7-7 7"
-                />
-              </svg>
-              <span className="text-gray-900 font-medium">{category.name}</span>
-            </nav>
-
-            {/* Category Header */}
-            <div className="space-y-4">
-              <h1 className="text-3xl md:text-4xl font-bold text-gray-900 leading-tight capitalize italic">
-                {category.name}
-              </h1>
-
-              {category.description && (
-                <p className="text-xl text-gray-600 leading-relaxed max-w-3xl">
-                  {category.description}
-                </p>
-              )}
-
-              {/* Stats */}
-              <div className="flex items-center gap-8 pt-4">
-                {Array.isArray(category.products) &&
-                  category.products.length > 0 && (
-                    <div className="flex items-center gap-2 text-gray-600">
-                      <svg
-                        className="w-5 h-5"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24">
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"
-                        />
-                      </svg>
-                      <span className="font-medium">
-                        {category.products.length} sản phẩm
-                      </span>
-                    </div>
-                  )}
-
-                {/* NEED CUSTOM HERE !! */}
-                {category.variant && (
-                  <div className="flex items-center gap-2 text-gray-600">
-                    <svg
-                      className="w-5 h-5"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24">
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
-                      />
-                    </svg>
-                    <span className="font-medium">
-                      {category.variant} danh mục con
-                    </span>
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Main Content */}
       <div className="container mx-auto px-4 py-12">
         {category.variant ? (
           /* Render Variants */
@@ -271,109 +204,39 @@ const DanhMucPage = async (props: DanhMucPageProps) => {
               </p>
             </div>
 
-            <Suspense
-              fallback={
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                  {Array.from({ length: 6 }).map((_, i) => (
-                    <VariantCardSkeleton key={i} />
-                  ))}
-                </div>
-              }>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                cai gi day
-                {/* {category.variants.map((variant, index) => (
-                  <VariantCard key={variant.id || index} variant={variant} />
-                ))} */}
-              </div>
-            </Suspense>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {/* Implement variant rendering here if needed */}
+              <div>Variants rendering to be implemented</div>
+            </div>
           </div>
         ) : (
-          /* Render Products */
+          /* Render Products with Infinite Scroll */
           <div className="space-y-8">
-            {/* Filter and Sort Bar */}
-            {/* <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
-              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                <div className="flex items-center gap-4">
-                  <button className="flex items-center gap-2 px-4 py-2 bg-gray-100 rounded-xl hover:bg-gray-200 transition-colors duration-200">
-                    <svg
-                      className="w-4 h-4"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24">
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"
-                      />
-                    </svg>
-                    <span className="font-medium">Bộ lọc</span>
-                  </button>
+            {products && products.length > 0 ? (
+              <>
+                <div className="mt-[35px] grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+                  {products.map((product, index) => {
+                    const isLast = index === products.length - 1;
+                    return (
+                      <div
+                        key={product.id || index}
+                        ref={isLast ? lastProductElementRef : null}>
+                        <ProductWidgets.productCard {...product} />
+                      </div>
+                    );
+                  })}
+                </div>
 
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm text-gray-600">Sắp xếp:</span>
-                    <select className="bg-transparent border-none text-sm font-medium text-gray-900 focus:ring-0">
-                      <option>Mới nhất</option>
-                      <option>Giá thấp đến cao</option>
-                      <option>Giá cao đến thấp</option>
-                      <option>Phổ biến nhất</option>
-                    </select>
+                {/* Loading indicator for infinite scroll */}
+                {loadingMore && <LoadingSpinner />}
+
+                {/* End of products message */}
+                {!hasMore && products.length > 0 && (
+                  <div className="text-center py-8">
+                    <p className="text-gray-500">Đã hiển thị tất cả sản phẩm</p>
                   </div>
-                </div>
-
-                <div className="flex items-center gap-2">
-                  <button className="p-2 rounded-lg hover:bg-gray-100 transition-colors duration-200">
-                    <svg
-                      className="w-5 h-5"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24">
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"
-                      />
-                    </svg>
-                  </button>
-                  <button className="p-2 rounded-lg hover:bg-gray-100 transition-colors duration-200">
-                    <svg
-                      className="w-5 h-5"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24">
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M4 6h16M4 10h16M4 14h16M4 18h16"
-                      />
-                    </svg>
-                  </button>
-                </div>
-              </div>
-            </div> */}
-
-            {/* Products Grid */}
-            {category.products && category.products.length > 0 ? (
-              <Suspense
-                fallback={
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-                    {Array.from({ length: 8 }).map((_, i) => (
-                      <ProductWidgets.cardSkeleton key={i} />
-                      // <ProductCardSkeleton key={i} />
-                    ))}
-                  </div>
-                }>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-                  {category.products.map((product, index) => (
-                    <ProductWidgets.productCard
-                      key={product.id || index}
-                      {...product}
-                    />
-                  ))}
-                </div>
-              </Suspense>
+                )}
+              </>
             ) : (
               <div className="text-center py-16 space-y-6">
                 <div className="w-24 h-24 mx-auto bg-gray-100 rounded-full flex items-center justify-center">

@@ -5,12 +5,13 @@ const storeID = process.env.STORE_ID || 1;
 
 const url = `${process.env.NEXT_PUBLIC_API}/categories`;
 export const CategoryAPI = {
-  getCategoryWithSlug: async (slug: string) => {
+  getCategoryWithSlug: async (slug: string, currentPage: number) => {
     return await api({
       method: "GET",
       url: `${url}/${slug}`,
       params: {
         storeID,
+        currentPage,
       },
     });
   },
