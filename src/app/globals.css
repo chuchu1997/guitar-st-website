@@ -39,8 +39,26 @@
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
-}
+  /* CUSTOM */
+  --text-price: #fb2150;
+  --text-ship:#1f8987;
 
+  --bg-price: #f9e5ea;
+  --bg-ship:#def4f7;
+
+}
+.bg-price {
+  background: var(--bg-price);
+}
+.bg-ship{
+  background:var(--bg-ship);
+}
+.text-ship{
+  color:var(--text-ship);
+}
+.text-price {
+  color: var(--text-price);
+}
 @theme {
   --font-roboto: "Roboto", sans-serif;
   --breakpoint-3xl: 1920px;

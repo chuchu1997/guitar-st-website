@@ -4,7 +4,7 @@ import Banner from "@/components/Banner";
 import SectionComponent from "@/components/layouts/SectionComponent";
 import { Suspense } from "react";
 import CircleLoading from "@/components/ui/circle-loading";
-import ProductList from "@/components/product/product-list";
+// import ProductList from "@/components/product/product-list";
 // import { getCategories } from "@/actions/get-categories";
 import ReadMoreButton from "@/components/ui/read-more-btn";
 import { Product } from "@/types/ProjectInterface";

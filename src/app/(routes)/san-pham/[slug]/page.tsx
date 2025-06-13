@@ -1,121 +1,50 @@
-import TileComponent from "@/components/layouts/TileComponent";
-import ProductList from "@/components/product/product-list";
-import BillboardLayout from "@/components/ui/billboard";
-import CircleLoading from "@/components/ui/circle-loading";
-import { Suspense } from "react";
+/** @format */
 
+import { ProductAPI } from "@/api/products/product.api";
+import { ImageInterface, ProductInterface } from "@/types/product";
 
-import type { Metadata } from "next";
-import { getSubCategoriesWithSlug } from "@/actions/get-subcategories";
+import { useState } from "react";
+import { ProductClient } from "./components/productClient";
 
-const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://happyfurniture.logtech.vn";
-
-interface SanPhamPageWithProps {  
+interface SanPhamPageWithProps {
   params: Promise<{ slug: string }>;
 }
 
-export async function generateMetadata(props: SanPhamPageWithProps): Promise<Metadata> {
+const SanPhamPageWithSlug = async (props: SanPhamPageWithProps) => {
   const { params } = props;
   const { slug } = await params;
 
-  const subCategory = await getSubCategoriesWithSlug(slug);
+  let product: ProductInterface | null = null;
 
-  if (!subCategory) {
-    return {
-      title: "Danh Mục Không Tồn Tại | Happy Furniture",
-      description: "Không tìm thấy danh mục sản phẩm phù hợp.",
-      metadataBase: new URL(baseUrl),
-    };
+  const response = await ProductAPI.getProductBySlug(slug);
+  if (response.status === 200) {
+    product = response.data.product as ProductInterface;
   }
 
-  const title = `${subCategory.name} - Sản Phẩm Nội Thất | Happy Furniture`;
-  const description = `Khám phá sản phẩm thuộc danh mục ${subCategory.name} tại Happy Furniture – thiết kế đẹp, chất lượng cao, giá tốt.`;
+  if (!product) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="text-center">
+          <h2 className="text-2xl font-semibold text-gray-700 mb-2">
+            Sản phẩm không tồn tại
+          </h2>
+          <p className="text-gray-500">Vui lòng kiểm tra lại đường dẫn</p>
+        </div>
+      </div>
+    );
+  }
 
-  return {
-    title,
-    description,
-    metadataBase: new URL(baseUrl),
-    alternates: {
-      canonical: `${baseUrl}/san-pham/${slug}`,
-      languages: {
-        "vi-VN": `${baseUrl}/san-pham/${slug}`,
-      },
-    },
-    openGraph: {
-      type: "website",
-      locale: "vi_VN",
-      url: `${baseUrl}/san-pham/${slug}`,
-      siteName: "Happy Furniture",
-      title,
-      description,
-      images: [
-        {
-          url: subCategory.billboard?.imageUrl || `${baseUrl}/images/banner-product.jpg`,
-          width: 1200,
-          height: 630,
-          alt: `${subCategory.name} - Danh Mục Sản Phẩm`,
-        },
-      ],
-    },
-    applicationName: "Happy Furniture",
-    keywords: [
-      subCategory.name.toLowerCase(),
-      "sản phẩm nội thất",
-      "thiết kế nội thất",
-      "mua nội thất",
-      "happy furniture",
-    ],
-    authors: [{ name: "Happy Furniture Team" }],
-    creator: "Happy Furniture",
-    publisher: "Happy Furniture Việt Nam",
-    formatDetection: {
-      telephone: true,
-      date: true,
-      address: true,
-      email: true,
-      url: true,
-    },
-    robots: {
-      index: true,
-      follow: true,
-      googleBot: {
-        index: true,
-        follow: true,
-        "max-image-preview": "large",
-        "max-snippet": -1,
-        "max-video-preview": -1,
-      },
-    },
-    category: "shopping",
-  };
-}
+  return (
+    <div className="min-h-screen ">
+      <ProductClient product={product} />
 
-
-const SanPhamPageWithSlug  = async (props:SanPhamPageWithProps) =>{
-    const {params} = props;
-    const {slug} = await params;
-    //GET SERVICE WITH SLUG  ;
-    //GET SERVICE ITEM 
-    const subCategories = await getSubCategoriesWithSlug(slug);
-
-    return <div className = "container mx-auto">
-
-
-    <Suspense fallback={<CircleLoading />}>
-        <BillboardLayout data={subCategories.billboard} />
-        <section className="list-products">
-          <TileComponent
-            title={`Các sản phẩm thuộc danh mục :(${subCategories.name}) `}
-          />
-         <ProductList title = {subCategories.name} products={subCategories.products} />
-        </section>
-      </Suspense> 
-    
-    
+      {/* Mobile Header */}
     </div>
-    
+  );
+};
 
-}
+// Mobile Header Component
 
+// Utility Functions
 
 export default SanPhamPageWithSlug;

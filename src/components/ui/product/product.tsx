@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import FlashSaleComponent from "../Flashsale/flashsale";
 import { Separator } from "../separator";
+import Link from "next/link";
 
 const productTemp = {
   id: 1,
@@ -104,7 +105,9 @@ export const ProductWidgets = {
     return (
       <div>
         {/* PC DISPLAY */}
-        <div className="hidden sm:block group relative  bg-white rounded-3xl shadow-lg border border-gray-100 overflow-hidden transition-all duration-700 hover:shadow-2xl hover:shadow-gray-900/15 hover:-translate-y-3 hover:border-gray-200">
+        <Link
+          href={`/san-pham/${product.slug}`}
+          className="hidden sm:block group relative  bg-white rounded-3xl shadow-lg border border-gray-100 overflow-hidden transition-all duration-700 hover:shadow-2xl hover:shadow-gray-900/15 hover:-translate-y-3 hover:border-gray-200">
           {/* Product Image */}
           <div className="relative aspect-square bg-gradient-to-br from-gray-50 to-gray-100 overflow-hidden">
             {/* Main Product Image */}
@@ -253,7 +256,7 @@ export const ProductWidgets = {
 
           {/* Hover border effect */}
           <div className="absolute inset-0 rounded-3xl border-2 border-transparent group-hover:border-gradient-to-r group-hover:from-blue-500/30 group-hover:to-purple-500/30 transition-all duration-500 pointer-events-none"></div>
-        </div>
+        </Link>
 
         {/* MOBILE DISPLAY */}
         <div className=" flex flex-row sm:hidden relative bg-white rounded-md shadow-lg border border-gray-100 overflow-hidden transition-all duration-700 hover:shadow-2xl hover:shadow-gray-900/15 hover:-translate-y-3 hover:border-gray-200">
@@ -330,48 +333,19 @@ export const ProductWidgets = {
 
                   <div className=" rounded-sm overflow-hidden flex ">
                     <button className="px-2 py-1 bg-[#fde6ee]">
-                      <ShoppingBasket className="text-[#ec5073]" size={20} />
+                      <Link href={`/danh-muc/san-pham/`}>
+                        <ShoppingBasket className="text-[#ec5073]" size={20} />
+                      </Link>
                     </button>
-                    <button className="px-4 bg-[#fe2b54] text-white text-sm font-bold">
+                    <Link
+                      href={`/san-pham/${product.slug}`}
+                      className="px-4 bg-[#fe2b54] text-white text-sm font-bold flex items-center">
                       <span>Mua</span>
-                    </button>
+                    </Link>
                   </div>
                 </div>
               </div>
             </div>
-
-            {/* Pricing */}
-            {/* <div className="space-y-1">
-              <div className="flex items-center gap-3">
-                <span className="text-base font-bold text-[#fb2150] tracking-tight">
-                  {FormatUtils.formatPriceVND(product.price)}
-                </span>
-                {product.originalPrice &&
-                  product.originalPrice > product.price && (
-                    <span className="text-sm text-gray-500 line-through">
-                      {FormatUtils.formatPriceVND(product.price)}
-                    </span>
-                  )}
-              </div>
-            </div> */}
-
-            {/* Flashsale Section */}
-            {/* <FlashSaleComponent /> */}
-
-            {/* { STAR} */}
-            {/* <div className="flex items-center space-x-1">
-              <Star className="w-4 h-4 text-yellow-400 fill-current" />
-              <div className="space-x-2 text-[#797979] text-sm font-semibold">
-                <span>5</span>
-                <span>|</span>
-                <span>Đã bán 90.0k</span>
-              </div>
-            </div> */}
-
-            {/* Add to Cart Button */}
-            {/* <button className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 px-4 rounded-xl font-semibold transition-all duration-300 hover:from-blue-700 hover:to-purple-700 hover:shadow-lg hover:shadow-blue-500/25 transform hover:-translate-y-0.5 active:translate-y-0">
-            Thêm vào giỏ hàng
-          </button> */}
           </div>
 
           {/* Hover border effect */}
