@@ -1,6 +1,6 @@
 /** @format */
 
-import { ProductInterface } from "@/types/product";
+import { ProductInterface, ProductQuickView } from "@/types/product";
 import { FormatUtils } from "@/utils/format";
 import Image from "next/image";
 import { ImageLoader } from "../image-loader";
@@ -9,6 +9,8 @@ import {
   Eye,
   Gift,
   Heart,
+  Palette,
+  Play,
   ShoppingBasket,
   ShoppingCart,
   Star,
@@ -16,47 +18,17 @@ import {
 import FlashSaleComponent from "../Flashsale/flashsale";
 import { Separator } from "../separator";
 import Link from "next/link";
-
-const productTemp = {
-  id: 1,
-  name: "Fender Player Stratocaster Electric Guitar",
-  shortDescription:
-    "Classic electric guitar with modern features, perfect for any music style",
-  image:
-    "https://mekship-develop.s3.ap-southeast-1.amazonaws.com/happyfurniture/ed947ac7-3d18-4228-8eb9-396a33a80d09-messi.jfif",
-  price: 15990000,
-  originalPrice: 18990000,
-  discount: 16,
-  rating: 4.8,
-  reviewCount: 124,
-  brand: "Guitar St.Real",
-  giftProducts: [
-    {
-      id: 1,
-      name: "Guitar Pick Set",
-      image:
-        "https://mekship-develop.s3.ap-southeast-1.amazonaws.com/happyfurniture/ed947ac7-3d18-4228-8eb9-396a33a80d09-messi.jfif",
-    },
-    {
-      id: 2,
-      name: "Guitar Strap",
-      image:
-        "https://mekship-develop.s3.ap-southeast-1.amazonaws.com/happyfurniture/ed947ac7-3d18-4228-8eb9-396a33a80d09-messi.jfif",
-    },
-    {
-      id: 3,
-      name: "Guitar Cable",
-      image:
-        "https://mekship-develop.s3.ap-southeast-1.amazonaws.com/happyfurniture/ed947ac7-3d18-4228-8eb9-396a33a80d09-messi.jfif",
-    },
-    {
-      id: 4,
-      name: "Tuner",
-      image:
-        "https://mekship-develop.s3.ap-southeast-1.amazonaws.com/happyfurniture/ed947ac7-3d18-4228-8eb9-396a33a80d09-messi.jfif",
-    },
-  ],
-};
+import { cn } from "@/lib/utils";
+import { useRouter } from "next/router";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "../card";
+import { Button } from "../button";
 
 export const ProductWidgets = {
   cardSkeleton: () => {
@@ -101,169 +73,247 @@ export const ProductWidgets = {
     );
   },
 
+  giftItem: ({
+    gift,
+    className,
+  }: {
+    gift: ProductInterface;
+    className?: string;
+  }) => {
+    return (
+      <div
+        onClick={(e) => {
+          e.stopPropagation(); // Ngăn click lan ra ngoài
+          window.location.href = `/san-pham/${gift.slug}`;
+        }}
+        className={cn(
+          "cursor-pointer flex items-center gap-2 rounded-lg p-2 transition-transform duration-200 hover:scale-[1.03] hover:bg-gray-100",
+          className
+        )}>
+        <ImageLoader
+          width={0}
+          height={0}
+          alt={gift.name}
+          src={gift.images[0].url}
+          className="w-8 h-8 object-cover rounded-md flex-shrink-0"
+        />
+        <span className="text-xs text-gray-700 font-medium truncate">
+          {gift.name}
+        </span>
+      </div>
+    );
+  },
+  productCardQuickView: (product: ProductQuickView) => {
+    return (
+      <div className="group bg-white rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 overflow-hidden border border-yellow-100">
+        <div className="relative overflow-hidden ">
+          <ImageLoader
+            src={product.image}
+            alt={product.name}
+            height={60}
+            width={60}
+            className="w-full"
+          />
+          {/* <img
+            src={product.image}
+            alt={product.name}
+            className="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-500"
+          /> */}
+          {product.badge && (
+            <div className="absolute top-3 left-3 bg-gradient-to-r from-yellow-400 to-yellow-500 text-black px-3 py-1 rounded-full text-xs font-bold shadow-lg">
+              {product.badge}
+            </div>
+          )}
+          <div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+            <button className="bg-black/80 hover:bg-black text-white p-2 rounded-full shadow-lg">
+              <ShoppingCart size={16} />
+            </button>
+          </div>
+        </div>
+        <div className="p-2">
+          <h3 className="font-bold text-sm md:text-lg text-gray-800 mb-2 group-hover:text-yellow-600 transition-colors duration-300">
+            {product.name}
+          </h3>
+          {/* <div className="flex items-center mb-3">
+            <div className="flex text-yellow-400">
+              {[...Array(5)].map((_, i) => (
+                <Star
+                  key={i}
+                  size={16}
+                  fill={
+                    i < Math.floor(product.rating) ? "currentColor" : "none"
+                  }
+                />
+              ))}
+            </div>
+            <span className="text-sm text-gray-600 ml-2">
+              ({product.reviews})
+            </span>
+          </div> */}
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-2">
+              <span className="text-sm md:text-lg font-bold text-price">
+                {FormatUtils.formatPriceVND(product.price)}
+              </span>
+              {product.originalPrice && (
+                <span className="text-xs md:text-base text-gray-500 line-through">
+                  {FormatUtils.formatPriceVND(product.originalPrice)}
+                </span>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  },
   productCard: (product: ProductInterface) => {
     return (
       <div>
         {/* PC DISPLAY */}
-        <Link
-          href={`/san-pham/${product.slug}`}
-          className="hidden sm:block group relative  bg-white rounded-3xl shadow-lg border border-gray-100 overflow-hidden transition-all duration-700 hover:shadow-2xl hover:shadow-gray-900/15 hover:-translate-y-3 hover:border-gray-200">
-          {/* Product Image */}
-          <div className="relative aspect-square bg-gradient-to-br from-gray-50 to-gray-100 overflow-hidden">
-            {/* Main Product Image */}
-            <ImageLoader src={product.images[0].url} alt={product.name} fill />
-            <div className="absolute top-2 right-2  bg-gradient-to-r from-yellow-400 to-orange-400 text-gray-900 px-3 py-1 rounded-full text-xs font-semibold italic shadow-md">
-              <span> Guitar St.Real</span>
-            </div>
-            <div className="absolute bottom-0 left-0">
-              <div className="flex rounded-r-4xl  overflow-hidden rounded-b-lg">
-                {/* <div className="bg-[#28d4d4] flex flex-col px-2 text-white">
-                <span>XTRA</span>
-                <span>Freeship*</span>
-              </div> */}
-                <div className="flex flex-col justify-center p-2 bg-gradient-to-r from-cyan-400 via-cyan-300 to-cyan-600 text-white">
-                  <span className="text-xs font-bold italic ">XTRA</span>
-                  <Badge className=" ">Freeship*</Badge>
+        <Link href={`/san-pham/${product.slug}`} className="hidden sm:block">
+          <Card
+            key={product.id}
+            className="relative overflow-hidden bg-gradient-to-br from-yellow-50 via-white to-amber-50 border border-yellow-200/50 shadow-lg hover:shadow-xl transition-all duration-500 hover:-translate-y-1 group">
+            {/* Gradient overlay for modern effect */}
+            <div className="absolute inset-0 bg-gradient-to-br from-yellow-400/5 via-transparent to-black/5 pointer-events-none" />
+
+            <CardHeader className="p-0  mt-[-25px] relative">
+              <div className="relative overflow-hidden">
+                <img
+                  src={product.images[0].url}
+                  alt={product.name}
+                  className="w-full h-80 object-cover group-hover:scale-105 transition-transform duration-500"
+                />
+
+                {/* Premium gradient overlay on image */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+
+                <Badge className="absolute top-4 left-4 bg-gradient-to-r from-red-500 to-red-600 text-white font-semibold px-3 py-1 shadow-md">
+                  SALE
+                </Badge>
+
+                {/* Premium corner accent */}
+                <div className="absolute top-0 right-0 w-0 h-0 border-l-[50px] border-l-transparent border-t-[50px] border-t-yellow-400/20" />
+              </div>
+            </CardHeader>
+
+            <CardContent className="p-6 relative z-10">
+              <CardTitle className="text-xl font-bold text-gray-900 mb-3 group-hover:text-yellow-600 transition-colors duration-300">
+                {product.name}
+              </CardTitle>
+
+              <CardDescription className="text-gray-600 mb-4 line-clamp-2">
+                {product.shortDescription}
+              </CardDescription>
+
+              {/* Rating section with better styling */}
+              <div className="flex items-center gap-2 mb-4">
+                <div className="flex items-center">
+                  {[...Array(5)].map((_, i) => (
+                    <Star
+                      key={i}
+                      className="h-4 w-4 text-yellow-400 fill-yellow-400"
+                    />
+                  ))}
                 </div>
-                <div className="flex flex-col justify-center p-2 bg-gradient-to-r from-green-600 via-green-500 to-green-400 text-white">
-                  <span className="text-xs font-bold italic ">EXTRA</span>
-                  <Badge className="bg-[#fb2150] py-0 rounded-sm">
-                    lên đến 14%*
-                  </Badge>
-                </div>
-              </div>
-            </div>
-            {/* Discount Badge */}
-            {product.discount && (
-              <div className="absolute top-4 left-4 bg-gradient-to-r from-red-500 to-pink-600 text-white px-3 py-1.5 rounded-full text-sm font-bold shadow-lg transform group-hover:scale-105 transition-transform duration-300">
-                -{product.discount ?? 10}%
-              </div>
-            )}
-
-            {/* Quick Actions Overlay */}
-            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-all duration-500 flex items-center justify-center opacity-0 group-hover:opacity-100">
-              <div className="flex gap-3 transform translate-y-6 group-hover:translate-y-0 transition-all duration-500 delay-100">
-                <button className="bg-white/95 backdrop-blur-md text-gray-800 p-3 rounded-full hover:bg-white hover:scale-110 transition-all duration-300 shadow-xl">
-                  <Eye className="w-5 h-5" />
-                </button>
-                <button
-                  className={`bg-white/95 backdrop-blur-md p-3 rounded-full hover:scale-110 transition-all duration-300 shadow-xl `}>
-                  <Heart className={`w-5 h-5 `} />
-                </button>
-                <button className="bg-black text-white p-3 rounded-full hover:bg-blue-700 hover:scale-110 transition-all duration-300 shadow-xl">
-                  <ShoppingCart className="w-5 h-5" />
-                </button>
-              </div>
-            </div>
-          </div>
-
-          {/* Product Information */}
-          <div className="p-6 pt-4 space-y-3">
-            {/* Brand Badge */}
-
-            {/* <div className="flex items-center gap-1">
-            {[...Array(5)].map((_, i) => (
-              <Star
-                key={i}
-                className={`w-4 h-4 text-yellow-400 fill-current`}
-              />
-            ))}
-          </div> */}
-
-            {/* Product Title */}
-            <h3 className="font-bold text-gray-900 text-lg leading-tight line-clamp-2 group-hover:text-blue-600 transition-colors duration-300">
-              {product.name}
-            </h3>
-
-            {/* Short Description */}
-            {/* <p className="text-gray-600 text-sm leading-relaxed line-clamp-2">
-            Classic electric guitar with modern features, perfect for any music
-            style
-          </p> */}
-
-            {/* Rating */}
-            {/* <div className="flex items-center gap-2">
-            <span className="text-sm text-gray-400">
-              ({product.reviews} reviews)
-            </span>
-          </div> */}
-
-            {/* Pricing */}
-            <div className="space-y-1">
-              <div className="flex items-center gap-3">
-                <span className="text-2xl font-bold text-[#fb2150] tracking-tight">
-                  {FormatUtils.formatPriceVND(product.price)}
+                {/* <span className="text-sm font-medium text-gray-700"></span> */}
+                <span className="text-xs text-gray-500">
+                  {/* ({product.ratingCount} reviews) */}
                 </span>
-                {product.originalPrice &&
-                  product.originalPrice > product.price && (
-                    <span className="text-lg text-gray-500 line-through">
-                      {FormatUtils.formatPriceVND(product.price)}
-                    </span>
-                  )}
               </div>
-            </div>
 
-            {/* Flashsale Section */}
-            <FlashSaleComponent />
+              {/* Color variants */}
+              {/* <div className="mb-4">
+                <div className="flex items-center gap-2 mb-2">
+                  <Palette className="h-4 w-4 text-gray-600" />
+                  <span className="text-sm font-medium text-gray-700">
+                    Màu sắc:
+                  </span>
+                </div>
+                <div className="flex gap-2 flex-wrap">
+                  {product.colors.map((color) => (
+                    <button
+                      key={color.hex}
+                      // onClick={() =>
+                      //   color.available && handleColorChange(color.value)
+                      // }
+                      // disabled={!color.available}
+                      className={`w-6 h-6 rounded-full border-2 transition-all duration-200`}
+                      style={{ backgroundColor: color.hex }}
+                      title={color.name}>
+                      {color.hex === "#FFFFFF" && (
+                        <div className="absolute inset-0.5 border border-gray-200 rounded-full"></div>
+                      )}
+                    </button>
+                  ))}
+                </div>
+              </div> */}
 
-            {/* { STAR} */}
-            <div className="flex items-center space-x-1">
-              <Star className="w-4 h-4 text-yellow-400 fill-current" />
-              <div className="space-x-2 text-[#797979] text-sm font-semibold">
-                <span>5</span>
-                <span>|</span>
-                <span>Đã bán 90.0k</span>
+              {/* Price section with better contrast */}
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-3">
+                  <span className="text-3xl font-bold bg-gradient-to-r from-yellow-600 to-yellow-500 bg-clip-text text-transparent">
+                    {FormatUtils.formatPriceVND(product.price)}
+                  </span>
+                  {product.originalPrice &&
+                    product.originalPrice > product.price && (
+                      <span className="text-lg text-gray-500 line-through font-medium">
+                        {FormatUtils.formatPriceVND(product.originalPrice)}
+                      </span>
+                    )}
+                </div>
               </div>
-            </div>
 
-            {/* Gifts Section */}
-
-            {productTemp.giftProducts &&
-              productTemp.giftProducts.length > 0 && (
-                <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-2xl p-4 border border-blue-100">
+              {/* Gift products section with improved styling */}
+              {product.giftProducts && product.giftProducts.length > 0 && (
+                <div className="bg-gradient-to-br from-yellow-50 to-amber-50 border-2 border-yellow-200/50 rounded-xl p-4 mb-4">
                   <div className="flex items-center gap-2 mb-3">
-                    {/* <Gift className="w-5 h-5 text-blue-600" /> */}
-
-                    <Badge className="overflow-hidden border-none rounded-sm bg-gradient-to-r from-green-600 via-green-500 to-green-400 text-white font-bold text-xs ">
+                    <Badge className="bg-gradient-to-r from-yellow-500 to-yellow-600 text-black font-bold text-xs px-3 py-1">
                       Quà tặng
                     </Badge>
                   </div>
                   <div className="grid grid-cols-2 gap-3">
-                    {productTemp.giftProducts.map((gift) => (
-                      <div
-                        key={gift.id}
-                        className="flex items-center gap-2 bg-white/70 rounded-lg p-2">
-                        <img
-                          src={gift.image}
-                          alt={gift.name}
-                          className="w-8 h-8 object-cover rounded-md flex-shrink-0"
-                          loading="lazy"
-                        />
-                        <span className="text-xs text-gray-700 font-medium truncate">
-                          {gift.name}
-                        </span>
-                      </div>
-                    ))}
+                    {product.giftProducts.map((giftContainer: any) => {
+                      const gift: ProductInterface = giftContainer.gift;
+                      return (
+                        <div
+                          key={gift.id}
+                          className="bg-white rounded-lg p-2 shadow-sm border border-yellow-100">
+                          <ProductWidgets.giftItem
+                            gift={gift}
+                            className="bg-transparent"
+                          />
+                        </div>
+                      );
+                    })}
                   </div>
                 </div>
               )}
+            </CardContent>
 
-            {/* Add to Cart Button */}
-            {/* <button className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 px-4 rounded-xl font-semibold transition-all duration-300 hover:from-blue-700 hover:to-purple-700 hover:shadow-lg hover:shadow-blue-500/25 transform hover:-translate-y-0.5 active:translate-y-0">
-            Thêm vào giỏ hàng
-          </button> */}
-          </div>
+            <CardFooter className="p-6 pt-0 relative z-10">
+              <Button className="w-full bg-gradient-to-r from-amber-900 via-yellow-800 to-amber-900 hover:from-yellow-800 hover:via-amber-900 hover:to-yellow-800 text-amber-100 font-semibold py-3 transition-all duration-300 shadow-lg hover:shadow-xl group-hover:scale-[1.02]">
+                <ShoppingCart className="h-5 w-5 mr-2" />
+                Thêm vào giỏ hàng
+              </Button>
+            </CardFooter>
 
-          {/* Hover border effect */}
-          <div className="absolute inset-0 rounded-3xl border-2 border-transparent group-hover:border-gradient-to-r group-hover:from-blue-500/30 group-hover:to-purple-500/30 transition-all duration-500 pointer-events-none"></div>
+            {/* Subtle bottom accent */}
+            <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-yellow-400 via-yellow-500 to-yellow-400" />
+          </Card>
         </Link>
 
         {/* MOBILE DISPLAY */}
         <div className=" flex flex-row sm:hidden relative bg-white rounded-md shadow-lg border border-gray-100 overflow-hidden transition-all duration-700 hover:shadow-2xl hover:shadow-gray-900/15 hover:-translate-y-3 hover:border-gray-200">
           {/* Product Image */}
-          <div className="relative aspect-square min-w-[140px] bg-gradient-to-br from-gray-50 to-gray-100 overflow-hidden">
+          <div className="relative aspect-square min-w-[160px]  bg-gradient-to-br from-gray-50 to-gray-100 overflow-hidden">
             {/* Main Product Image */}
-            <ImageLoader src={product.images[0].url} alt={product.name} fill />
+            <ImageLoader
+              src={product.images[0].url}
+              alt={product.name}
+              fill
+              className="rounded-sm"
+            />
 
             <div className="absolute bottom-0 left-0 ">
               <div className="flex  rounded-r-4xl  overflow-hidden ">
@@ -314,6 +364,7 @@ export const ProductWidgets = {
                 </div>
               </div>
             </div>
+
             <div className="bottom-info space-y-1">
               {/* Pricing */}
               <div className="space-y-1">
@@ -322,11 +373,10 @@ export const ProductWidgets = {
                     <span className="text-base font-bold text-[#fb2150] tracking-tight">
                       {FormatUtils.formatPriceVND(product.price)}
                     </span>
-
                     {product.originalPrice &&
                       product.originalPrice > product.price && (
                         <span className="text-sm text-gray-400 line-through font-semibold">
-                          {FormatUtils.formatPriceVND(product.price)}
+                          {FormatUtils.formatPriceVND(product.originalPrice)}
                         </span>
                       )}
                   </div>
@@ -346,6 +396,11 @@ export const ProductWidgets = {
                 </div>
               </div>
             </div>
+            {product.giftProducts && product.giftProducts.length > 0 && (
+              <div className="font-semibold capitalize text-xs">
+                🎁 Có Quà tặng{" "}
+              </div>
+            )}
           </div>
 
           {/* Hover border effect */}

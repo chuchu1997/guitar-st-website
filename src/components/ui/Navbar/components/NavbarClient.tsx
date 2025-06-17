@@ -177,7 +177,8 @@ const NavbarClient: React.FC<NavbarProps> = ({ categories }) => {
           <div className="hidden lg:block flex-1">
             <div className="flex items-center justify-center space-x-8">
               {parentCategories.map((category: CategoryInterface) => (
-                <div
+                <Link
+                  href={`/danh-muc/${category.slug}`}
                   key={category.id}
                   className="relative group "
                   onMouseEnter={() => handleMouseEnter(category.id)}
@@ -192,7 +193,7 @@ const NavbarClient: React.FC<NavbarProps> = ({ categories }) => {
                   {activeDropdown === category.id && (
                     <MegaMenu category={category} />
                   )}
-                </div>
+                </Link>
               ))}
 
               <Link

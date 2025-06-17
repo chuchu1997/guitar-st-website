@@ -17,6 +17,9 @@ const nextConfig: NextConfig = {
       {
         hostname: "res.cloudinary.com",
       },
+      {
+        hostname: "images.unsplash.com",
+      },
     ],
 
     formats: ["image/avif", "image/webp"],

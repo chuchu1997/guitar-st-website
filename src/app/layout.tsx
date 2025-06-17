@@ -5,7 +5,7 @@ import { Geist, Geist_Mono, Roboto } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/ui/Navbar";
 import { BodyContainer } from "@/components/BodyContainer";
-import { Footer } from "@/components/layouts/Footer";
+import Footer from "@/components/layouts/Footer";
 import BlockSidebar from "@/components/layouts/BlockSidebar";
 import { MobileGroupButton } from "@/components/layouts/MobileGroupButton";
 import { SidebarProvider } from "@/components/ui/sidebar";
@@ -134,7 +134,7 @@ export default function RootLayout({
               <Toaster position="top-center" reverseOrder={false} />
               <div className="flex flex-col  w-full">
                 <Navbar />
-                <BodyContainer className="mt-[100px]">{children}</BodyContainer>
+                <BodyContainer className="mt-[80px]">{children}</BodyContainer>
                 {/* <BlockSidebar />
                 <MobileGroupButton /> */}
 

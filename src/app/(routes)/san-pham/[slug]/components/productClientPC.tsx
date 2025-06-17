@@ -19,12 +19,20 @@ import {
   MessageCircle,
 } from "lucide-react";
 import { FormatUtils } from "@/utils/format";
+import { ImageLoader } from "@/components/ui/image-loader";
+import { ProductWidgets } from "@/components/ui/product/product";
+import EditorClientWrapper from "@/components/editor/editor-wrapper";
 
 interface propsProductClientPC {
   product: ProductInterface;
 }
 
 export const ProductClientPC = ({ product }: propsProductClientPC) => {
+  const tabs = [
+    { key: "description", label: "Mô tả" },
+    { key: "reviews", label: "Đánh giá" },
+    { key: "shipping", label: "Giao hàng" },
+  ];
   const [selectedColor, setSelectedColor] = useState(
     product.colors?.[0] || null
   );
@@ -79,20 +87,6 @@ export const ProductClientPC = ({ product }: propsProductClientPC) => {
 
             {/* Image Actions */}
             <div className="flex items-center justify-between">
-              {/* <div className="flex items-center space-x-4">
-                <button className="flex items-center space-x-2 text-gray-600 hover:text-red-500 transition-colors">
-                  <Heart
-                    className={`w-5 h-5 ${
-                      isWishlisted ? "fill-red-500 text-red-500" : ""
-                    }`}
-                  />
-                  <span>Add to Wishlist</span>
-                </button>
-                <button className="flex items-center space-x-2 text-gray-600 hover:text-blue-500 transition-colors">
-                  <Share2 className="w-5 h-5" />
-                  <span>Share</span>
-                </button>
-              </div> */}
               <span className="text-sm text-gray-500">
                 {product.viewCount} views
               </span>
@@ -146,7 +140,7 @@ export const ProductClientPC = ({ product }: propsProductClientPC) => {
             {/* Color Selection */}
             {product.colors && product.colors.length > 0 && (
               <div className="space-y-3">
-                <h3 className="font-semibold text-gray-900">Color:</h3>
+                <h3 className="font-semibold text-gray-900">Màu sắc:</h3>
                 <div className="flex items-center space-x-3">
                   {product.colors.map((color, index) => (
                     <button
@@ -168,7 +162,7 @@ export const ProductClientPC = ({ product }: propsProductClientPC) => {
             {/* Size Selection */}
             {product.sizes && product.sizes.length > 0 && (
               <div className="space-y-3">
-                <h3 className="font-semibold text-gray-900">Size:</h3>
+                <h3 className="font-semibold text-gray-900">Kích thước:</h3>
                 <div className="flex items-center space-x-3">
                   {product.sizes.map((size, index) => (
                     <button
@@ -224,12 +218,17 @@ export const ProductClientPC = ({ product }: propsProductClientPC) => {
             {product.giftProducts && product.giftProducts.length > 0 && (
               <div className="bg-gradient-to-r from-green-50 to-blue-50 p-4 rounded-lg border border-green-200">
                 <h3 className="font-semibold text-green-700 mb-2">
-                  🎁 Free Gifts Included:
+                  🎁 Quà tặng miễn phí kèm theo:
                 </h3>
                 <ul className="text-sm text-green-600 space-y-1">
-                  {product.giftProducts.map((gift, index) => (
-                    <li key={index}>• {gift.name}</li>
-                  ))}
+                  {product.giftProducts.map((giftContainer) => {
+                    const gift: ProductInterface = giftContainer.gift;
+                    return (
+                      <li key={gift.id}>
+                        <ProductWidgets.giftItem gift={gift} />
+                      </li>
+                    );
+                  })}
                 </ul>
               </div>
             )}
@@ -280,16 +279,16 @@ export const ProductClientPC = ({ product }: propsProductClientPC) => {
         <div className="mt-16">
           <div className="border-b border-gray-200">
             <nav className="flex space-x-8">
-              {["description", "reviews", "shipping"].map((tab) => (
+              {tabs.map(({ key, label }) => (
                 <button
-                  key={tab}
-                  onClick={() => setActiveTab(tab)}
+                  key={key}
+                  onClick={() => setActiveTab(key)}
                   className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
-                    activeTab === tab
+                    activeTab === key
                       ? "border-black text-black"
                       : "border-transparent text-gray-500 hover:text-gray-700"
                   }`}>
-                  {tab.charAt(0).toUpperCase() + tab.slice(1)}
+                  {label}
                 </button>
               ))}
             </nav>
@@ -302,7 +301,7 @@ export const ProductClientPC = ({ product }: propsProductClientPC) => {
                   Mô tả về sản phẩm
                 </h3>
                 <div className="text-gray-700 leading-relaxed whitespace-pre-line">
-                  {product.description}
+                  <EditorClientWrapper jsonString={product.description} />
                 </div>
               </div>
             )}

@@ -10,6 +10,8 @@ export interface ImageInterface {
 interface ProductBase { 
     name:string;
     description:string;
+    shortDescription:string;
+
     price:number;
     originalPrice?:number;
     isFeatured:boolean;
@@ -66,3 +68,15 @@ export interface ProductInterface extends ProductBase{
     id:number
 
 };
+
+
+export interface ProductQuickView {
+  id: number;
+  name: string;
+  price: number;
+  originalPrice?: number;
+  image: string;
+  rating: number;
+  reviews: number;
+  badge?: string;
+}
