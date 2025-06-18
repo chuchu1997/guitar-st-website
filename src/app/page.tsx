@@ -86,7 +86,7 @@ const MusicStoreLanding: React.FC = () => {
       <section className="py-16">
         <div className="container mx-auto px-6">
           <SectionHeader title="Featured Products" icon={<Star className="text-black" size={24} />} />
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="grid grid-cols-3 md:grid-cols-2 lg:grid-cols-4 gap-1">
             {featuredProducts.map(product => (
               <ProductWidgets.productCardQuickView key={product.id} {...product} />
             ))}
@@ -98,7 +98,7 @@ const MusicStoreLanding: React.FC = () => {
       <section className="py-16 bg-gradient-to-r from-amber-100 to-yellow-100">
         <div className="container mx-auto px-6">
           <SectionHeader title="Guitars" icon={<Guitar className="text-black" size={24} />} />
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="grid grid-cols-3 md:grid-cols-2 lg:grid-cols-4 gap-1">
             {guitars.map(product => (
                           <ProductWidgets.productCardQuickView key={product.id} {...product} />
 
@@ -111,7 +111,7 @@ const MusicStoreLanding: React.FC = () => {
       <section className="py-16">
         <div className="container mx-auto px-6">
           <SectionHeader title="Guitar Accessories" icon={<Music className="text-black" size={24} />} />
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="grid grid-cols-3 md:grid-cols-2 lg:grid-cols-4 gap-1">
             {accessories.map(product => (
               <ProductWidgets.productCardQuickView key={product.id} {...product} />
             ))}
@@ -123,7 +123,7 @@ const MusicStoreLanding: React.FC = () => {
       <section className="py-16 bg-gradient-to-r from-orange-100 to-amber-100">
         <div className="container mx-auto px-6">
           <SectionHeader title="Drums & Wind Instruments" icon={<Drum className="text-black" size={24} />} />
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="grid grid-cols-3 md:grid-cols-2 lg:grid-cols-4 gap-1">
             {drumsWindInstruments.map(product => (
               <ProductWidgets.productCardQuickView key={product.id} {...product} />
             ))}
@@ -135,7 +135,7 @@ const MusicStoreLanding: React.FC = () => {
       <section className="py-16">
         <div className="container mx-auto px-6">
           <SectionHeader title="Recommended for You" icon={<Star className="text-black" size={24} />} />
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-1">
             {recommended.map(product => (
               <ProductWidgets.productCardQuickView key={product.id} {...product} />
             ))}

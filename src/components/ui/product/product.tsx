@@ -29,6 +29,7 @@ import {
   CardTitle,
 } from "../card";
 import { Button } from "../button";
+import { DiscountComponent } from "../Discount/discount";
 
 export const ProductWidgets = {
   cardSkeleton: () => {
@@ -134,25 +135,9 @@ export const ProductWidgets = {
           <h3 className="font-bold text-sm md:text-lg text-gray-800 mb-2 group-hover:text-yellow-600 transition-colors duration-300">
             {product.name}
           </h3>
-          {/* <div className="flex items-center mb-3">
-            <div className="flex text-yellow-400">
-              {[...Array(5)].map((_, i) => (
-                <Star
-                  key={i}
-                  size={16}
-                  fill={
-                    i < Math.floor(product.rating) ? "currentColor" : "none"
-                  }
-                />
-              ))}
-            </div>
-            <span className="text-sm text-gray-600 ml-2">
-              ({product.reviews})
-            </span>
-          </div> */}
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between ">
             <div className="flex items-center space-x-2">
-              <span className="text-sm md:text-lg font-bold text-price">
+              <span className=" text-sm md:text-lg font-bold text-price">
                 {FormatUtils.formatPriceVND(product.price)}
               </span>
               {product.originalPrice && (
@@ -166,6 +151,52 @@ export const ProductWidgets = {
       </div>
     );
   },
+
+  renderCardFlashSale: (product: ProductQuickView) => {
+    return (
+      <div className="group bg-white rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 overflow-hidden border border-yellow-100">
+        <div className="relative overflow-hidden ">
+          <div className="relative">
+            <ImageLoader
+              src={product.image}
+              alt={product.name}
+              height={60}
+              width={60}
+              className="w-full"
+            />
+            <DiscountComponent className="absolute bottom-0 left-0" />
+          </div>
+
+          {/* <img
+              src={product.image}
+              alt={product.name}
+              className="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-500"
+            /> */}
+          {product.badge && (
+            <div className="absolute top-3 left-3 bg-gradient-to-r from-yellow-400 to-yellow-500 text-black px-3 py-1 rounded-full text-xs font-bold shadow-lg">
+              {product.badge}
+            </div>
+          )}
+        </div>
+        <div className="p-2">
+          <h3 className="font-bold text-sm md:text-lg text-gray-800 mb-2 group-hover:text-yellow-600 transition-colors duration-300">
+            {product.name}
+          </h3>
+          <div className="space-y-1">
+            <p className=" text-sm md:text-lg font-bold text-price text-price">
+              {FormatUtils.formatPriceVND(product.price)}
+            </p>
+            {product.originalPrice && (
+              <p className="text-xs md:text-base text-gray-400 opacity-80 line-through">
+                {FormatUtils.formatPriceVND(product.originalPrice)}
+              </p>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  },
+
   productCard: (product: ProductInterface) => {
     return (
       <div>
