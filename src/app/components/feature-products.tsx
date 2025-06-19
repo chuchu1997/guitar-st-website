@@ -16,7 +16,7 @@ const FeatureProducts = async  () =>{
     return  <section className="py-16">
         <div className="container mx-auto px-6">
           <SectionHeader title="Sản phẩm nổi bật" icon={<Star className="text-black" size={24} />} />
-          <div className="grid grid-cols-2 sm-grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-1">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4  gap-1">
             {featureProducts.map(product => (
                 <ProductCard key = {product.id} product={product}  />
             //   <ProductWidgets.productCardMasterPage key={product.id} product={product} />

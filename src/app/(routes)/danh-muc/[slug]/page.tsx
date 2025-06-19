@@ -31,7 +31,7 @@ const DanhMucPage = () => {
         const response = await CategoryAPI.getCategoryWithSlug(slug, page);
         if (response.status === 200) {
           const categoryData = response.data as CategoryInterface;
-          console.log("FETCH CALL !!");
+
           if (page === 1) {
             // Initial load
             setCategory(categoryData);
@@ -221,7 +221,7 @@ const DanhMucPage = () => {
                       <div
                         key={product.id || index}
                         ref={isLast ? lastProductElementRef : null}>
-                        <ProductWidgets.productCard {...product} />
+                        <ProductWidgets.productCardSameTiktok {...product} />
                       </div>
                     );
                   })}

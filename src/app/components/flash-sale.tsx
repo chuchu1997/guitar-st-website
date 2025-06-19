@@ -5,6 +5,7 @@
 import { PromotionAPI } from "@/api/promotion/promotion.api";
 import { DiscountComponent } from "@/components/ui/Discount/discount";
 import { ImageLoader } from "@/components/ui/image-loader";
+import { ProductCard } from "@/components/ui/product/product-card";
 import { SectionHeader } from "@/components/ui/section/section-header";
 import {
   discountTypeEnum,
@@ -114,56 +115,13 @@ export const FlashSaleComponentView = () => {
           }
         />
 
-        <div className="columns-3 md:columns-4 lg:columns-6 gap-4">
-          {promotionProducts.map((promotion) => {
-            const { product, discount, discountType } = promotion;
-            const price = product.price;
-
-            const discountedPrice =
-              discountType === discountTypeEnum.PERCENT
-                ? price - (price * discount) / 100
-                : price - discount;
-
-            const percentOff =
-              discountType === discountTypeEnum.PERCENT
-                ? discount
-                : Math.round((discount / price) * 100);
-
-            return (
-              <div
-                key={promotion.productId}
-                className="break-inside-avoid group bg-white rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 overflow-hidden border border-yellow-100">
-                <div className="relative overflow-hidden">
-                  <div className="relative">
-                    <ImageLoader
-                      src={product.images[0].url}
-                      alt={product.name}
-                      height={80}
-                      width={80}
-                      className="w-full"
-                    />
-                    <DiscountComponent
-                      discount={-percentOff}
-                      className="absolute bottom-0 left-0"
-                    />
-                  </div>
-                </div>
-                <div className="p-2">
-                  <h3 className="font-bold text-sm md:text-lg text-gray-800 mb-2 group-hover:text-yellow-600 transition-colors duration-300">
-                    {product.name}
-                  </h3>
-                  <div className="space-y-1">
-                    <p className="text-sm md:text-lg font-bold text-price">
-                      {FormatUtils.formatPriceVND(Math.max(0, discountedPrice))}
-                    </p>
-                    <p className="text-xs md:text-base text-gray-400 opacity-80 line-through">
-                      {FormatUtils.formatPriceVND(price)}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            );
-          })}
+        <div className="columns-2 md:columns-3 lg:columns-4 gap-2">
+          {promotionProducts.map((productPromotion) => (
+            <ProductCard
+              key={productPromotion.productId}
+              product={productPromotion.product}
+            />
+          ))}
         </div>
       </div>
     </section>

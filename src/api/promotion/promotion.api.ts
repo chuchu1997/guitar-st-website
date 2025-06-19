@@ -20,6 +20,7 @@ export const PromotionAPI = {
       method: "GET",
       url: `${url}`,
       params: {
+        isActive: true,
         storeID: storeID,
         currentPage,
         limit,

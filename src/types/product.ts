@@ -1,3 +1,4 @@
+import { ProductPromotion } from "./promotion";
 
 
 
@@ -27,6 +28,9 @@ interface ProductBase {
     categoryId:number;
     reviews:[]
     sku:string;
+    
+
+    promotionProducts:ProductPromotion[]
     storeId:number;
     //sản phẩm này có tặng quà nào không?
     giftProducts?:any[];

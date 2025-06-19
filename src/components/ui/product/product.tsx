@@ -30,6 +30,9 @@ import {
 } from "../card";
 import { Button } from "../button";
 import { DiscountComponent } from "../Discount/discount";
+import { BadgeFreeship } from "../Badge/freeship";
+import { BadgeFlashSale } from "../Badge/flashsale";
+import { ProductCard, RenderGiftItems } from "./product-card";
 
 export const ProductWidgets = {
   cardSkeleton: () => {
@@ -273,142 +276,14 @@ export const ProductWidgets = {
     );
   },
 
-  productCard: (product: ProductInterface) => {
+  productCardSameTiktok: (product: ProductInterface) => {
     return (
       <div>
         {/* PC DISPLAY */}
-        <Link href={`/san-pham/${product.slug}`} className="hidden sm:block">
-          <Card
-            key={product.id}
-            className="relative overflow-hidden bg-gradient-to-br from-yellow-50 via-white to-amber-50 border border-yellow-200/50 shadow-lg hover:shadow-xl transition-all duration-500 hover:-translate-y-1 group">
-            {/* Gradient overlay for modern effect */}
-            <div className="absolute inset-0 bg-gradient-to-br from-yellow-400/5 via-transparent to-black/5 pointer-events-none" />
 
-            <CardHeader className="p-0  mt-[-25px] relative">
-              <div className="relative overflow-hidden">
-                <img
-                  src={product.images[0].url}
-                  alt={product.name}
-                  className="w-full h-80 object-cover group-hover:scale-105 transition-transform duration-500"
-                />
-
-                {/* Premium gradient overlay on image */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-
-                <Badge className="absolute top-4 left-4 bg-gradient-to-r from-red-500 to-red-600 text-white font-semibold px-3 py-1 shadow-md">
-                  SALE
-                </Badge>
-
-                {/* Premium corner accent */}
-                <div className="absolute top-0 right-0 w-0 h-0 border-l-[50px] border-l-transparent border-t-[50px] border-t-yellow-400/20" />
-              </div>
-            </CardHeader>
-
-            <CardContent className="p-6 relative z-10">
-              <CardTitle className="text-xl font-bold text-gray-900 mb-3 group-hover:text-yellow-600 transition-colors duration-300">
-                {product.name}
-              </CardTitle>
-
-              <CardDescription className="text-gray-600 mb-4 line-clamp-2">
-                {product.shortDescription}
-              </CardDescription>
-
-              {/* Rating section with better styling */}
-              <div className="flex items-center gap-2 mb-4">
-                <div className="flex items-center">
-                  {[...Array(5)].map((_, i) => (
-                    <Star
-                      key={i}
-                      className="h-4 w-4 text-yellow-400 fill-yellow-400"
-                    />
-                  ))}
-                </div>
-                {/* <span className="text-sm font-medium text-gray-700"></span> */}
-                <span className="text-xs text-gray-500">
-                  {/* ({product.ratingCount} reviews) */}
-                </span>
-              </div>
-
-              {/* Color variants */}
-              {/* <div className="mb-4">
-                <div className="flex items-center gap-2 mb-2">
-                  <Palette className="h-4 w-4 text-gray-600" />
-                  <span className="text-sm font-medium text-gray-700">
-                    Màu sắc:
-                  </span>
-                </div>
-                <div className="flex gap-2 flex-wrap">
-                  {product.colors.map((color) => (
-                    <button
-                      key={color.hex}
-                      // onClick={() =>
-                      //   color.available && handleColorChange(color.value)
-                      // }
-                      // disabled={!color.available}
-                      className={`w-6 h-6 rounded-full border-2 transition-all duration-200`}
-                      style={{ backgroundColor: color.hex }}
-                      title={color.name}>
-                      {color.hex === "#FFFFFF" && (
-                        <div className="absolute inset-0.5 border border-gray-200 rounded-full"></div>
-                      )}
-                    </button>
-                  ))}
-                </div>
-              </div> */}
-
-              {/* Price section with better contrast */}
-              <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center gap-3">
-                  <span className="text-3xl font-bold bg-gradient-to-r from-yellow-600 to-yellow-500 bg-clip-text text-transparent">
-                    {FormatUtils.formatPriceVND(product.price)}
-                  </span>
-                  {product.originalPrice &&
-                    product.originalPrice > product.price && (
-                      <span className="text-lg text-gray-500 line-through font-medium">
-                        {FormatUtils.formatPriceVND(product.originalPrice)}
-                      </span>
-                    )}
-                </div>
-              </div>
-
-              {/* Gift products section with improved styling */}
-              {product.giftProducts && product.giftProducts.length > 0 && (
-                <div className="bg-gradient-to-br from-yellow-50 to-amber-50 border-2 border-yellow-200/50 rounded-xl p-4 mb-4">
-                  <div className="flex items-center gap-2 mb-3">
-                    <Badge className="bg-gradient-to-r from-yellow-500 to-yellow-600 text-black font-bold text-xs px-3 py-1">
-                      Quà tặng
-                    </Badge>
-                  </div>
-                  <div className="grid grid-cols-2 gap-3">
-                    {product.giftProducts.map((giftContainer: any) => {
-                      const gift: ProductInterface = giftContainer.gift;
-                      return (
-                        <div
-                          key={gift.id}
-                          className="bg-white rounded-lg p-2 shadow-sm border border-yellow-100">
-                          <ProductWidgets.giftItem
-                            gift={gift}
-                            className="bg-transparent"
-                          />
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-              )}
-            </CardContent>
-
-            <CardFooter className="p-6 pt-0 relative z-10">
-              <Button className="w-full bg-gradient-to-r from-amber-900 via-yellow-800 to-amber-900 hover:from-yellow-800 hover:via-amber-900 hover:to-yellow-800 text-amber-100 font-semibold py-3 transition-all duration-300 shadow-lg hover:shadow-xl group-hover:scale-[1.02]">
-                <ShoppingCart className="h-5 w-5 mr-2" />
-                Thêm vào giỏ hàng
-              </Button>
-            </CardFooter>
-
-            {/* Subtle bottom accent */}
-            <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-yellow-400 via-yellow-500 to-yellow-400" />
-          </Card>
-        </Link>
+        <div className="hidden sm:block">
+          <ProductCard product={product} />
+        </div>
 
         {/* MOBILE DISPLAY */}
         <div className=" flex flex-row sm:hidden relative bg-white rounded-md shadow-lg border border-gray-100 overflow-hidden transition-all duration-700 hover:shadow-2xl hover:shadow-gray-900/15 hover:-translate-y-3 hover:border-gray-200">
