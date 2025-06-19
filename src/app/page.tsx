@@ -1,5 +1,4 @@
 
-"use client";
 
 
 import React, { useState, useEffect } from 'react';
@@ -9,6 +8,7 @@ import { FlashSaleComponentView } from './components/flash-sale';
 import { SectionHeader } from '@/components/ui/section/section-header';
 import { ProductQuickView } from '@/types/product';
 import { ProductWidgets } from '@/components/ui/product/product';
+import FeatureProducts from './components/feature-products';
 
 
 const MusicStoreLanding: React.FC = () => {
@@ -83,19 +83,10 @@ const MusicStoreLanding: React.FC = () => {
       <FlashSaleComponentView/>
 
       {/* Featured Products */}
-      <section className="py-16">
-        <div className="container mx-auto px-6">
-          <SectionHeader title="Featured Products" icon={<Star className="text-black" size={24} />} />
-          <div className="grid grid-cols-3 md:grid-cols-2 lg:grid-cols-4 gap-1">
-            {featuredProducts.map(product => (
-              <ProductWidgets.productCardQuickView key={product.id} {...product} />
-            ))}
-          </div>
-        </div>
-      </section>
+      <FeatureProducts/>
 
       {/* Guitars */}
-      <section className="py-16 bg-gradient-to-r from-amber-100 to-yellow-100">
+      {/* <section className="py-16 bg-gradient-to-r from-amber-100 to-yellow-100">
         <div className="container mx-auto px-6">
           <SectionHeader title="Guitars" icon={<Guitar className="text-black" size={24} />} />
           <div className="grid grid-cols-3 md:grid-cols-2 lg:grid-cols-4 gap-1">
@@ -105,10 +96,10 @@ const MusicStoreLanding: React.FC = () => {
             ))}
           </div>
         </div>
-      </section>
+      </section> */}
 
       {/* Guitar Accessories */}
-      <section className="py-16">
+      {/* <section className="py-16">
         <div className="container mx-auto px-6">
           <SectionHeader title="Guitar Accessories" icon={<Music className="text-black" size={24} />} />
           <div className="grid grid-cols-3 md:grid-cols-2 lg:grid-cols-4 gap-1">
@@ -117,10 +108,10 @@ const MusicStoreLanding: React.FC = () => {
             ))}
           </div>
         </div>
-      </section>
+      </section> */}
 
       {/* Drums & Wind Instruments */}
-      <section className="py-16 bg-gradient-to-r from-orange-100 to-amber-100">
+      {/* <section className="py-16 bg-gradient-to-r from-orange-100 to-amber-100">
         <div className="container mx-auto px-6">
           <SectionHeader title="Drums & Wind Instruments" icon={<Drum className="text-black" size={24} />} />
           <div className="grid grid-cols-3 md:grid-cols-2 lg:grid-cols-4 gap-1">
@@ -129,10 +120,10 @@ const MusicStoreLanding: React.FC = () => {
             ))}
           </div>
         </div>
-      </section>
+      </section> */}
 
       {/* Recommended for You */}
-      <section className="py-16">
+      {/* <section className="py-16">
         <div className="container mx-auto px-6">
           <SectionHeader title="Recommended for You" icon={<Star className="text-black" size={24} />} />
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-1">
@@ -141,7 +132,7 @@ const MusicStoreLanding: React.FC = () => {
             ))}
           </div>
         </div>
-      </section>
+      </section> */}
     </div>
   );
 };

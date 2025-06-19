@@ -12,4 +12,16 @@ export const ProductAPI = {
       url: `${url}/${slug}`,
     });
   },
+  getFeatureProducts: async ({ currentPage = 1, limit = 6 }) => {
+    return await api({
+      method: "GET",
+      url: `${url}`,
+      params: {
+        currentPage,
+        limit,
+        storeID,
+        isFeature: true,
+      },
+    });
+  },
 };

@@ -3,11 +3,11 @@ import { ChevronRight } from "lucide-react";
 export const SectionHeader: React.FC<{ title: React.ReactNode; icon?: React.ReactNode }> = ({ title, icon }) => (
   <div className="flex items-center justify-between mb-8">
     <div className="flex items-center space-x-3">
-      {/* {icon && (
+      {icon && (
         <div className="p-3 bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-xl shadow-lg flex items-center">
           {icon}
         </div>
-      )} */}
+      )}
       <h2 className="text-lg md:text-xl lg:text-2xl font-bold text-gray-800">
         {title}
       </h2>
