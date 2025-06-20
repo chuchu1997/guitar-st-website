@@ -33,6 +33,7 @@ export interface PromotionInterface {
 export interface ProductPromotion {
   promotionId: number;
   productId: number;
+  promotion?:PromotionInterface;
   discountType: discountTypeEnum;
   discount: number;
   product: ProductInterface;

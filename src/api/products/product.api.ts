@@ -12,6 +12,19 @@ export const ProductAPI = {
       url: `${url}/${slug}`,
     });
   },
+  getProductByName: async (name: string) => {
+    return await api({
+      method: "GET",
+      url: `${url}`,
+      params: {
+        currentPage: 1,
+        limit: 4,
+        storeID,
+        name: name,
+      },
+    });
+  },
+
   getFeatureProducts: async ({ currentPage = 1, limit = 6 }) => {
     return await api({
       method: "GET",

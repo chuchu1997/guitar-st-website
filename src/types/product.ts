@@ -8,6 +8,11 @@ export interface ImageInterface {
 
 }
 
+export interface ProductInterface extends ProductBase{
+    id:number
+
+};
+
 interface ProductBase { 
     name:string;
     description:string;
@@ -68,10 +73,6 @@ export interface ProductSizeInterface {
    
 
 }
-export interface ProductInterface extends ProductBase{
-    id:number
-
-};
 
 
 export interface ProductQuickView {

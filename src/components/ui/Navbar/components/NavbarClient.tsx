@@ -1,16 +1,17 @@
 /** @format */
 
 "use client";
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useCallback } from "react";
 import { ChevronDown, Menu, X, Search, ShoppingBag, User } from "lucide-react";
 import { CategoryInterface } from "@/types/category";
 import Link from "next/link";
 import { ImageLoader } from "../../image-loader";
 import { usePathname } from "next/navigation";
 import MenuBar from "./Menubar";
+import { ProductAPI } from "@/api/products/product.api";
+import { ProductInterface } from "@/types/product";
 
 // TypeScript Interfaces
-
 interface NavbarProps {
   categories: CategoryInterface[];
 }
@@ -19,10 +20,309 @@ interface MegaMenuProps {
   category: CategoryInterface;
 }
 
+interface SearchResult {
+  id: number;
+  name: string;
+  description?: string;
+  slug: string;
+  type?: "product" | "category" | "article";
+  imageUrl?: string;
+}
+
+interface SearchComponentProps {
+  isOpen: boolean;
+  onClose: () => void;
+  variant: "desktop" | "mobile";
+}
+
+// Reusable Search Component
+const SearchComponent: React.FC<SearchComponentProps> = ({
+  isOpen,
+  onClose,
+  variant,
+}) => {
+  const [searchQuery, setSearchQuery] = useState<string>("");
+  const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
+  const [isSearching, setIsSearching] = useState<boolean>(false);
+
+  const pathname = usePathname();
+
+  const searchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const searchInputRef = useRef<HTMLInputElement | null>(null);
+  const searchContainerRef = useRef<HTMLDivElement | null>(null);
+
+  // API call function
+  const performSearch = useCallback(async (query: string) => {
+    if (!query.trim()) {
+      setSearchResults([]);
+      return;
+    }
+
+    setIsSearching(true);
+    try {
+      const response = await ProductAPI.getProductByName(query);
+
+      if (response.status === 200) {
+        const data = (await response.data.products) as ProductInterface[];
+
+        setSearchResults(
+          data.map((item) => ({
+            id: item.id,
+            name: item.name,
+            slug: item.slug,
+            imageUrl: item.images[0].url,
+            // các trường khác nếu cần
+          }))
+        );
+        // setSearchResults(data.results || []);
+      } else {
+        // console.error("Search API error:", response.statusText);
+        // setSearchResults([]);
+      }
+    } catch (error) {
+      console.error("Search error:", error);
+      setSearchResults([]);
+    } finally {
+      setIsSearching(false);
+    }
+  }, []);
+
+  // Debounced search
+  const debouncedSearch = useCallback(
+    (query: string) => {
+      if (searchTimeoutRef.current) {
+        clearTimeout(searchTimeoutRef.current);
+      }
+
+      searchTimeoutRef.current = setTimeout(() => {
+        performSearch(query);
+      }, 300);
+    },
+    [performSearch]
+  );
+
+  // Handle search input change
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const query = e.target.value;
+    setSearchQuery(query);
+    debouncedSearch(query);
+  };
+
+  // Handle search result click
+  const handleSearchResultClick = (result: SearchResult) => {
+    onClose();
+    setSearchQuery("");
+    setSearchResults([]);
+
+    window.location.href = `/san-pham/${result.slug}`;
+  };
+
+  // Reset search when closed
+  useEffect(() => {
+    if (!isOpen) {
+      setSearchQuery("");
+      setSearchResults([]);
+      if (searchTimeoutRef.current) {
+        clearTimeout(searchTimeoutRef.current);
+      }
+    }
+  }, [isOpen]);
+  useEffect(() => {
+    if (pathname) {
+      console.log("PATH NAME", pathname);
+      onClose();
+    }
+  }, [pathname]);
+
+  // Close search when clicking outside (desktop only)
+  useEffect(() => {
+    if (variant === "mobile") return;
+
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as Node;
+      if (
+        searchContainerRef.current &&
+        !searchContainerRef.current.contains(target)
+      ) {
+        onClose();
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isOpen, onClose, variant]);
+
+  // Focus search input when opened
+  useEffect(() => {
+    if (isOpen && searchInputRef.current) {
+      searchInputRef.current.focus();
+    }
+  }, [isOpen]);
+
+  // Desktop Search Dropdown
+  if (variant === "desktop") {
+    if (!isOpen) return null;
+
+    return (
+      <div
+        ref={searchContainerRef}
+        className="absolute right-0 top-full mt-2 w-80 bg-white rounded-xl shadow-2xl border border-gray-200 overflow-hidden z-[9999]">
+        <div className="p-4 border-b border-gray-100">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4 pointer-events-none z-10" />
+            <input
+              ref={searchInputRef}
+              type="text"
+              value={searchQuery}
+              onChange={handleSearchChange}
+              placeholder="Tìm kiếm sản phẩm, danh mục..."
+              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none text-sm relative z-20"
+            />
+            {isSearching && (
+              <div className="absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none">
+                <div className="animate-spin rounded-full h-4 w-4 border-2 border-indigo-500 border-t-transparent"></div>
+              </div>
+            )}
+          </div>
+        </div>
+
+        <div className="max-h-80 overflow-y-auto relative z-30">
+          {searchQuery.trim() && !isSearching && searchResults.length === 0 && (
+            <div className="p-4 text-center text-gray-500 text-sm">
+              Không tìm thấy kết quả nào
+            </div>
+          )}
+
+          {searchResults.map((result) => (
+            <Link
+              key={`${result.type}-${result.id}`}
+              href={`/san-pham/${result.slug}`}
+              className="w-full p-3 border-b border-gray-100 last:border-b-0 text-left transition-colors duration-200 cursor-pointer relative z-40"
+              type="button">
+              <div className="flex items-center space-x-3">
+                {result.imageUrl && (
+                  <div className="flex-shrink-0 w-10 h-10 rounded-lg overflow-hidden bg-gray-100">
+                    <img
+                      src={result.imageUrl}
+                      alt={result.name}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                )}
+                <div className="flex-1 min-w-0">
+                  <div className="font-medium text-gray-900 text-sm truncate">
+                    {result.name}
+                  </div>
+                  {result.description && (
+                    <div className="text-xs text-gray-500 truncate mt-1">
+                      {result.description}
+                    </div>
+                  )}
+                  <div className="text-xs text-indigo-600 mt-1 capitalize">
+                    Sản phẩm
+                  </div>
+                </div>
+              </div>
+            </Link>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  // Mobile Search Overlay
+  if (variant === "mobile") {
+    if (!isOpen) return null;
+
+    return (
+      <div ref={searchContainerRef} className="fixed inset-0 bg-white z-[70]">
+        <div className="flex items-center p-4 border-b border-gray-200">
+          <button
+            onClick={onClose}
+            className="p-2 text-gray-500 hover:text-gray-700 mr-2">
+            <X className="h-5 w-5" />
+          </button>
+          <div className="flex-1 relative">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+            <input
+              ref={searchInputRef}
+              type="text"
+              value={searchQuery}
+              onChange={handleSearchChange}
+              placeholder="Tìm kiếm sản phẩm, danh mục..."
+              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none"
+            />
+            {isSearching && (
+              <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
+                <div className="animate-spin rounded-full h-4 w-4 border-2 border-indigo-500 border-t-transparent"></div>
+              </div>
+            )}
+          </div>
+        </div>
+
+        <div className="overflow-y-auto">
+          {searchQuery.trim() && !isSearching && searchResults.length === 0 && (
+            <div className="p-4 text-center text-gray-500">
+              Không tìm thấy kết quả nào
+            </div>
+          )}
+
+          {searchResults.map((result) => (
+            <Link
+              key={`${result.type}-${result.id}`}
+              href={`/san-pham/${result.slug}`}
+              className="w-full p-4 hover:bg-gray-50 border-b border-gray-100 text-left transition-colors duration-200">
+              <div className="flex items-center space-x-3">
+                {result.imageUrl && (
+                  <div className="flex-shrink-0 w-12 h-12 rounded-lg overflow-hidden bg-gray-100">
+                    <img
+                      src={result.imageUrl}
+                      alt={result.name}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                )}
+                <div className="flex-1 min-w-0">
+                  <div className="font-medium text-gray-900 truncate">
+                    {result.name}
+                  </div>
+                  {result.description && (
+                    <div className="text-sm text-gray-500 truncate mt-1">
+                      {result.description}
+                    </div>
+                  )}
+                  <div className="text-sm text-indigo-600 mt-1 capitalize">
+                    {result.type === "product"
+                      ? "Sản phẩm"
+                      : result.type === "category"
+                      ? "Danh mục"
+                      : "Bài viết"}
+                  </div>
+                </div>
+              </div>
+            </Link>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  return null;
+};
+
 const NavbarClient: React.FC<NavbarProps> = ({ categories }) => {
   const [activeDropdown, setActiveDropdown] = useState<number | null>(null);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
   const [isScrolled, setIsScrolled] = useState<boolean>(false);
+  const [isDesktopSearchOpen, setIsDesktopSearchOpen] =
+    useState<boolean>(false);
+  const [isMobileSearchOpen, setIsMobileSearchOpen] = useState<boolean>(false);
+
   const dropdownTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const pathname = usePathname();
 
@@ -34,7 +334,6 @@ const NavbarClient: React.FC<NavbarProps> = ({ categories }) => {
   const parentCategories: CategoryInterface[] = categories
     .filter((cat) => cat.parentId === null)
     .map((parentCat) => {
-      // Find all subcategories for this parent
       const subcategories = categories.filter(
         (cat) => cat.parentId === parentCat.id
       );
@@ -64,6 +363,7 @@ const NavbarClient: React.FC<NavbarProps> = ({ categories }) => {
       setActiveDropdown(null);
     }, 150);
   };
+
   useEffect(() => {
     setActiveDropdown(null);
   }, [pathname]);
@@ -110,17 +410,9 @@ const NavbarClient: React.FC<NavbarProps> = ({ categories }) => {
                         src={subcat.imageUrl}
                         alt={subcat.name}
                         className="h-32 w-full object-cover group-hover/item:scale-110 transition-transform duration-500"
-                        // fill={true}
                         width={0}
                         height={0}
                       />
-
-                      {/* <img
-                        src={subcat.imageUrl}
-                        alt={subcat.name}
-                        className="w-full h-32 object-cover group-hover/item:scale-110 transition-transform duration-500"
-                        loading="lazy"
-                      /> */}
                       <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover/item:opacity-100 transition-opacity duration-300"></div>
                     </div>
                     <div className="p-5">
@@ -165,13 +457,14 @@ const NavbarClient: React.FC<NavbarProps> = ({ categories }) => {
               height={70}
             />
           </Link>
-          <button className="flex sm:hidden bg-[#f2f2f2] flex-1 p-2  items-center gap-x-2 rounded-lg cursor-pointer">
+
+          {/* Mobile Search Button */}
+          <button
+            onClick={() => setIsMobileSearchOpen(true)}
+            className="flex sm:hidden bg-[#f2f2f2] flex-1 p-2 items-center gap-x-2 rounded-lg cursor-pointer">
             <Search className="h-5 w-5" />
             <span className="text-[#9b9b9b]">Tìm kiếm</span>
           </button>
-          {/* <button className="p-2 text-gray-500 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-all duration-200">
-            <Search className="h-5 w-5" />
-          </button> */}
 
           {/* Desktop Navigation - Centered */}
           <div className="hidden lg:block flex-1">
@@ -180,7 +473,7 @@ const NavbarClient: React.FC<NavbarProps> = ({ categories }) => {
                 <Link
                   href={`/danh-muc/${category.slug}`}
                   key={category.id}
-                  className="relative group "
+                  className="relative group"
                   onMouseEnter={() => handleMouseEnter(category.id)}
                   onMouseLeave={handleMouseLeave}>
                   <button className="flex items-center text-gray-700 hover:text-indigo-600 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 hover:bg-indigo-50 capitalize">
@@ -216,10 +509,21 @@ const NavbarClient: React.FC<NavbarProps> = ({ categories }) => {
 
           {/* Right side actions */}
           <div className="flex items-center space-x-1 px-2">
-            {/* Search */}
-            <button className="hidden sm:block p-2 text-gray-500 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-all duration-200">
-              <Search className="h-5 w-5" />
-            </button>
+            {/* Desktop Search */}
+            <div className="hidden sm:block relative">
+              <button
+                onClick={() => setIsDesktopSearchOpen(!isDesktopSearchOpen)}
+                className="p-2 text-gray-500 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-all duration-200">
+                <Search className="h-5 w-5" />
+              </button>
+
+              <SearchComponent
+                isOpen={isDesktopSearchOpen}
+                onClose={() => setIsDesktopSearchOpen(false)}
+                variant="desktop"
+              />
+            </div>
+
             {/* User */}
             <button className="p-2 text-gray-500 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-all duration-200">
               <User className="h-5 w-5" />
@@ -232,66 +536,18 @@ const NavbarClient: React.FC<NavbarProps> = ({ categories }) => {
                 2
               </span>
             </button>
-
-            {/* Mobile menu button */}
-            {/* <button
-              onClick={toggleMobileMenu}
-              className="lg:hidden p-2 text-gray-500 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-all duration-200">
-              {isMobileMenuOpen ? (
-                <X className="h-6 w-6" />
-              ) : (
-                <Menu className="h-6 w-6" />
-              )}
-            </button> */}
           </div>
         </div>
       </div>
 
-      <MenuBar />
-      {/* Mobile menu */}
-      {/* <div
-        className={`lg:hidden transition-all duration-300 ease-in-out ${
-          isMobileMenuOpen
-            ? "max-h-screen opacity-100"
-            : "max-h-0 opacity-0 overflow-hidden"
-        }`}>
-        <div className="px-4 pt-2 pb-6 bg-white border-t border-gray-100">
-          <div className="space-y-1">
-            {parentCategories.map((category: CategoryInterface) => (
-              <div key={category.id} className="space-y-1">
-                <div className="px-3 py-3 text-gray-700 font-medium capitalize border-b border-gray-100">
-                  {category.name}
-                </div>
-                {category.subCategories &&
-                  category.subCategories.map((subcat: CategoryInterface) => (
-                    <Link
-                      key={subcat.id}
-                      href={`/danh-muc/${subcat.slug}`}
-                      className="block pl-6 pr-3 py-2 text-sm text-gray-600 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors duration-200 capitalize">
-                      {subcat.name}
-                    </Link>
-                  ))}
-              </div>
-            ))}
+      {/* Mobile Search */}
+      <SearchComponent
+        isOpen={isMobileSearchOpen}
+        onClose={() => setIsMobileSearchOpen(false)}
+        variant="mobile"
+      />
 
-            <Link
-              href="/gioi-thieu"
-              className="text-gray-700 hover:text-indigo-600 px-3 py-2 rounded-lg text-sm font-medium transition-colors duration-200 hover:bg-indigo-50">
-              Giới thiệu
-            </Link>
-            <Link
-              href="/lien-he"
-              className="text-gray-700 hover:text-indigo-600 px-3 py-2 rounded-lg text-sm font-medium transition-colors duration-200 hover:bg-indigo-50">
-              Liên hệ
-            </Link>
-            <Link
-              href="/tin-tuc"
-              className="text-gray-700 hover:text-indigo-600 px-3 py-2 rounded-lg text-sm font-medium transition-colors duration-200 hover:bg-indigo-50">
-              Tin tức
-            </Link>
-          </div>
-        </div>
-      </div> */}
+      <MenuBar />
     </nav>
   );
 };

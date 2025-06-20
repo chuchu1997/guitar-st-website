@@ -19,6 +19,7 @@ import { FormatUtils } from "@/utils/format";
 import { BadgeFreeship } from "../Badge/freeship";
 import { DiscountComponent } from "../Discount/discount";
 import { BadgeFlashSale } from "../Badge/flashsale";
+import { PromotionInterface } from "@/types/promotion";
 
 export const RenderGiftItems = ({
   gift,
@@ -49,9 +50,11 @@ export const RenderGiftItems = ({
 
 interface ProductCardProps {
   product: ProductInterface;
+  promotion?: PromotionInterface;
 }
-export const ProductCard = ({ product }: ProductCardProps) => {
+export const ProductCard = ({ product, promotion }: ProductCardProps) => {
   const promotionProduct = product.promotionProducts;
+  console.log("PROMOTION", promotion);
 
   return (
     <div>
@@ -117,7 +120,9 @@ export const ProductCard = ({ product }: ProductCardProps) => {
 
             <div className="badge flex items-center gap-x-1">
               <BadgeFreeship />
-              {promotionProduct.length > 0 && <BadgeFlashSale />}
+              {promotionProduct.length > 0 && promotion && (
+                <BadgeFlashSale promotion={promotion} />
+              )}
             </div>
 
             <div className="">
