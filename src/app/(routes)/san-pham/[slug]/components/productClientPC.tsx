@@ -22,6 +22,7 @@ import { FormatUtils } from "@/utils/format";
 import { ImageLoader } from "@/components/ui/image-loader";
 import { ProductWidgets } from "@/components/ui/product/product";
 import EditorClientWrapper from "@/components/editor/editor-wrapper";
+import useCart from "@/hooks/use-cart";
 
 interface propsProductClientPC {
   product: ProductInterface;
@@ -40,6 +41,7 @@ export const ProductClientPC = ({ product }: propsProductClientPC) => {
   const [quantity, setQuantity] = useState(1);
   const [activeTab, setActiveTab] = useState("description");
   const [isWishlisted, setIsWishlisted] = useState(false);
+  const cartObject = useCart();
 
   const discountPercentage = product.originalPrice
     ? Math.round(
@@ -55,6 +57,9 @@ export const ProductClientPC = ({ product }: propsProductClientPC) => {
     }
   };
 
+  const addProductToCart = (product: ProductInterface) => {
+    cartObject.addItem(product);
+  };
   const renderRatingStars = (rating: number) => {
     return Array.from({ length: 5 }, (_, i) => (
       <Star
@@ -204,7 +209,11 @@ export const ProductClientPC = ({ product }: propsProductClientPC) => {
               </div>
 
               <div className="flex space-x-4">
-                <button className="flex-1 bg-black text-white py-3 px-6 rounded-lg font-semibold hover:bg-gray-800 transition-colors flex items-center justify-center space-x-2">
+                <button
+                  className="flex-1 bg-black text-white py-3 px-6 rounded-lg font-semibold hover:bg-gray-800 transition-colors flex items-center justify-center space-x-2"
+                  onClick={() => {
+                    addProductToCart(product);
+                  }}>
                   <ShoppingCart className="w-5 h-5" />
                   <span>Thêm vào giỏ hàng</span>
                 </button>

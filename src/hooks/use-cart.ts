@@ -1,22 +1,18 @@
+import { CartItemType } from "@/types/cart";
+import { ProductInterface } from "@/types/product";
 import { Product } from "@/types/ProjectInterface";
 import toast from "react-hot-toast";
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 
-interface CartItem extends Product {
-  stockQuantity: number;
-  stock: number; // ĐÂY LÀ PHẦN STOCK ORIGIN CỦA PRODUCT
-  isSelect?: boolean; // <== thêm vào đây
-
-}
 
 export interface CartStore {
-  items: CartItem[];
-  addItem: (data: Product) => void;
-  removeItem: (id: string) => void;
+  items: CartItemType[];
+  addItem: (data: ProductInterface) => void;
+  removeItem: (id: number) => void;
   removeAll: () => void;
-  updateQuantity: (id: string, quantity: number) => void;
-  toggleSelectItem:(id:string) =>void;
+  updateQuantity: (id: number, quantity: number) => void;
+  toggleSelectItem:(id:number) =>void;
   cleanSelectedItems:()=>void
 
 }
@@ -25,7 +21,7 @@ const useCart = create(
   persist<CartStore>(
     (set, get) => ({
       items: [],
-      toggleSelectItem: (id: string) => {
+      toggleSelectItem: (id: number) => {
         const updatedItems = get().items.map((item) => {
           if (item.id === id) {
             return { ...item, isSelect: !item.isSelect };
@@ -36,7 +32,7 @@ const useCart = create(
         set({ items: updatedItems });
       },
      
-      addItem: (data: Product) => {
+      addItem: (data: ProductInterface) => {
         const currentItems = get().items;
         const existItem = currentItems.find((item) => item.id === data.id);
 
@@ -44,15 +40,14 @@ const useCart = create(
           return toast("Sản phẩm đã tồn tại trong giỏ hàng!");
         }
 
-        if (data.stockQuantity < 1) {
+        if (data.stock < 1) {
           return toast.error("Sản phẩm đã hết hàng!");
         }
 
-        const newItem: CartItem = {
+        const newItem: CartItemType = {
           ...data,
+          stockAvailable:data.stock,
           stockQuantity: 1, // mặc định khi thêm vào là 1
-          stock:data.stockQuantity
-          ,
           isSelect:true
         };
 
@@ -60,7 +55,7 @@ const useCart = create(
         toast.success("Đã thêm sản phẩm vào giỏ hàng");
       },
 
-      removeItem: (id: string) => {
+      removeItem: (id: number) => {
         const newItems = get().items.filter((item) => item.id !== id);
         set({ items: newItems });
         toast.success("Đã xóa sản phẩm khỏi giỏ hàng");
@@ -70,7 +65,7 @@ const useCart = create(
         set({ items: [] });
       },
 
-      updateQuantity: (id: string, quantity: number) => {
+      updateQuantity: (id: number, quantity: number) => {
         const updatedItems = get().items.map((item) => {
           if (item.id === id) {
             if (quantity < 1) {
@@ -78,8 +73,8 @@ const useCart = create(
               return item;
             }
 
-            if (quantity > item.stock) {
-              toast.error(`Chỉ còn ${item.stock} sản phẩm trong kho`);
+            if (quantity > item.stockAvailable) {
+              toast.error(`Chỉ còn ${item.stockQuantity} sản phẩm trong kho`);
               return item;
             }
 

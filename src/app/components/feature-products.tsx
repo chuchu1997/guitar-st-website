@@ -11,7 +11,7 @@ import { Star } from "lucide-react";
 const FeatureProducts = async () => {
   const response = await ProductAPI.getFeatureProducts({});
   const featureProducts = response.data.products as ProductInterface[];
-  console.log("FF", featureProducts);
+
   const allProductPromotions: ProductPromotion[] = featureProducts.flatMap(
     (product) => product.promotionProducts
   );

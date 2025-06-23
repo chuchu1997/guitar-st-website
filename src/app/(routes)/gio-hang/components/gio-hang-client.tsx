@@ -9,7 +9,7 @@ import useCart from "@/hooks/use-cart";
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import CartComponent from "./cart";
-import OrderHistory from "./order-history";
+// import OrderHistory from "./order-history";
 
 const GioHangClient = () => {
   const router = useRouter();
@@ -37,7 +37,7 @@ const GioHangClient = () => {
     0
   );
 
-  const toggleSelectItem = (id: string) => {
+  const toggleSelectItem = (id: number) => {
     cart.toggleSelectItem(id);
   };
   useEffect(() => {
@@ -88,7 +88,8 @@ const GioHangClient = () => {
 
             <TabsContent value="orders">
               <div className="rounded-lg p-6  animate-fade-in-up">
-                <OrderHistory />
+                order history
+                {/* <OrderHistory /> */}
               </div>
             </TabsContent>
           </div>

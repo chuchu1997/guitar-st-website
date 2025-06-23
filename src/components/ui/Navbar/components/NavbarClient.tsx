@@ -10,6 +10,7 @@ import { usePathname } from "next/navigation";
 import MenuBar from "./Menubar";
 import { ProductAPI } from "@/api/products/product.api";
 import { ProductInterface } from "@/types/product";
+import useCart from "@/hooks/use-cart";
 
 // TypeScript Interfaces
 interface NavbarProps {
@@ -129,7 +130,6 @@ const SearchComponent: React.FC<SearchComponentProps> = ({
   }, [isOpen]);
   useEffect(() => {
     if (pathname) {
-      console.log("PATH NAME", pathname);
       onClose();
     }
   }, [pathname]);
@@ -319,6 +319,8 @@ const NavbarClient: React.FC<NavbarProps> = ({ categories }) => {
   const [activeDropdown, setActiveDropdown] = useState<number | null>(null);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
   const [isScrolled, setIsScrolled] = useState<boolean>(false);
+  const cartObject = useCart();
+
   const [isDesktopSearchOpen, setIsDesktopSearchOpen] =
     useState<boolean>(false);
   const [isMobileSearchOpen, setIsMobileSearchOpen] = useState<boolean>(false);
@@ -530,12 +532,16 @@ const NavbarClient: React.FC<NavbarProps> = ({ categories }) => {
             </button>
 
             {/* Shopping bag */}
-            <button className="relative p-2 text-gray-500 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-all duration-200">
+
+            <Link
+              href="/gio-hang"
+              className="relative p-2 text-gray-500 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-all duration-200">
               <ShoppingBag className="h-5 w-5" />
               <span className="absolute -top-1 -right-1 h-4 w-4 bg-red-500 text-white rounded-full text-xs flex items-center justify-center">
-                2
+                {cartObject.items.length}
               </span>
-            </button>
+            </Link>
+            {/* <button className=""></button> */}
           </div>
         </div>
       </div>

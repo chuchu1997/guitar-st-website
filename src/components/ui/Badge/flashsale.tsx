@@ -12,9 +12,15 @@ interface propsFlashSaleBadge {
 
 export const BadgeFlashSale = ({ promotion }: propsFlashSaleBadge) => {
   return (
-    <Badge className="bg-[#fdf0f7] text-price text-sm font-semibold flex items-center">
-      <Zap />
-      <FlashSaleCountDown promotion={promotion} />
-    </Badge>
+    <>
+      {new Date(promotion.endDate).getTime() > Date.now() && (
+        <span>
+          <Badge className="bg-[#fdf0f7] text-price text-sm font-semibold flex items-center">
+            <Zap />
+            <FlashSaleCountDown promotion={promotion} />
+          </Badge>
+        </span>
+      )}
+    </>
   );
 };

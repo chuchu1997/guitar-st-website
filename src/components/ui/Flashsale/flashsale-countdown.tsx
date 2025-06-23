@@ -51,10 +51,14 @@ export const FlashSaleCountDown = ({
   const timeObject = formatTime(timeLeft);
 
   return (
-    <div className={cn("text-xs flex items-center", className)}>
-      <span className="">{timeObject.hours}:</span>
-      <span className="">{timeObject.minutes}:</span>
-      <span className="">{timeObject.secs}</span>
-    </div>
+    <>
+      {timeLeft > 0 && (
+        <div className={cn("text-xs flex items-center", className)}>
+          <span className="">{timeObject.hours}:</span>
+          <span className="">{timeObject.minutes}:</span>
+          <span className="">{timeObject.secs}</span>
+        </div>
+      )}
+    </>
   );
 };

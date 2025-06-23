@@ -54,8 +54,6 @@ interface ProductCardProps {
 }
 export const ProductCard = ({ product, promotion }: ProductCardProps) => {
   const promotionProduct = product.promotionProducts;
-  console.log("PROMOTION", promotion);
-
   return (
     <div>
       <Link href={`/san-pham/${product.slug}`}>

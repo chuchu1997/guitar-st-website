@@ -8,6 +8,10 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { motion } from "framer-motion";
 import { useCookies } from "react-cookie"; // Dùng để quản lý cookie
 import { Button } from "@/components/ui/button"; // Adjust the path if necessary
+import { ImageLoader } from "@/components/ui/image-loader";
+import { FormatUtils } from "@/utils/format";
+import { DiscountComponent } from "@/components/ui/Discount/discount";
+import { CartItem } from "./cart-item";
 
 const CartComponent = () => {
   const router = useRouter();
@@ -37,7 +41,7 @@ const CartComponent = () => {
     0
   );
 
-  const toggleSelectItem = (id: string) => {
+  const toggleSelectItem = (id: number) => {
     cart.toggleSelectItem(id);
   };
   const onCheckout = async () => {
@@ -76,61 +80,21 @@ const CartComponent = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.1 }}
-                className="flex flex-col sm:flex-row items-center bg-white shadow-sm hover:shadow-md rounded-xl p-4 gap-4 border border-gray-100 transition-all duration-300">
+                className="flex items-start bg-white shadow-sm hover:shadow-md rounded-xl p-4 gap-4 border border-gray-100 transition-all duration-300">
                 <div className="flex items-center gap-2">
                   <Checkbox
                     checked={item.isSelect}
                     onCheckedChange={() => toggleSelectItem(item.id)}
                   />
-                  <img
+
+                  {/* <img
                     src={item.images[0].url}
                     alt={item.name}
                     className="w-24 h-24 sm:w-28 sm:h-28 rounded-lg object-cover"
-                  />
+                  /> */}
                 </div>
-
-                <div className="flex-grow">
-                  <div className="flex flex-col sm:flex-row sm:justify-between">
-                    <h2 className="text-lg md:text-xl font-semibold text-gray-800">
-                      {item.name}
-                    </h2>
-                    <p className="text-lg md:text-xl font-bold text-accent italic">
-                      {(item.price * item.stockQuantity).toLocaleString()}₫
-                    </p>
-                  </div>
-                  <p className="text-sm text-gray-500 mt-1">
-                    {item.price.toLocaleString()}₫
-                  </p>
-
-                  <div className="flex items-center justify-between mt-4">
-                    <div className="flex items-center border border-gray-200 rounded-lg overflow-hidden">
-                      <button
-                        onClick={() => {
-                          cart.updateQuantity(item.id, item.stockQuantity - 1);
-                        }}
-                        disabled={item.stockQuantity === 1}
-                        className="px-3 py-1 bg-gray-50 hover:bg-gray-100 text-gray-600 transition-colors">
-                        <Minus size={16} />
-                      </button>
-                      <span className="px-4 py-1 text-center min-w-12">
-                        {item.stockQuantity}
-                      </span>
-                      <button
-                        onClick={() => {
-                          cart.updateQuantity(item.id, item.stockQuantity + 1);
-                        }}
-                        className="px-3 py-1 bg-gray-50 hover:bg-gray-100 text-gray-600 transition-colors">
-                        <Plus size={16} />
-                      </button>
-                    </div>
-
-                    <button
-                      onClick={() => cart.removeItem(item.id)}
-                      className="cursor-pointer text-red-500 hover:text-red-700 flex items-center gap-1 transition-colors">
-                      <Trash2 size={16} />
-                      <span className="text-sm">Xóa</span>
-                    </button>
-                  </div>
+                <div className="flex-grow ">
+                  <CartItem product={item} cart={cart} />
                 </div>
               </motion.div>
             ))}
