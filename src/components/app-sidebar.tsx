@@ -30,9 +30,6 @@ import { useState } from "react";
 
 import { cn } from "@/lib/utils";
 import { Category } from "@/types/ProjectInterface";
-import SearchWithSuggestions from "./ui/searchBar";
-import IconButton from "./ui/icon-button";
-import { CartIconButton } from "./ui/cart-icon-btn";
 
 interface AppSidebarProps {
   categories: Category[];

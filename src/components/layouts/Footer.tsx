@@ -95,7 +95,7 @@ const Footer: React.FC = () => {
         </div> */}
 
         {/* Newsletter Signup */}
-        <div className="py-16 bg-gradient-to-r from-transparent via-yellow-400/5 to-transparent">
+        {/* <div className="py-16 bg-gradient-to-r from-transparent via-yellow-400/5 to-transparent">
           <div className="max-w-4xl mx-auto px-4 text-center">
             <div className="bg-gradient-to-r from-yellow-400/10 to-yellow-300/10 backdrop-blur-sm rounded-3xl p-12 border border-yellow-400/20">
               <h3 className="text-4xl font-bold mb-4">
@@ -118,7 +118,7 @@ const Footer: React.FC = () => {
               </div>
             </div>
           </div>
-        </div>
+        </div> */}
 
         {/* Main Footer Content */}
         <div className="py-16">

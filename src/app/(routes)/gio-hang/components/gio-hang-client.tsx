@@ -21,22 +21,6 @@ const GioHangClient = () => {
     (item) => item.isSelect // Kiểm tra xem sản phẩm có được chọn hay không
   );
 
-  const tongTien = selectedCartItems.reduce(
-    (sum, item) => sum + item.price * item.stockQuantity,
-    0
-  );
-
-  const tongSanPham = selectedCartItems.reduce(
-    (sum, item) => sum + item.stockQuantity,
-    0
-  );
-
-  // Tổng tất cả sản phẩm (dùng ở phần tiêu đề)
-  const tongSanPhamTatCa = cart.items.reduce(
-    (sum, item) => sum + item.stockQuantity,
-    0
-  );
-
   const toggleSelectItem = (id: number) => {
     cart.toggleSelectItem(id);
   };

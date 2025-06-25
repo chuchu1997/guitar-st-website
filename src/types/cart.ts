@@ -1,3 +1,5 @@
+import { ProductInterface } from "./product";
+import { ProductPromotion, PromotionInterface } from "./promotion";
 
 
 
@@ -7,12 +9,16 @@ interface CartImage {
 
 export interface CartItemType {
   id: number;
-  name: string;
-  price: number;
-  originalPrice?: number;
   stockQuantity: number;
-  stockAvailable:number;
-  
   isSelect: boolean;
-  images: CartImage[];
+  
+}
+export interface CartTotals {
+  totalItems: number;
+  totalPrice: number;
+}
+
+export interface CartProduct extends ProductInterface {
+  cartQuantity: number;
+  isSelect: boolean;
 }

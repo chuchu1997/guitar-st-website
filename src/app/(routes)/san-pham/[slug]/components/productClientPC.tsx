@@ -23,6 +23,7 @@ import { ImageLoader } from "@/components/ui/image-loader";
 import { ProductWidgets } from "@/components/ui/product/product";
 import EditorClientWrapper from "@/components/editor/editor-wrapper";
 import useCart from "@/hooks/use-cart";
+import { discountTypeEnum } from "@/types/promotion";
 
 interface propsProductClientPC {
   product: ProductInterface;
@@ -43,11 +44,34 @@ export const ProductClientPC = ({ product }: propsProductClientPC) => {
   const [isWishlisted, setIsWishlisted] = useState(false);
   const cartObject = useCart();
 
-  const discountPercentage = product.originalPrice
-    ? Math.round(
+  const promotion = product.promotionProducts[0];
+
+  const discountPercentage = (() => {
+    // Nếu có khuyến mãi
+    if (promotion) {
+      const basePrice = product.price;
+      const promotionPrice =
+        promotion.discountType === discountTypeEnum.PERCENT
+          ? basePrice * (1 - promotion.discount / 100)
+          : basePrice - promotion.discount;
+
+      return Math.round(((basePrice - promotionPrice) / basePrice) * 100);
+    }
+
+    // Nếu không có khuyến mãi, nhưng có originalPrice > price
+    if (product.originalPrice && product.originalPrice > product.price) {
+      return Math.round(
         ((product.originalPrice - product.price) / product.originalPrice) * 100
-      )
-    : 0;
+      );
+    }
+
+    return 0;
+  })();
+  const showLineThroughPrice = promotion
+    ? product.price
+    : product.originalPrice && product.originalPrice > product.price
+    ? product.originalPrice
+    : null;
 
   const handleQuantityChange = (type: "increase" | "decrease") => {
     if (type === "increase" && quantity < product.stock) {
@@ -56,9 +80,18 @@ export const ProductClientPC = ({ product }: propsProductClientPC) => {
       setQuantity(quantity - 1);
     }
   };
+  const getDiscountedPrice = () => {
+    const promotionProductFlashSale = product.promotionProducts[0];
+    if (!promotionProductFlashSale) return product.price;
 
+    if (promotionProductFlashSale.discountType === discountTypeEnum.PERCENT) {
+      return product.price * (1 - promotionProductFlashSale.discount / 100);
+    }
+
+    return product.price - promotionProductFlashSale.discount;
+  };
   const addProductToCart = (product: ProductInterface) => {
-    cartObject.addItem(product);
+    cartObject.addItem(product, quantity);
   };
   const renderRatingStars = (rating: number) => {
     return Array.from({ length: 5 }, (_, i) => (
@@ -122,16 +155,23 @@ export const ProductClientPC = ({ product }: propsProductClientPC) => {
             <div className="space-y-2">
               <div className="flex items-center space-x-3">
                 <span className="text-4xl font-bold text-red-600">
-                  {FormatUtils.formatPriceVND(product.price)}
+                  {FormatUtils.formatPriceVND(getDiscountedPrice())}
                 </span>
                 {product.originalPrice && (
                   <>
-                    <span className="text-xl text-gray-400 line-through">
-                      ${product.originalPrice.toLocaleString()}
-                    </span>
-                    <span className="bg-red-100 text-red-800 text-sm font-semibold px-2 py-1 rounded">
+                    {showLineThroughPrice && (
+                      <p className="text-xs sm:text-sm md:text-base lg:text-lg text-gray-400 opacity-80 line-through font-medium">
+                        {FormatUtils.formatPriceVND(showLineThroughPrice)}
+                      </p>
+                    )}
+                    <span className="text-[12px] bg-red-100 text-red-600 font-semibold px-2 py-0.5 rounded">
                       -{discountPercentage}%
                     </span>
+                    {promotion && (
+                      <span className="text-[12px] bg-red-100 text-red-600 font-semibold px-2 py-0.5 rounded">
+                        Flash Sale
+                      </span>
+                    )}
                   </>
                 )}
               </div>

@@ -17,10 +17,49 @@ import { ProductImageGallery } from "./productImageGallery";
 import { ImageLoader } from "@/components/ui/image-loader";
 import { ProductWidgets } from "@/components/ui/product/product";
 import EditorClientWrapper from "@/components/editor/editor-wrapper";
+import { discountTypeEnum } from "@/types/promotion";
 interface propsProductMobile {
   product: ProductInterface;
 }
 export default function ProductMobile({ product }: propsProductMobile) {
+  const promotion = product.promotionProducts[0];
+  const discountPercentage = (() => {
+    // Nếu có khuyến mãi
+    if (promotion) {
+      const basePrice = product.price;
+      const promotionPrice =
+        promotion.discountType === discountTypeEnum.PERCENT
+          ? basePrice * (1 - promotion.discount / 100)
+          : basePrice - promotion.discount;
+
+      return Math.round(((basePrice - promotionPrice) / basePrice) * 100);
+    }
+
+    // Nếu không có khuyến mãi, nhưng có originalPrice > price
+    if (product.originalPrice && product.originalPrice > product.price) {
+      return Math.round(
+        ((product.originalPrice - product.price) / product.originalPrice) * 100
+      );
+    }
+
+    return 0;
+  })();
+  const showLineThroughPrice = promotion
+    ? product.price
+    : product.originalPrice && product.originalPrice > product.price
+    ? product.originalPrice
+    : null;
+  const getDiscountedPrice = () => {
+    const promotionProductFlashSale = product.promotionProducts[0];
+    if (!promotionProductFlashSale) return product.price;
+
+    if (promotionProductFlashSale.discountType === discountTypeEnum.PERCENT) {
+      return product.price * (1 - promotionProductFlashSale.discount / 100);
+    }
+
+    return product.price - promotionProductFlashSale.discount;
+  };
+
   const StickyBottomActions = () => (
     <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-4 z-50">
       <div className="flex gap-3">
@@ -54,23 +93,20 @@ export default function ProductMobile({ product }: propsProductMobile) {
           <div className="mb-4">
             <div className="flex items-center gap-2 mb-2 flex-wrap">
               <p className="text-2xl font-bold text-red-500 order-1">
-                {FormatUtils.formatPriceVND(product.price)}
+                {FormatUtils.formatPriceVND(getDiscountedPrice())}
               </p>
               <BadgePercent size={18} className="text-red-500 order-3" />
-              <p className="text-base font-medium text-gray-400 line-through order-2">
-                {FormatUtils.formatPriceVND(product.originalPrice ?? 1000)}
-              </p>
+
+              {showLineThroughPrice && (
+                <p className="text-base font-medium text-gray-400 line-through order-2">
+                  {FormatUtils.formatPriceVND(showLineThroughPrice)}
+                </p>
+              )}
 
               {product.originalPrice &&
                 product.originalPrice > product.price && (
                   <div className="bg-red-100 text-red-600 rounded-md px-2 py-1 text-xs font-semibold order-4">
-                    -
-                    {Math.round(
-                      ((product.originalPrice - product.price) /
-                        product.originalPrice) *
-                        100
-                    )}
-                    %
+                    -{discountPercentage}%
                   </div>
                 )}
             </div>

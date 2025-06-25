@@ -12,37 +12,86 @@ import { ImageLoader } from "@/components/ui/image-loader";
 import { FormatUtils } from "@/utils/format";
 import { DiscountComponent } from "@/components/ui/Discount/discount";
 import { CartItem } from "./cart-item";
+import { CartProduct } from "@/types/cart";
+import { ProductAPI } from "@/api/products/product.api";
+import { ProductInterface } from "@/types/product";
+import { discountTypeEnum } from "@/types/promotion";
 
 const CartComponent = () => {
   const router = useRouter();
   const [isMouted, setIsMounted] = useState(true);
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
 
   const cart = useCart();
-  const selectedCartItems = cart.items.filter(
-    (item) => item.isSelect // Kiểm tra xem sản phẩm có được chọn hay không
-  );
+  const [productCarts, setProductCarts] = useState<CartProduct[]>([]);
+  const [totalBill, setTotalBill] = useState<number>(0);
+  const [totalQuantity, setTotalQuantity] = useState<number>(0);
 
-  const tongTien = selectedCartItems.reduce(
-    (sum, item) => sum + item.price * item.stockQuantity,
-    0
-  );
-
-  const tongSanPham = selectedCartItems.reduce(
-    (sum, item) => sum + item.stockQuantity,
-    0
-  );
-
-  // Tổng tất cả sản phẩm (dùng ở phần tiêu đề)
   const tongSanPhamTatCa = cart.items.reduce(
     (sum, item) => sum + item.stockQuantity,
     0
   );
 
+  useEffect(() => {
+    setIsMounted(true);
+    fetchProductRelateWithCart();
+  }, []);
+
+  useEffect(() => {
+    const selectedItems = productCarts.filter((item) => item.isSelect);
+
+    const total = selectedItems.reduce((sum, item) => {
+      const price = item.promotionProducts?.[0]
+        ? // Nếu có khuyến mãi
+          item.promotionProducts[0].discountType === discountTypeEnum.PERCENT
+          ? item.price * (1 - item.promotionProducts[0].discount / 100)
+          : item.price - item.promotionProducts[0].discount
+        : item.price;
+
+      return sum + price * item.cartQuantity;
+    }, 0);
+
+    const quantity = selectedItems.reduce(
+      (sum, item) => sum + item.cartQuantity,
+      0
+    );
+
+    setTotalBill(total);
+    setTotalQuantity(quantity);
+  }, [productCarts]);
+  const onUpdateQuantity = (id: number, newQuantity: number, stock: number) => {
+    cart.updateQuantity(id, newQuantity, stock);
+    setProductCarts((prev) =>
+      prev.map((item) =>
+        item.id === id ? { ...item, cartQuantity: newQuantity } : item
+      )
+    );
+  };
+  const fetchProductRelateWithCart = async () => {
+    const { items } = cart;
+
+    const ids = items.map((item) => item.id);
+    if (ids.length > 0) {
+      const res = await ProductAPI.getProductByIDS(ids);
+      const fetchedProducts: ProductInterface[] = res.data.products;
+      const merged = fetchedProducts.map((product) => {
+        const cartItem = items.find((item) => item.id === product.id);
+        return {
+          ...product,
+          cartQuantity: cartItem?.stockQuantity || 1,
+          isSelect: cartItem?.isSelect ?? true,
+        };
+      });
+      setProductCarts(merged);
+    }
+  };
+
   const toggleSelectItem = (id: number) => {
     cart.toggleSelectItem(id);
+    setProductCarts((prev) =>
+      prev.map((item) =>
+        item.id === id ? { ...item, isSelect: !item.isSelect } : item
+      )
+    );
   };
   const onCheckout = async () => {
     router.push(`/checkout`);
@@ -74,7 +123,7 @@ const CartComponent = () => {
         <div className="flex flex-col lg:grid lg:grid-cols-3 gap-8">
           {/* Danh sách sản phẩm */}
           <div className="lg:col-span-2 space-y-4">
-            {cart.items.map((item, index) => (
+            {productCarts.map((item, index) => (
               <motion.div
                 key={item.id}
                 initial={{ opacity: 0, y: 20 }}
@@ -94,7 +143,11 @@ const CartComponent = () => {
                   /> */}
                 </div>
                 <div className="flex-grow ">
-                  <CartItem product={item} cart={cart} />
+                  <CartItem
+                    product={item}
+                    cart={cart}
+                    onUpdateQuantity={onUpdateQuantity}
+                  />
                 </div>
               </motion.div>
             ))}
@@ -109,13 +162,13 @@ const CartComponent = () => {
 
               <div className="space-y-3 mb-4 text-gray-600">
                 <div className="flex justify-between">
-                  <span>Tạm tính ({tongSanPham} sản phẩm):</span>
-                  <span>{tongTien.toLocaleString()}₫</span>
+                  <span>Tạm tính ({totalQuantity} sản phẩm):</span>
+                  <span>{FormatUtils.formatPriceVND(totalBill)}</span>
                 </div>
                 <div className="flex justify-between">
                   <span>Phí vận chuyển:</span>
                   <span className="text-green-600">
-                    {tongTien > 0 ? "Miễn phí" : "0₫"}
+                    {totalBill > 0 ? "Miễn phí" : "0₫"}
                   </span>
                 </div>
               </div>
@@ -124,7 +177,7 @@ const CartComponent = () => {
                 <div className="flex justify-between font-bold text-lg">
                   <span>Tổng cộng:</span>
                   <span className="text-accent">
-                    {tongTien.toLocaleString()}₫
+                    <span>{FormatUtils.formatPriceVND(totalBill)}</span>
                   </span>
                 </div>
                 <p className="text-xs text-gray-500 mt-1">
@@ -134,9 +187,9 @@ const CartComponent = () => {
 
               <Button
                 className="w-full py-6 text-lg text-accent transition-all duration-300 rounded-lg disabled:opacity-50"
-                disabled={selectedCartItems.length === 0}
+                disabled={cart.items.length === 0}
                 onClick={onCheckout}>
-                Tiến hành thanh toán ({tongSanPham})
+                Tiến hành thanh toán ({totalQuantity})
               </Button>
 
               <div className="mt-4 text-center">

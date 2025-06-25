@@ -32,6 +32,7 @@ export const FlashSaleComponentView = () => {
 
     if (res.status === 200 && res.data.length > 0) {
       const promotion = res.data[0] as PromotionInterface;
+      console.log("PROMOTION", promotion);
       setFlashSale(promotion);
       setPromotionProducts(promotion.promotionProducts);
     }
