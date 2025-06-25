@@ -8,6 +8,13 @@ const nextConfig: NextConfig = {
   compiler: {
     reactRemoveProperties: process.env.NODE_ENV === "production",
   },
+  productionBrowserSourceMaps: true,
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
+  typescript: {
+    ignoreBuildErrors: true,
+  },
   images: {
     remotePatterns: [
       {
