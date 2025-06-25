@@ -83,7 +83,7 @@ import { Suspense } from "react";
 // }
 
 const DanhMucPage = async () => {
-  console.log("DANH MUC CALL TRUOC")
+
   return (
     <div className="container mx-auto">
       {/* <Suspense fallback={<CircleLoading />}>
