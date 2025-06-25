@@ -5,8 +5,8 @@ import toast from "react-hot-toast";
 
 console.log("BASE URL", process.env.NEXT_PUBLIC_API);
 const api = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API,
-  timeout: 10000, // Thời gian timeout là 10 giây
+  baseURL: process.env.NEXT_PUBLIC_API || "https://api.45.32.105.240.sslip.io",
+  timeout: 20000, // Thời gian timeout là 10 giây
 });
 
 // Gắn request interceptor
