@@ -15,14 +15,14 @@ const api = axios.create({
 // Gắn request interceptor
 api.interceptors.request.use(
   (config) => {
-    const access_token =
-      typeof window !== "undefined"
-        ? localStorage.getItem("access_token")
-        : null;
+    // const access_token =
+    //   typeof window !== "undefined"
+    //     ? localStorage.getItem("access_token")
+    //     : null;
 
-    if (access_token && config.headers) {
-      config.headers["Authorization"] = `Bearer ${access_token}`;
-    }
+    // if (access_token && config.headers) {
+    //   config.headers["Authorization"] = `Bearer ${access_token}`;
+    // }
     // GẮN TOKEN VÀO HEADER CỦA TẤT CẢ CÁC REQUEST
     return config;
   },
@@ -51,8 +51,8 @@ api.interceptors.response.use(
         toast.error("⛔ Lỗi xác thực - Vui lòng đăng nhập lại");
         console.error("🚫 401 Error:", message);
 
-        localStorage.removeItem("token");
-        window.location.href = "/login";
+        // localStorage.removeItem("token");
+        // window.location.href = "/login";
         break;
 
       case 403:
