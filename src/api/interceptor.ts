@@ -2,10 +2,8 @@
 
 import axios from "axios";
 import toast from "react-hot-toast";
-import { getBaseApiUrl } from "@/utils/getBaseApiURL";
-console.log("BASE URL PROCESS", getBaseApiUrl());
 const api = axios.create({
-  baseURL: getBaseApiUrl(),
+  baseURL: process.env.NEXT_PUBLIC_API || "https://api.45.32.105.240.sslip.io",
   timeout: 20000, // Thời gian timeout là 10 giây
 });
 
