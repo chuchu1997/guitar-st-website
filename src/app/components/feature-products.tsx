@@ -1,7 +1,6 @@
 /** @format */
 
 import { ProductAPI } from "@/api/products/product.api";
-import { ProductWidgets } from "@/components/ui/product/product";
 import { ProductCard } from "@/components/ui/product/product-card";
 import { SectionHeader } from "@/components/ui/section/section-header";
 import { ProductInterface } from "@/types/product";
@@ -9,24 +8,33 @@ import { ProductPromotion, PromotionInterface } from "@/types/promotion";
 import { Star } from "lucide-react";
 
 const FeatureProducts = async () => {
-  const response = await ProductAPI.getFeatureProducts({});
-  const featureProducts = response.data.products as ProductInterface[];
+  const isBuildTime = process.env.SKIP_BUILD_STATIC_GENERATION === "true";
 
-  const allProductPromotions: ProductPromotion[] = featureProducts.flatMap(
-    (product) => product.promotionProducts
-  );
-  const uniquePromotionsMap = new Map<number, PromotionInterface>();
+  let featureProducts: ProductInterface[] = [];
+  let promotions: PromotionInterface[] = [];
 
-  for (const promo of allProductPromotions) {
-    if (promo.promotion && !uniquePromotionsMap.has(promo.promotionId)) {
-      uniquePromotionsMap.set(promo.promotionId, promo.promotion);
+  if (!isBuildTime) {
+    try {
+      const response = await ProductAPI.getFeatureProducts({});
+      featureProducts = response.data.products as ProductInterface[];
+
+      const allProductPromotions: ProductPromotion[] = featureProducts.flatMap(
+        (product) => product.promotionProducts
+      );
+
+      const uniquePromotionsMap = new Map<number, PromotionInterface>();
+
+      for (const promo of allProductPromotions) {
+        if (promo.promotion && !uniquePromotionsMap.has(promo.promotionId)) {
+          uniquePromotionsMap.set(promo.promotionId, promo.promotion);
+        }
+      }
+
+      promotions = Array.from(uniquePromotionsMap.values());
+    } catch (error) {
+      console.error("Failed to fetch featured products:", error);
     }
   }
-
-  const promotions = Array.from(uniquePromotionsMap.values());
-
-  //   featureProducts[0].promotionProducts[0].
-  // console.log("FF",featureProducts)
 
   return (
     <section className="py-16">
@@ -54,4 +62,5 @@ const FeatureProducts = async () => {
     </section>
   );
 };
+
 export default FeatureProducts;
