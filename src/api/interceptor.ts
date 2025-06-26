@@ -2,8 +2,13 @@
 
 import axios from "axios";
 import toast from "react-hot-toast";
+
+const baseURL =
+  typeof window !== "undefined"
+    ? process.env.NEXT_PUBLIC_API
+    : process.env.API_INTERNAL_URL || "http://api:3000";
 const api = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API || "https://api.45.32.105.240.sslip.io",
+  baseURL: baseURL,
   timeout: 20000, // Thời gian timeout là 10 giây
 });
 
