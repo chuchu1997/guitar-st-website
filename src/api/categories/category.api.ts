@@ -4,6 +4,7 @@ import api from "../interceptor";
 const storeID = process.env.STORE_ID || 1;
 
 const url = `${process.env.NEXT_PUBLIC_API}/categories`;
+console.log("PULIC API URL", url);
 export const CategoryAPI = {
   getCategoryWithSlug: async (slug: string, currentPage: number) => {
     return await api({
