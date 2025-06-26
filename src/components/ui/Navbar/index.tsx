@@ -12,13 +12,21 @@ export const dynamic = "force-dynamic";
 const Navbar = async () => {
   let categories: CategoryInterface[] = [];
 
-  const response = await CategoryAPI.getAllCategoriesOfStore({
-    justGetParent: false,
-  });
-  if (response.status === 200) {
-    const data = response.data as { categories: CategoryInterface[] };
+  const isBuildTime = process.env.SKIP_BUILD_STATIC_GENERATION === "true";
 
-    categories = data.categories;
+  if (!isBuildTime) {
+    try {
+      const response = await CategoryAPI.getAllCategoriesOfStore({
+        justGetParent: false,
+      });
+
+      if (response.status === 200) {
+        const data = response.data as { categories: CategoryInterface[] };
+        categories = data.categories;
+      }
+    } catch (error) {
+      console.error("Failed to fetch categories in Navbar:", error);
+    }
   }
 
   //LẤY TẤT CẢ CATEGORIES BAO GỒM CẢ CATEGORY CON!!
