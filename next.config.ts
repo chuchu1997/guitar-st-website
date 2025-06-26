@@ -4,17 +4,22 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   reactStrictMode: false,
-  compress: true,
-  compiler: {
-    reactRemoveProperties: process.env.NODE_ENV === "production",
-  },
+  output: "standalone",
+  // experimental:{
+  //   serverActions:true
+  // },
+
+  // compress: true,
+  // compiler: {
+  //   reactRemoveProperties: process.env.NODE_ENV === "production",
+  // },
   productionBrowserSourceMaps: true,
   eslint: {
     ignoreDuringBuilds: true,
   },
-  typescript: {
-    ignoreBuildErrors: true,
-  },
+  // typescript: {
+  //   ignoreBuildErrors: true,
+  // },
   images: {
     remotePatterns: [
       {
@@ -32,23 +37,6 @@ const nextConfig: NextConfig = {
     formats: ["image/avif", "image/webp"],
     // Optimize more aggressively in production
     minimumCacheTTL: 60,
-  },
-  async headers() {
-    return [
-      {
-        source: "/:path*",
-        headers: [
-          {
-            key: "Connection",
-            value: "keep-alive",
-          },
-          {
-            key: "DNS-Prefetch-Control",
-            value: "on",
-          },
-        ],
-      },
-    ];
   },
   /* config options here */
 };
