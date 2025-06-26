@@ -25,17 +25,16 @@ export const FlashSaleComponentView = () => {
 
   // Fetch flash sale
   const fetchFlashSale = async () => {
-    const res = await PromotionAPI.getAllPromotionsFromStore({
-      limit: 1,
-      promotionType: PromotionTypeEnum.FLASHSALE,
-    });
-
-    if (res.status === 200 && res.data.length > 0) {
-      const promotion = res.data[0] as PromotionInterface;
-      console.log("PROMOTION", promotion);
-      setFlashSale(promotion);
-      setPromotionProducts(promotion.promotionProducts);
-    }
+    // const res = await PromotionAPI.getAllPromotionsFromStore({
+    //   limit: 1,
+    //   promotionType: PromotionTypeEnum.FLASHSALE,
+    // });
+    // if (res.status === 200 && res.data.length > 0) {
+    //   const promotion = res.data[0] as PromotionInterface;
+    //   console.log("PROMOTION", promotion);
+    //   setFlashSale(promotion);
+    //   setPromotionProducts(promotion.promotionProducts);
+    // }
   };
 
   useEffect(() => {

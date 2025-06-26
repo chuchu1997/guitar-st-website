@@ -3,7 +3,7 @@
 import api from "../interceptor";
 const storeID = process.env.STORE_ID || 1;
 
-const url = `${process.env.NEXT_PUBLIC_API}/products`;
+const url = `/products`;
 
 export const ProductAPI = {
   getProductBySlug: async (slug: string) => {

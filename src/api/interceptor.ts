@@ -5,8 +5,8 @@ import toast from "react-hot-toast";
 
 const baseURL =
   typeof window !== "undefined"
-    ? process.env.NEXT_PUBLIC_API
-    : process.env.API_INTERNAL_URL || "http://api:3000";
+    ? process.env.NEXT_PUBLIC_API // client (browser)
+    : process.env.API_INTERNAL_URL || "http://localhost:3000"; // server (SSR)
 const api = axios.create({
   baseURL: baseURL,
   timeout: 20000, // Thời gian timeout là 10 giây

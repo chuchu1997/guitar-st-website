@@ -3,7 +3,7 @@
 import { PromotionTypeEnum } from "@/types/promotion";
 import api from "../interceptor";
 const storeID = process.env.STORE_ID || 1;
-const url = `${process.env.NEXT_PUBLIC_API}/promotion`;
+const url = `/promotion`;
 
 export interface GetPromotionDTO {
   limit?: number;
