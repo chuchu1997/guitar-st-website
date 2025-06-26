@@ -22,6 +22,7 @@ export const CategoryAPI = {
   }: {
     justGetParent: boolean;
   }) => {
+    console.log("URL GET CATEGORIES", url);
     console.log("STORE BUILD", storeID);
     return await api({
       method: "GET",
