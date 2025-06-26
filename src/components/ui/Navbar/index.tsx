@@ -7,8 +7,8 @@ import MainNavbar from "./components/NavbarClient";
 import { AppSidebar } from "../../app-sidebar";
 import { CategoryInterface } from "@/types/category";
 import NavbarClient from "./components/NavbarClient";
-// export const dynamic = "force-dynamic";
-// export const revalidate = 60;
+export const dynamic = "force-dynamic";
+export const revalidate = 60;
 
 const Navbar = async () => {
   let categories: CategoryInterface[] = [];
