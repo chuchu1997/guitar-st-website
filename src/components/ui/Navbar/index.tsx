@@ -7,8 +7,6 @@ import MainNavbar from "./components/NavbarClient";
 import { AppSidebar } from "../../app-sidebar";
 import { CategoryInterface } from "@/types/category";
 import NavbarClient from "./components/NavbarClient";
-export const dynamic = "force-dynamic";
-export const revalidate = 60;
 
 const Navbar = async () => {
   let categories: CategoryInterface[] = [];
@@ -17,13 +15,13 @@ const Navbar = async () => {
     const response = await CategoryAPI.getAllCategoriesOfStore({
       justGetParent: false,
     });
-    console.log("RESPONSE CATEGORIES", response.data);
 
     if (response.status === 200) {
       const data = response.data as { categories: CategoryInterface[] };
       categories = data.categories;
     }
   } catch (error) {
+    console.log("BASE url", process.env.API_INTERNAL_URL);
     console.error("Failed to fetch categories in Navbar:", error);
   }
 

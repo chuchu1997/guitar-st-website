@@ -15,6 +15,9 @@ import { Toaster } from "react-hot-toast";
 import { CookiesProvider } from "react-cookie"; // Import CookiesProvider
 import CookiesClientWrapper from "@/provider/cookie-provider-wrapper";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 60;
+
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
