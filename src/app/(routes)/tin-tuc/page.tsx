@@ -1,7 +1,11 @@
+import { ExampleUsage } from "@/components/scrollToLoad/example";
 
 
 
 const TictucPage = ()=>{
-    return <>TIN TUC PAGE</>
+    return <>
+    
+      <ExampleUsage/>
+    </>
 }
 export default TictucPage;

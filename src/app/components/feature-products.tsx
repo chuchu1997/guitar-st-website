@@ -1,6 +1,7 @@
 /** @format */
 
 import { ProductAPI } from "@/api/products/product.api";
+import ProductWrapperCard from "@/components/ui/product/product-wrapper-card";
 import { ProductCard } from "@/components/ui/product/product-card";
 import { SectionHeader } from "@/components/ui/section/section-header";
 import { ProductInterface } from "@/types/product";
@@ -39,20 +40,16 @@ const FeatureProducts = async () => {
           title="Sản phẩm nổi bật"
           icon={<Star className="text-black" size={24} />}
         />
-        <div className="columns-2 md:columns-3 lg:columns-4 xl:columns-5 gap-2">
-          {featureProducts.map((product) => {
+        <div className="">
+          <ProductWrapperCard products={featureProducts} />
+
+          {/* {featureProducts.map((product) => {
             const matchedPromotion = product.promotionProducts.find((pp) =>
               promotions.find((p) => p.id === pp.promotionId)
             )?.promotion;
 
-            return (
-              <ProductCard
-                key={product.id}
-                product={product}
-                promotion={matchedPromotion || undefined}
-              />
-            );
-          })}
+        
+          })} */}
         </div>
       </div>
     </section>

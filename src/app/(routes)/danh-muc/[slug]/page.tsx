@@ -2,132 +2,82 @@
 "use client";
 
 import Link from "next/link";
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect } from "react";
 import { CategoryAPI } from "@/api/categories/category.api";
 import { CategoryInterface } from "@/types/category";
 import { ProductWidgets } from "@/components/ui/product/product";
 import { useParams } from "next/navigation";
-
-const LoadingSpinner = () => (
-  <div className="flex justify-center items-center py-8">
-    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-  </div>
-);
+import {
+  ApiResponseProductScroll,
+  ScrollToLoadProductsWithCategory,
+} from "@/components/scrollToLoad/scrollToLoadProductWithCategoryComponent";
+import { ProductInterface } from "@/types/product";
 
 const DanhMucPage = () => {
-  const [category, setCategory] = useState<CategoryInterface | null>(null);
-  const [products, setProducts] = useState<any[]>([]);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [loading, setLoading] = useState(true);
-  const [loadingMore, setLoadingMore] = useState(false);
-  const [hasMore, setHasMore] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const { slug } = useParams();
+  const [category, setCategory] = useState<CategoryInterface | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  // Fetch category data function
-  const fetchCategoryData = useCallback(
-    async (slug: string, page: number = 1) => {
-      try {
-        const response = await CategoryAPI.getCategoryWithSlug(slug, page);
-        if (response.status === 200) {
-          const categoryData = response.data as CategoryInterface;
+  // Load category details (once)
+  useEffect(() => {
+    // const fetchCategory = async () => {
+    //   try {
+    //     if (!slug) return;
+    //     const res = await CategoryAPI.getCategoryWithSlug(slug.toString(), 1);
+    //     setCategory(res.data || null);
+    //   } catch (err) {
+    //     console.error("Error loading category:", err);
+    //     setError("Không tìm thấy danh mục");
+    //   } finally {
+    //     setLoading(false);
+    //   }
+    // };
+    // fetchCategory();
+    fetchProductsFromCategory(1, 4);
+  }, [slug]);
 
-          if (page === 1) {
-            // Initial load
-            setCategory(categoryData);
-            setProducts(categoryData.products || []);
-            setHasMore((categoryData.products?.length || 0) >= 4);
-          } else {
-            // Load more products
-            const newProducts = categoryData.products || [];
-            setProducts((prev) => [...prev, ...newProducts]);
-            setHasMore(newProducts.length >= 4);
-          }
-          return categoryData;
-        } else {
-          throw new Error("Category not found");
-        }
-      } catch (err) {
-        console.error("Error fetching category:", err);
-        setError("Failed to load category");
-        return null;
-      }
-    },
-    []
-  );
-
-  // Load more products function
-  const loadMoreProducts = useCallback(async () => {
-    if (loadingMore || !hasMore || !slug) return;
-
-    setLoadingMore(true);
+  // Fetch products by page for ScrollToLoad
+  const fetchProductsFromCategory = async (
+    page: number,
+    limit: number
+  ): Promise<ApiResponseProductScroll> => {
     try {
-      const nextPage = currentPage + 1;
-      await fetchCategoryData(slug.toString(), nextPage);
-      setCurrentPage(nextPage);
-    } catch (err) {
-      console.error("Error loading more products:", err);
-    } finally {
-      setLoadingMore(false);
-    }
-  }, [currentPage, loadingMore, hasMore, slug, fetchCategoryData]);
-
-  // Intersection Observer ref callback
-  const lastProductElementRef = useCallback(
-    (node: HTMLDivElement) => {
-      if (loadingMore) return;
-      if (observerRef.current) observerRef.current.disconnect();
-
-      observerRef.current = new IntersectionObserver(
-        (entries) => {
-          if (entries[0].isIntersecting && hasMore && !loadingMore) {
-            loadMoreProducts();
-          }
-        },
-        {
-          threshold: 0.1,
-          rootMargin: "100px",
-        }
+      const res = await CategoryAPI.getCategoryWithSlug(
+        slug?.toString() || "",
+        page,
+        limit
       );
+      const categoryData = res.data;
+      const products = categoryData.products;
+      setCategory(categoryData);
 
-      if (node) observerRef.current.observe(node);
-    },
-    [loadingMore, hasMore, loadMoreProducts]
-  );
+      return {
+        products: products ?? [],
+        hasMore: categoryData.products?.length === limit,
+        nextPage:
+          categoryData.products?.length === limit ? page + 1 : undefined,
+        total: categoryData.totalProducts,
+      };
+    } catch (err) {
+      console.error("Error fetching products:", err);
+      return {
+        products: [],
+        hasMore: false,
+        nextPage: undefined,
+        total: 0,
+      };
+    }
+  };
 
-  const observerRef = useRef<IntersectionObserver | null>(null);
-
-  // Debug effect for currentPage changes
-
-  // Initialize data when slug changes
-  useEffect(() => {
-    const initializeData = async () => {
-      setLoading(true);
-      setCurrentPage(1);
-      setProducts([]);
-      setHasMore(true);
-      setError(null);
-
-      if (slug) {
-        const categoryData = await fetchCategoryData(slug.toString(), 1);
-        if (!categoryData) {
-          setError("Category not found");
-        }
-      }
-      setLoading(false);
-    };
-
-    initializeData();
-  }, [slug, fetchCategoryData]);
-
-  // Cleanup observer on unmount
-  useEffect(() => {
-    return () => {
-      if (observerRef.current) {
-        observerRef.current.disconnect();
-      }
-    };
-  }, []);
+  const handleProductsLoaded = (
+    newProducts: ProductInterface[],
+    totalLoaded: number
+  ) => {
+    console.log(
+      `Loaded ${newProducts.length} new products. Total: ${totalLoaded}`
+    );
+  };
 
   if (loading) {
     return (
@@ -193,7 +143,6 @@ const DanhMucPage = () => {
     <div className="min-h-screen bg-gray-50/30">
       <div className="container mx-auto px-4 py-12">
         {category.variant ? (
-          /* Render Variants */
           <div className="space-y-8">
             <div className="text-center space-y-4">
               <h2 className="text-3xl font-bold text-gray-900">
@@ -203,64 +152,19 @@ const DanhMucPage = () => {
                 Tìm hiểu các danh mục sản phẩm đa dạng của chúng tôi
               </p>
             </div>
-
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {/* Implement variant rendering here if needed */}
               <div>Variants rendering to be implemented</div>
             </div>
           </div>
         ) : (
-          /* Render Products with Infinite Scroll */
           <div className="space-y-8">
-            {products && products.length > 0 ? (
-              <>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-                  {products.map((product, index) => {
-                    const isLast = index === products.length - 1;
-                    return (
-                      <div
-                        key={product.id || index}
-                        ref={isLast ? lastProductElementRef : null}>
-                        <ProductWidgets.productCardSameTiktok {...product} />
-                      </div>
-                    );
-                  })}
-                </div>
-
-                {/* Loading indicator for infinite scroll */}
-                {loadingMore && <LoadingSpinner />}
-
-                {/* End of products message */}
-                {!hasMore && products.length > 0 && (
-                  <div className="text-center py-8">
-                    <p className="text-gray-500">Đã hiển thị tất cả sản phẩm</p>
-                  </div>
-                )}
-              </>
-            ) : (
-              <div className="text-center py-16 space-y-6">
-                <div className="w-24 h-24 mx-auto bg-gray-100 rounded-full flex items-center justify-center">
-                  <svg
-                    className="w-12 h-12 text-gray-400"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24">
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"
-                    />
-                  </svg>
-                </div>
-                <h3 className="text-xl font-semibold text-gray-900">
-                  Chưa có sản phẩm
-                </h3>
-                <p className="text-gray-600">
-                  Danh mục này hiện chưa có sản phẩm nào. Hãy quay lại sau nhé!
-                </p>
-              </div>
-            )}
+            <ScrollToLoadProductsWithCategory
+              fetchProducts={fetchProductsFromCategory}
+              itemsPerPage={8}
+              containerClassName="mb-8"
+              loadOffset={150}
+              onProductsLoaded={handleProductsLoaded}
+            />
           </div>
         )}
       </div>

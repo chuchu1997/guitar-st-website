@@ -18,10 +18,15 @@ import { ImageLoader } from "@/components/ui/image-loader";
 import { ProductWidgets } from "@/components/ui/product/product";
 import EditorClientWrapper from "@/components/editor/editor-wrapper";
 import { discountTypeEnum } from "@/types/promotion";
+import useCart from "@/hooks/use-cart";
+import { useRouter } from "next/navigation";
 interface propsProductMobile {
   product: ProductInterface;
 }
 export default function ProductMobile({ product }: propsProductMobile) {
+  const cart = useCart();
+  const router = useRouter();
+
   const promotion = product.promotionProducts[0];
   const discountPercentage = (() => {
     // Nếu có khuyến mãi
@@ -70,13 +75,24 @@ export default function ProductMobile({ product }: propsProductMobile) {
         </button>
 
         {/* Chat Button */}
-        <button className="flex-shrink-0 flex flex-col items-center justify-center w-16 h-12 border border-gray-300 rounded-lg">
+        <button
+          className="flex-shrink-0 flex flex-col items-center justify-center w-16 h-12 border border-gray-300 rounded-lg"
+          onClick={() => {
+            cart.addItem(product, 1);
+          }}>
           <div className="w-5 h-5 bg-gray-300 rounded mb-1"></div>
           <span className="text-xs text-gray-600">Thêm vào giỏ hàng</span>
         </button>
 
         {/* Buy Now Button */}
-        <button className="flex-1 bg-red-500 hover:bg-red-600 text-white font-medium py-3 px-6 rounded-lg transition-colors">
+        <button
+          className="flex-1 bg-red-500 hover:bg-red-600 text-white font-medium py-3 px-6 rounded-lg transition-colors"
+          onClick={() => {
+            cart.cleanSelectedItems();
+
+            cart.addItem(product, 1);
+            router.push("/checkout");
+          }}>
           Mua Ngay
         </button>
       </div>

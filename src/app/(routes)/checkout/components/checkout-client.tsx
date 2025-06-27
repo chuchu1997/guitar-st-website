@@ -25,6 +25,7 @@ import toast from "react-hot-toast";
 import { CartProduct } from "@/types/cart";
 import { ProductInterface } from "@/types/product";
 import { ProductAPI } from "@/api/products/product.api";
+import { FormatUtils } from "@/utils/format";
 
 // Mock existing customer data - in real app, this would come from your user context/API
 
@@ -336,6 +337,7 @@ export default function CheckoutForm() {
               items={productCarts}
               onCheckout={() => {
                 const result = checkoutSchema.safeParse(customerData);
+
                 if (!result.success) {
                   // Hiển thị thông báo lỗi ở đây (có thể dùng toast hoặc alert)
 
@@ -344,6 +346,45 @@ export default function CheckoutForm() {
                   );
                   return;
                 }
+
+                let message = "🛒 Chi tiết đơn hàng:\n\n";
+
+                productCarts.forEach((item) => {
+                  const promotion = item.promotionProducts?.[0];
+                  const price =
+                    promotion?.discountType === "PERCENT"
+                      ? item.price * (1 - promotion.discount / 100)
+                      : item.price - (promotion?.discount ?? 0);
+
+                  const subtotal = price * item.cartQuantity;
+
+                  message += `- ${item.name} (x${
+                    item.cartQuantity
+                  }): ${FormatUtils.formatPriceVND(price)} x ${
+                    item.cartQuantity
+                  } = ${FormatUtils.formatPriceVND(subtotal)}\n`;
+                });
+
+                const totalQuantity = productCarts.reduce(
+                  (acc, item) => acc + item.cartQuantity,
+                  0
+                );
+
+                const totalPrice = productCarts.reduce((acc, item) => {
+                  const promotion = item.promotionProducts?.[0];
+                  const price =
+                    promotion?.discountType === "PERCENT"
+                      ? item.price * (1 - promotion.discount / 100)
+                      : item.price - (promotion?.discount ?? 0);
+                  return acc + price * item.cartQuantity;
+                }, 0);
+
+                message += `\n🧾 Tổng số lượng: ${totalQuantity} sản phẩm\n`;
+                message += `💰 Tổng tiền: ${FormatUtils.formatPriceVND(
+                  totalPrice
+                )}`;
+
+                alert(message);
 
                 // console.log("ON CHECKOUT", customerData);
                 // console.log("total", total);

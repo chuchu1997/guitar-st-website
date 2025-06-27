@@ -6,10 +6,9 @@ import toast from "react-hot-toast";
 const baseURL =
   typeof window !== "undefined"
     ? process.env.NEXT_PUBLIC_API // client (browser)
-    : process.env.API_INTERNAL_URL || "http://localhost:3000"; // server (SSR)
+    : process.env.API_INTERNAL_URL || "https://api.45.32.105.240.sslip.io"; // server (SSR)
 const api = axios.create({
   baseURL: baseURL,
-  timeout: 20000, // Thời gian timeout là 10 giây
 });
 
 // Gắn request interceptor
@@ -38,6 +37,7 @@ api.interceptors.response.use(
     const status = error.response?.status;
     const message = error.response?.data?.message || "Đã có lỗi xảy ra";
 
+    // console.log("ERROR RESPONMSE",error.request)
     switch (status) {
       case 400:
         toast.error("⛔ Bad Request - Dữ liệu gửi lên không hợp lệ");

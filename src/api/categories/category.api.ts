@@ -6,13 +6,14 @@ const storeID = process.env.STORE_ID || 1;
 const url = `/categories`;
 console.log("PULIC API URL", url);
 export const CategoryAPI = {
-  getCategoryWithSlug: async (slug: string, currentPage: number) => {
+  getCategoryWithSlug: async (slug: string, currentPage: number, limit = 4) => {
     return await api({
       method: "GET",
       url: `${url}/${slug}`,
       params: {
         storeID,
         currentPage,
+        limit,
       },
     });
   },
