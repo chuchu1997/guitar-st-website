@@ -1,101 +1,128 @@
 /** @format */
 "use client";
+
 import useCart from "@/hooks/use-cart";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
-import { Trash2, Minus, Plus, ShoppingBag } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { ShoppingBag } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { motion } from "framer-motion";
-import { useCookies } from "react-cookie"; // Dùng để quản lý cookie
-import { Button } from "@/components/ui/button"; // Adjust the path if necessary
-import { ImageLoader } from "@/components/ui/image-loader";
+import { useCookies } from "react-cookie";
+import { Button } from "@/components/ui/button";
 import { FormatUtils } from "@/utils/format";
-import { DiscountComponent } from "@/components/ui/Discount/discount";
 import { CartItem } from "./cart-item";
-import { CartProduct } from "@/types/cart";
-import { ProductAPI } from "@/api/products/product.api";
 import { ProductInterface } from "@/types/product";
-import { discountTypeEnum } from "@/types/promotion";
+import { UserCartAPI } from "@/api/cart/cart.api";
+
+export type CartItemSSR = {
+  id?: number;
+  isSelect: boolean;
+  product: ProductInterface;
+  quantity: number;
+};
 
 const CartComponent = () => {
   const router = useRouter();
   const [isMouted, setIsMounted] = useState(true);
-
-  const cart = useCart();
-  const [productCarts, setProductCarts] = useState<CartProduct[]>([]);
   const [totalBill, setTotalBill] = useState<number>(0);
   const [totalQuantity, setTotalQuantity] = useState<number>(0);
-
-  const tongSanPhamTatCa = cart.items.reduce(
-    (sum, item) => sum + item.stockQuantity,
-    0
-  );
+  const [cookies] = useCookies(["userInfo"]);
+  const cartIDRef = useRef<number>(0);
+  const [cartItems, setCartItems] = useState<CartItemSSR[]>([]);
 
   useEffect(() => {
-    setIsMounted(true);
-    fetchProductRelateWithCart();
-  }, []);
+    const user = cookies["userInfo"];
+    if (user?.id) {
+      fetchCart(user.id);
+    }
+  }, [cookies]);
 
-  useEffect(() => {
-    const selectedItems = productCarts.filter((item) => item.isSelect);
-
-    const total = selectedItems.reduce((sum, item) => {
-      const price = item.promotionProducts?.[0]
-        ? // Nếu có khuyến mãi
-          item.promotionProducts[0].discountType === discountTypeEnum.PERCENT
-          ? item.price * (1 - item.promotionProducts[0].discount / 100)
-          : item.price - item.promotionProducts[0].discount
-        : item.price;
-
-      return sum + price * item.cartQuantity;
-    }, 0);
-
-    const quantity = selectedItems.reduce(
-      (sum, item) => sum + item.cartQuantity,
-      0
-    );
-
-    setTotalBill(total);
-    setTotalQuantity(quantity);
-  }, [productCarts]);
-  const onUpdateQuantity = (id: number, newQuantity: number, stock: number) => {
-    cart.updateQuantity(id, newQuantity, stock);
-    setProductCarts((prev) =>
-      prev.map((item) =>
-        item.id === id ? { ...item, cartQuantity: newQuantity } : item
-      )
-    );
-  };
-  const fetchProductRelateWithCart = async () => {
-    const { items } = cart;
-
-    const ids = items.map((item) => item.id);
-    if (ids.length > 0) {
-      const res = await ProductAPI.getProductByIDS(ids);
-      const fetchedProducts: ProductInterface[] = res.data.products;
-      const merged = fetchedProducts.map((product) => {
-        const cartItem = items.find((item) => item.id === product.id);
-        return {
-          ...product,
-          cartQuantity: cartItem?.stockQuantity || 1,
-          isSelect: cartItem?.isSelect ?? true,
-        };
-      });
-      setProductCarts(merged);
+  const fetchCart = async (userID: number) => {
+    const res = await UserCartAPI.getAllCartItemsOfUser(userID);
+    if (res.status === 200) {
+      const resCart = res.data.cart;
+      cartIDRef.current = resCart.id;
+      const mappedItems: CartItemSSR[] = resCart.items.map((item: any) => ({
+        id: item.id,
+        isSelect: item.isSelect,
+        quantity: item.quantity,
+        product: item.product,
+      }));
+      setCartItems(mappedItems);
     }
   };
 
-  const toggleSelectItem = (id: number) => {
-    cart.toggleSelectItem(id);
-    setProductCarts((prev) =>
-      prev.map((item) =>
-        item.id === id ? { ...item, isSelect: !item.isSelect } : item
-      )
+  // Cập nhật ref mỗi khi cartItems thay đổi
+  useEffect(() => {
+    if (!cartItems.length) {
+      setTotalBill(0);
+      setTotalQuantity(0);
+      return;
+    }
+
+    let totalQuantity = 0;
+    let totalBill = 0;
+    cartItems.forEach((item) => {
+      if (item.isSelect) {
+        totalQuantity += item.quantity;
+        totalBill += item.quantity * item.product.price;
+      }
+    });
+
+    setTotalQuantity(totalQuantity);
+    setTotalBill(totalBill);
+  }, [cartItems]);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  const onUpdateQuantity = (productId: number, newQuantity: number) => {
+    const updatedItems = cartItems.map((item) =>
+      item.product.id === productId ? { ...item, quantity: newQuantity } : item
+    );
+    setCartItems(updatedItems);
+    debouncedUpdateRef.current(updatedItems); // Truyền trực tiếp
+  };
+
+  function debounce<T extends (...args: any[]) => void>(
+    fn: T,
+    delay: number
+  ): T {
+    let timeout: NodeJS.Timeout;
+    return function (...args: any[]) {
+      clearTimeout(timeout);
+      timeout = setTimeout(() => fn(...args), delay);
+    } as T;
+  }
+
+  const onUpdateCart = async (itemsToUpdate: CartItemSSR[]) => {
+    const user = cookies["userInfo"];
+    await UserCartAPI.updateCartItems(
+      user.id,
+      cartIDRef.current,
+      itemsToUpdate
     );
   };
+
+  const debouncedUpdateRef = useRef(
+    debounce((items: CartItemSSR[]) => {
+      onUpdateCart(items);
+    }, 1000)
+  );
+
+  const toggleSelectItem = (id: number) => {
+    const updatedItems = cartItems.map((item) =>
+      item.id === id ? { ...item, isSelect: !item.isSelect } : item
+    );
+    setCartItems(updatedItems);
+    debouncedUpdateRef.current(updatedItems); // Truyền trực tiếp
+  };
+
   const onCheckout = async () => {
     router.push(`/checkout`);
   };
+
   if (!isMouted) return null;
 
   return (
@@ -103,11 +130,11 @@ const CartComponent = () => {
       <div className="flex items-center justify-center md:justify-start mb-8">
         <ShoppingBag className="mr-2 text-accent" />
         <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 italic">
-          Giỏ Hàng <span className="text-accent">({tongSanPhamTatCa})</span>
+          Giỏ Hàng <span className="text-accent">({cartItems.length})</span>
         </h1>
       </div>
 
-      {cart.items.length === 0 ? (
+      {cartItems.length === 0 ? (
         <div className="text-center py-16">
           <div className="flex justify-center mb-4">
             <ShoppingBag size={64} className="text-gray-300" />
@@ -123,7 +150,7 @@ const CartComponent = () => {
         <div className="flex flex-col lg:grid lg:grid-cols-3 gap-8">
           {/* Danh sách sản phẩm */}
           <div className="lg:col-span-2 space-y-4">
-            {productCarts.map((item, index) => (
+            {cartItems.map((item, index) => (
               <motion.div
                 key={item.id}
                 initial={{ opacity: 0, y: 20 }}
@@ -133,19 +160,13 @@ const CartComponent = () => {
                 <div className="flex items-center gap-2">
                   <Checkbox
                     checked={item.isSelect}
-                    onCheckedChange={() => toggleSelectItem(item.id)}
+                    onCheckedChange={() => toggleSelectItem(item.id ?? 0)}
                   />
-
-                  {/* <img
-                    src={item.images[0].url}
-                    alt={item.name}
-                    className="w-24 h-24 sm:w-28 sm:h-28 rounded-lg object-cover"
-                  /> */}
                 </div>
-                <div className="flex-grow ">
+                <div className="flex-grow">
                   <CartItem
-                    product={item}
-                    cart={cart}
+                    quantity={item.quantity}
+                    product={item.product}
                     onUpdateQuantity={onUpdateQuantity}
                   />
                 </div>
@@ -177,7 +198,7 @@ const CartComponent = () => {
                 <div className="flex justify-between font-bold text-lg">
                   <span>Tổng cộng:</span>
                   <span className="text-accent">
-                    <span>{FormatUtils.formatPriceVND(totalBill)}</span>
+                    {FormatUtils.formatPriceVND(totalBill)}
                   </span>
                 </div>
                 <p className="text-xs text-gray-500 mt-1">
@@ -187,7 +208,7 @@ const CartComponent = () => {
 
               <Button
                 className="w-full py-6 text-lg text-accent transition-all duration-300 rounded-lg disabled:opacity-50"
-                disabled={cart.items.length === 0}
+                disabled={cartItems.length === 0}
                 onClick={onCheckout}>
                 Tiến hành thanh toán ({totalQuantity})
               </Button>

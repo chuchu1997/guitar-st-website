@@ -24,6 +24,7 @@ import { ProductWidgets } from "@/components/ui/product/product";
 import EditorClientWrapper from "@/components/editor/editor-wrapper";
 import useCart from "@/hooks/use-cart";
 import { discountTypeEnum } from "@/types/promotion";
+import { AddToCartButton } from "@/components/ui/Cart/addToCartButton";
 
 interface propsProductClientPC {
   product: ProductInterface;
@@ -249,14 +250,18 @@ export const ProductClientPC = ({ product }: propsProductClientPC) => {
               </div>
 
               <div className="flex space-x-4">
-                <button
+                {/* <button
                   className="flex-1 bg-black text-white py-3 px-6 rounded-lg font-semibold hover:bg-gray-800 transition-colors flex items-center justify-center space-x-2"
                   onClick={() => {
-                    addProductToCart(product);
+                    // ADD TO CART BUTTON ;
+                    console.log("ADD TO CART BUTTON");
+
+                    // addProductToCart(product);
                   }}>
                   <ShoppingCart className="w-5 h-5" />
                   <span>Thêm vào giỏ hàng</span>
-                </button>
+                </button> */}
+                <AddToCartButton product={product} quantity={quantity} />
                 <button className="px-6 py-3 border border-gray-300 rounded-lg font-semibold hover:bg-gray-50 transition-colors">
                   Mua ngay
                 </button>

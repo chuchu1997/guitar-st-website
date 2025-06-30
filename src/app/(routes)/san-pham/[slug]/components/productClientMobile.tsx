@@ -20,6 +20,7 @@ import EditorClientWrapper from "@/components/editor/editor-wrapper";
 import { discountTypeEnum } from "@/types/promotion";
 import useCart from "@/hooks/use-cart";
 import { useRouter } from "next/navigation";
+import { AddToCartButton } from "@/components/ui/Cart/addToCartButton";
 interface propsProductMobile {
   product: ProductInterface;
 }
@@ -75,14 +76,15 @@ export default function ProductMobile({ product }: propsProductMobile) {
         </button>
 
         {/* Chat Button */}
-        <button
+        {/* <button
           className="flex-shrink-0 flex flex-col items-center justify-center w-16 h-12 border border-gray-300 rounded-lg"
           onClick={() => {
             cart.addItem(product, 1);
           }}>
           <div className="w-5 h-5 bg-gray-300 rounded mb-1"></div>
           <span className="text-xs text-gray-600">Thêm vào giỏ hàng</span>
-        </button>
+        </button> */}
+        <AddToCartButton product={product} quantity={1} />
 
         {/* Buy Now Button */}
         <button

@@ -46,7 +46,10 @@ const useCart = create(
         if (existItem) {
           const updatedItems = currentItems.map((item) =>
             item.id === data.id
-              ? { ...item, stockQuantity: item.stockQuantity + stockQuantity }
+              ? { ...item,
+                
+                
+                stockQuantity: item.stockQuantity + stockQuantity }
               : item
           );
 

@@ -22,27 +22,52 @@ import { CustomerInfoModal } from "./customer-info-model";
 import { CheckoutFormValues, checkoutSchema } from "@/lib/schemas/checkout";
 import { CustomerData } from "@/types/checkout";
 import toast from "react-hot-toast";
-import { CartProduct } from "@/types/cart";
 import { ProductInterface } from "@/types/product";
 import { ProductAPI } from "@/api/products/product.api";
 import { FormatUtils } from "@/utils/format";
+import { CartItemSSR } from "../../gio-hang/components/cart";
+import { UserCartAPI } from "@/api/cart/cart.api";
+import { useCookies } from "react-cookie";
+import authApi, { BaseInfoUser } from "@/api/auth";
 
-// Mock existing customer data - in real app, this would come from your user context/API
+// Validation utilities
+const validateCustomerInfo = (
+  data: CustomerData | undefined
+): { isValid: boolean; errors: string[] } => {
+  const errors: string[] = [];
 
-// Types
+  if (!data) {
+    errors.push("Vui lòng nhập thông tin giao hàng");
+    return { isValid: false, errors };
+  }
 
-// Mock cart data
+  if (!data.name || data.name.trim().length === 0) {
+    errors.push("Vui lòng nhập tên của bạn");
+  }
 
-// Zod schema
+  if (!data.phone || data.phone.trim().length === 0) {
+    errors.push("Vui lòng nhập số điện thoại");
+  } else {
+    // Basic phone validation for Vietnamese phone numbers
+    const phoneRegex = /(84|0[3|5|7|8|9])+([0-9]{8})\b/;
+    if (!phoneRegex.test(data.phone.replace(/\s/g, ""))) {
+      errors.push("Số điện thoại không hợp lệ");
+    }
+  }
 
-// Format utilities
+  if (!data.address || data.address.trim().length === 0) {
+    errors.push("Vui lòng nhập địa chỉ giao hàng");
+  }
+
+  return { isValid: errors.length === 0, errors };
+};
 
 // Customer Info Card Component
 const CustomerInfoCard = ({
   customerData,
   onEdit,
 }: {
-  customerData: any;
+  customerData: CustomerData;
   onEdit: () => void;
 }) => (
   <div className="bg-white rounded-lg shadow-sm border mb-6">
@@ -75,11 +100,6 @@ const CustomerInfoCard = ({
           <AddressIcon className="h-4 w-4 mr-2 mt-0.5 text-gray-500 flex-shrink-0" />
           <div>
             <div>{customerData.address}</div>
-            {customerData.addressDetails && (
-              <div className="text-sm text-gray-600">
-                {customerData.addressDetails}
-              </div>
-            )}
           </div>
         </div>
         {customerData.note && (
@@ -93,105 +113,227 @@ const CustomerInfoCard = ({
   </div>
 );
 
-// Cart Item Component
-
 export default function CheckoutForm() {
   const [isMounted, setIsMounted] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
-
   const [customerData, setCustomerData] = useState<CustomerData | undefined>();
-  const [hasCustomerData, setHasCustomerData] = useState(true); // Set to false to test empty state
-  const cart = useCart();
+  const [cartItems, setCartItems] = useState<CartItemSSR[]>([]);
+  const [cookies] = useCookies(["userInfo"]);
 
-  const [productCarts, setProductCarts] = useState<CartProduct[]>([]);
-
-  const [totalQuantity, setTotalQuantity] = useState<number>(0);
-
-  const form = useForm({
+  const form = useForm<CheckoutFormValues>({
     resolver: zodResolver(checkoutSchema),
     defaultValues: {
       name: "",
       phone: "",
       address: "",
       note: "",
-      paymentMethod: "cod",
-      addressDetails: "",
     },
   });
 
-  // Auto-fill form on desktop when customer data exists
-  // useEffect(() => {
-  //   if (hasCustomerData && customerData) {
-  //     form.reset({
-  //       name: customerData.name,
-  //       phone: customerData.phone,
-  //       address: customerData.address,
-  //       addressDetails: customerData.addressDetails,
-  //       note: "", // Note field is always empty for manual entry
-  //       paymentMethod: "cod",
-  //     });
-  //   }
-  // }, [customerData, hasCustomerData, form]);
+  // Load user info from cookies or API
+  const loadUserInfo = async () => {
+    const user = cookies["userInfo"];
+    if (user) {
+      let res = await authApi.getUserInfoByID(user.id);
 
-  const loadUserInfo = () => {
-    let customerInfo = CustomerInfoLocalStorage.getCustomer();
-    if (customerInfo) {
-      const payload = {
-        name: "CUONG",
-        phone: "phonebnumber",
-        address: "123 Đường Lê Lợi, Quận 1",
-        addressDetails: "Tầng 5, Tòa nhà ABC",
+      const userInfo = res.data.userInfo as BaseInfoUser;
+      const payload: CustomerData = {
+        name: userInfo.name ?? "",
+        phone: userInfo.phone ?? "",
+        address: userInfo.address ?? "",
         note: "",
       };
+
       form.reset({
         ...payload,
+        paymentMethod: "cod", // <- THÊM DÒNG NÀY
       });
       setCustomerData(payload);
     }
+
+    // if (user && user.name && user.phone && user.address) {
+    //   const payload: CustomerData = {
+    //     name: user.name,
+    //     phone: user.phone,
+    //     address: user.address,
+    //     note: user.note || "",
+    //   };
+
+    //   form.reset({
+    //     ...payload,
+    //     paymentMethod: "cod", // <- THÊM DÒNG NÀY
+    //   });
+    //   setCustomerData(payload);
+    // } else {
+    //   // Reset to empty state if no valid user info
+    //   const emptyData: CustomerData = {
+    //     name: "",
+    //     phone: "",
+    //     address: "",
+    //     note: "",
+    //   };
+    //   form.reset({
+    //     ...emptyData,
+    //     paymentMethod: "cod", // <- THÊM DÒNG NÀY
+    //   });
+    //   setCustomerData(undefined);
+    // }
   };
-  useEffect(() => {
-    loadUserInfo();
-    fetchProductRelateWithCart();
-    setIsMounted(true);
-  }, []);
 
-  const fetchProductRelateWithCart = async () => {
-    const { items } = cart;
-    const selectedItems = items.filter((item) => item.isSelect);
-    const ids = selectedItems.map((item) => item.id);
-    if (ids.length > 0) {
-      const res = await ProductAPI.getProductByIDS(ids);
-      const fetchedProducts: ProductInterface[] = res.data.products;
-      const merged = fetchedProducts.map((product) => {
-        const cartItem = items.find((item) => item.id === product.id);
-        return {
-          ...product,
-          cartQuantity: cartItem?.stockQuantity || 1,
-          isSelect: cartItem?.isSelect ?? true,
-        };
-      });
-      setProductCarts(merged);
+  const fetchSelectedItemCart = async () => {
+    const user = cookies["userInfo"];
+    if (user) {
+      try {
+        const res = await UserCartAPI.getAllCartItemsOfUser(user.id, true);
+        if (res.status === 200) {
+          const resCart = res.data.cart;
+          const mappedItems: CartItemSSR[] = resCart.items.map((item: any) => ({
+            id: item.id,
+            isSelect: item.isSelect,
+            quantity: item.quantity,
+            product: item.product,
+          }));
 
-      setTotalQuantity(
-        productCarts.reduce((acc, item) => {
-          if (item.isSelect) {
-            acc += item.cartQuantity || 0;
-          }
-          return acc;
-        }, 0)
-      );
+          console.log("CALL FETCH SELECTED", mappedItems);
+          setCartItems(mappedItems);
+        }
+      } catch (error) {
+        console.error("Error fetching cart items:", error);
+        toast.error("Không thể tải giỏ hàng");
+      }
     }
   };
 
+  // Handle checkout with validation
+  const handleCheckout = async () => {
+    // Get current form values
+    const formValues = form.getValues();
+    const currentCustomerData: CustomerData = {
+      name: formValues.name,
+      phone: formValues.phone,
+      address: formValues.address,
+      note: formValues.note || "",
+    };
+
+    // Validate customer info
+    const validation = validateCustomerInfo(currentCustomerData);
+
+    if (!validation.isValid) {
+      // Show validation errors
+      validation.errors.forEach((error) => {
+        toast.error(error);
+      });
+      return;
+    }
+
+    // Check if cart has items
+    if (cartItems.length === 0) {
+      toast.error("Giỏ hàng của bạn đang trống");
+      return;
+    }
+
+    // Validate form using react-hook-form
+    form.handleSubmit(
+      async (data) => {
+        // Form is valid, proceed with checkout
+        toast.success("Thông tin hợp lệ! Đang xử lý đơn hàng...");
+
+        // Create order message
+        let message = "🛒 Chi tiết đơn hàng:\n\n";
+        message += `👤 Khách hàng: ${data.name}\n`;
+        message += `📞 Số điện thoại: ${data.phone}\n`;
+        message += `📍 Địa chỉ: ${data.address}\n`;
+
+        if (data.note) {
+          message += `📝 Ghi chú: ${data.note}\n`;
+        }
+        message += `\n🛍️ Sản phẩm:\n`;
+
+        cartItems.forEach((item, index) => {
+          message += `${index + 1}. ${item.product.name} x${item.quantity}\n`;
+        });
+
+        console.log("Order details:", {
+          customerInfo: data,
+          cartItems: cartItems,
+          orderMessage: message,
+        });
+
+        const user = cookies["userInfo"];
+        if (user) {
+          let res = await authApi.updateUserProfile(user.id, {
+            name: data.name,
+            phone: data.phone,
+            address: data.address,
+          });
+        }
+
+        // Here you would typically:
+        // 1. Call your order API
+        // 2. Navigate to success page
+        // 3. Clear cart
+        // For now, just log the order details
+
+        // Example: Navigate to next step
+        // router.push('/checkout/success');
+      },
+      (errors) => {
+        // Form validation failed
+        console.log("Form validation errors:", errors);
+        Object.values(errors).forEach((error) => {
+          if (error?.message) {
+            toast.error(error.message);
+          }
+        });
+      }
+    )();
+  };
+
+  // Handle saving customer info from modal
+  const handleSaveCustomerInfo = (data: CustomerData) => {
+    const validation = validateCustomerInfo(data);
+
+    if (!validation.isValid) {
+      validation.errors.forEach((error) => {
+        toast.error(error);
+      });
+      return;
+    }
+
+    setCustomerData(data);
+    form.reset({
+      ...data,
+      paymentMethod: "cod",
+    });
+    setIsModalOpen(false);
+    toast.success("Đã cập nhật thông tin giao hàng");
+  };
+
+  useEffect(() => {
+    fetchSelectedItemCart();
+    loadUserInfo();
+    setIsMounted(true);
+  }, []);
+
+  // Watch form changes and update customer data
   useEffect(() => {
     const subscription = form.watch((value) => {
-      setCustomerData(value as CustomerData); // Cập nhật mỗi khi form thay đổi
+      if (value.name && value.phone && value.address) {
+        setCustomerData(value as CustomerData);
+      }
     });
 
     return () => subscription.unsubscribe();
   }, [form]);
 
   if (!isMounted) return null;
+
+  // Determine if we have valid customer data
+  const hasValidCustomerData =
+    customerData &&
+    customerData.name &&
+    customerData.phone &&
+    customerData.address;
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -202,7 +344,7 @@ export default function CheckoutForm() {
             <h1 className="text-xl font-semibold text-gray-900">Đặt hàng</h1>
             <div className="hidden md:flex items-center space-x-2 text-sm text-gray-600">
               <ShoppingBag size={16} />
-              <span>{totalQuantity} mặt hàng</span>
+              <span>{cartItems.length} mặt hàng</span>
             </div>
           </div>
         </div>
@@ -231,7 +373,11 @@ export default function CheckoutForm() {
                         </label>
                         <input
                           {...form.register("name")}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                          className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+                            form.formState.errors.name
+                              ? "border-red-500"
+                              : "border-gray-300"
+                          }`}
                           placeholder="Nhập họ tên đầy đủ"
                         />
                         {form.formState.errors.name && (
@@ -247,7 +393,11 @@ export default function CheckoutForm() {
                         </label>
                         <input
                           {...form.register("phone")}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                          className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+                            form.formState.errors.phone
+                              ? "border-red-500"
+                              : "border-gray-300"
+                          }`}
                           placeholder="Nhập số điện thoại"
                         />
                         {form.formState.errors.phone && (
@@ -264,28 +414,16 @@ export default function CheckoutForm() {
                       </label>
                       <input
                         {...form.register("address")}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+                          form.formState.errors.address
+                            ? "border-red-500"
+                            : "border-gray-300"
+                        }`}
                         placeholder="Nhập địa chỉ"
                       />
                       {form.formState.errors.address && (
                         <p className="mt-1 text-sm text-red-600">
                           {form.formState.errors.address.message}
-                        </p>
-                      )}
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Mô tả địa chỉ *
-                      </label>
-                      <input
-                        {...form.register("addressDetails")}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                        placeholder="Tầng, căn hộ, tòa nhà..."
-                      />
-                      {form.formState.errors.addressDetails && (
-                        <p className="mt-1 text-sm text-red-600">
-                          {form.formState.errors.addressDetails.message}
                         </p>
                       )}
                     </div>
@@ -308,7 +446,7 @@ export default function CheckoutForm() {
 
             {/* Mobile: Customer Info Card or Add Button */}
             <div className="lg:hidden">
-              {hasCustomerData && customerData ? (
+              {hasValidCustomerData ? (
                 <CustomerInfoCard
                   customerData={customerData}
                   onEdit={() => setIsModalOpen(true)}
@@ -326,86 +464,20 @@ export default function CheckoutForm() {
                 </div>
               )}
             </div>
-
-            {/* Mobile Order Items */}
           </div>
 
           {/* Desktop Order Summary */}
           <div className="col-span-5">
-            <OrderSummary
-              cart={cart}
-              items={productCarts}
-              onCheckout={() => {
-                const result = checkoutSchema.safeParse(customerData);
-
-                if (!result.success) {
-                  // Hiển thị thông báo lỗi ở đây (có thể dùng toast hoặc alert)
-
-                  toast.error(
-                    "Vui lòng nhập đầy đủ thông tin giao hàng trước khi đặt hàng (hoặc thông tin đang bị sai )"
-                  );
-                  return;
-                }
-
-                let message = "🛒 Chi tiết đơn hàng:\n\n";
-
-                productCarts.forEach((item) => {
-                  const promotion = item.promotionProducts?.[0];
-                  const price =
-                    promotion?.discountType === "PERCENT"
-                      ? item.price * (1 - promotion.discount / 100)
-                      : item.price - (promotion?.discount ?? 0);
-
-                  const subtotal = price * item.cartQuantity;
-
-                  message += `- ${item.name} (x${
-                    item.cartQuantity
-                  }): ${FormatUtils.formatPriceVND(price)} x ${
-                    item.cartQuantity
-                  } = ${FormatUtils.formatPriceVND(subtotal)}\n`;
-                });
-
-                const totalQuantity = productCarts.reduce(
-                  (acc, item) => acc + item.cartQuantity,
-                  0
-                );
-
-                const totalPrice = productCarts.reduce((acc, item) => {
-                  const promotion = item.promotionProducts?.[0];
-                  const price =
-                    promotion?.discountType === "PERCENT"
-                      ? item.price * (1 - promotion.discount / 100)
-                      : item.price - (promotion?.discount ?? 0);
-                  return acc + price * item.cartQuantity;
-                }, 0);
-
-                message += `\n🧾 Tổng số lượng: ${totalQuantity} sản phẩm\n`;
-                message += `💰 Tổng tiền: ${FormatUtils.formatPriceVND(
-                  totalPrice
-                )}`;
-
-                alert(message);
-
-                // console.log("ON CHECKOUT", customerData);
-                // console.log("total", total);
-                // console.log("selected items", selectedItems);
-              }}
-            />
+            <OrderSummary items={cartItems} onCheckout={handleCheckout} />
           </div>
         </div>
       </div>
 
       {/* Customer Info Modal */}
-
       <CustomerInfoModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        onSave={(data) => {
-          setCustomerData(data);
-          form.reset({
-            ...data,
-          });
-        }}
+        onSave={handleSaveCustomerInfo}
         initialData={customerData}
       />
     </div>

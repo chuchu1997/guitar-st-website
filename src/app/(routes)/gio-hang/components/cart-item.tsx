@@ -4,7 +4,8 @@ import FlashSaleComponent from "@/components/ui/Flashsale/flashsale";
 import { RenderGiftItems } from "@/components/ui/product/product-card";
 import { CartStore } from "@/hooks/use-cart";
 import { cn } from "@/lib/utils";
-import { CartItemType, CartProduct } from "@/types/cart";
+import { CartItemType } from "@/types/cart";
+import { ProductInterface } from "@/types/product";
 import { discountTypeEnum } from "@/types/promotion";
 import { FormatUtils } from "@/utils/format";
 import { Separator } from "@radix-ui/react-separator";
@@ -12,20 +13,20 @@ import { Minus, Plus, Trash2 } from "lucide-react";
 
 export function CartItem({
   product,
-  cart,
+  quantity,
   isShowDelete = true,
   hiddenUpdateQuantity = false,
   onUpdateQuantity,
   className,
 }: {
-  product: CartProduct;
-  cart: CartStore;
+  product: ProductInterface;
+  quantity: number;
   isShowDelete?: boolean;
   hiddenUpdateQuantity?: boolean;
   className?: string;
   onUpdateQuantity: (id: number, newQuantity: number, stock: number) => void;
 }) {
-  const getDiscountedPrice = (item: CartProduct) => {
+  const getDiscountedPrice = (item: ProductInterface) => {
     const promotion = item.promotionProducts?.[0];
     if (!promotion) return item.price;
 
@@ -75,17 +76,13 @@ export function CartItem({
           <div className="mb-3">
             <div className="flex items-center gap-2 flex-wrap">
               <span className="text-lg sm:text-xl font-bold text-red-600">
-                {FormatUtils.formatPriceVND(
-                  discountedPrice * product.cartQuantity
-                )}
+                {FormatUtils.formatPriceVND(discountedPrice * quantity)}
               </span>
 
               {hasPromotion && (
                 <>
                   <span className="text-xs sm:text-sm text-gray-400 line-through">
-                    {FormatUtils.formatPriceVND(
-                      originalPrice * product.cartQuantity
-                    )}
+                    {FormatUtils.formatPriceVND(originalPrice * quantity)}
                   </span>
                   <span className="bg-gradient-to-r from-red-500 to-pink-500 text-white text-xs font-semibold px-2 py-1 rounded-full shadow-sm">
                     Flash Sale
@@ -108,30 +105,22 @@ export function CartItem({
                 <div className="flex items-center border border-gray-200 rounded-lg bg-gray-50">
                   <button
                     onClick={() =>
-                      onUpdateQuantity(
-                        product.id,
-                        product.cartQuantity - 1,
-                        product.stock
-                      )
+                      onUpdateQuantity(product.id, quantity - 1, product.stock)
                     }
-                    disabled={product.cartQuantity === 1}
+                    disabled={quantity === 1}
                     className="w-8 h-8 sm:w-9 sm:h-9 flex items-center justify-center hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed rounded-l-lg transition-colors">
                     <Minus size={14} />
                   </button>
 
                   <div className="w-12 sm:w-14 h-8 sm:h-9 flex items-center justify-center bg-white border-x border-gray-200 text-sm font-semibold">
-                    {product.cartQuantity}
+                    {quantity}
                   </div>
 
                   <button
                     onClick={() => {
-                      onUpdateQuantity(
-                        product.id,
-                        product.cartQuantity + 1,
-                        product.stock
-                      );
+                      onUpdateQuantity(product.id, quantity + 1, product.stock);
                     }}
-                    disabled={product.cartQuantity >= product.stock}
+                    disabled={quantity >= product.stock}
                     className="w-8 h-8 sm:w-9 sm:h-9 flex items-center justify-center hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed rounded-r-lg transition-colors">
                     <Plus size={14} />
                   </button>
@@ -139,7 +128,7 @@ export function CartItem({
               ) : (
                 <div className="bg-gray-100 px-3 py-2 rounded-lg">
                   <span className="text-sm font-semibold text-gray-700">
-                    Số lượng: {product.cartQuantity}
+                    Số lượng: {quantity}
                   </span>
                 </div>
               )}
@@ -148,7 +137,7 @@ export function CartItem({
             {/* Delete Button */}
             {isShowDelete && (
               <button
-                onClick={() => cart.removeItem(product.id)}
+                onClick={() => {}}
                 className="flex items-center gap-1 px-3 py-2 text-red-500 hover:text-red-700 hover:bg-red-50 rounded-lg transition-all duration-200 text-sm font-medium">
                 <Trash2 size={16} />
                 <span className="hidden sm:inline">Xóa</span>
@@ -157,7 +146,7 @@ export function CartItem({
           </div>
 
           {/* Stock Warning */}
-          {product.cartQuantity >= product.stock && (
+          {quantity >= product.stock && (
             <div className="mt-2 text-xs text-amber-600 bg-amber-50 px-2 py-1 rounded">
               Đã đạt số lượng tối đa trong kho
             </div>

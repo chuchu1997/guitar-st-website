@@ -3,27 +3,25 @@
 // components/checkout/OrderSummary.tsx
 // import { CartItem as CartItemType, CartTotals } from '@/types/checkout';
 
-import { CartItemType, CartProduct, CartTotals } from "@/types/cart";
 import { CartItem } from "../../gio-hang/components/cart-item";
 import { FormatUtils } from "@/utils/format";
 import { CartStore } from "@/hooks/use-cart";
 import { RenderGiftItems } from "@/components/ui/product/product-card";
 import { Separator } from "@radix-ui/react-separator";
 import { discountTypeEnum } from "@/types/promotion";
+import { CartItemSSR } from "../../gio-hang/components/cart";
 interface OrderSummaryProps {
-  items: CartProduct[];
+  items: CartItemSSR[];
   onCheckout: () => void;
   isLoading?: boolean;
-  cart: CartStore;
 }
 
 export const OrderSummary = ({
   items,
   onCheckout,
   isLoading = false,
-  cart,
 }: OrderSummaryProps) => {
-  const getDiscountedPrice = (item: CartProduct) => {
+  const getDiscountedPrice = (item: any) => {
     const promotion = item.promotionProducts?.[0];
     if (!promotion) return item.price;
 
@@ -36,14 +34,26 @@ export const OrderSummary = ({
 
   const totals = items.reduce(
     (acc, item) => {
-      const price = getDiscountedPrice(item); // 👉 dùng hàm khuyến mãi
-      const quantity = item.cartQuantity;
+      if (!item.isSelect) return acc;
+      const price = getDiscountedPrice(item.product);
+      const quantity = item.quantity;
       acc.totalPrice += price * quantity;
       acc.totalQuantity += quantity;
       return acc;
     },
     { totalPrice: 0, totalQuantity: 0 }
   );
+
+  // const totals = items.reduce(
+  //   (acc, item) => {
+  //     const price = getDiscountedPrice(item); // 👉 dùng hàm khuyến mãi
+  //     const quantity = item.cartQuantity;
+  //     acc.totalPrice += price * quantity;
+  //     acc.totalQuantity += quantity;
+  //     return acc;
+  //   },
+  //   { totalPrice: 0, totalQuantity: 0 }
+  // );
   return (
     <div className="bg-white rounded-lg shadow-sm border sticky top-24 overflow-hidden">
       <div className="p-6">
@@ -53,11 +63,11 @@ export const OrderSummary = ({
 
         <div className="mb-6">
           {items.map((item, index) => (
-            <div key={item.id}>
+            <div key={index}>
               <CartItem
                 className="py-2"
-                product={item}
-                cart={cart}
+                product={item.product}
+                quantity={item.quantity}
                 isShowDelete={false}
                 onUpdateQuantity={() => {}}
                 hiddenUpdateQuantity={true}
