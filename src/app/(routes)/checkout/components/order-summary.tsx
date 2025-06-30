@@ -5,7 +5,7 @@
 
 import { CartItem } from "../../gio-hang/components/cart-item";
 import { FormatUtils } from "@/utils/format";
-import { CartStore } from "@/hooks/use-cart";
+
 import { RenderGiftItems } from "@/components/ui/product/product-card";
 import { Separator } from "@radix-ui/react-separator";
 import { discountTypeEnum } from "@/types/promotion";
@@ -71,6 +71,7 @@ export const OrderSummary = ({
                 isShowDelete={false}
                 onUpdateQuantity={() => {}}
                 hiddenUpdateQuantity={true}
+                onDeleteCartItem={() => {}}
               />
               {index < items.length - 1 && (
                 <hr className="border-t border-gray-200 my-2" />

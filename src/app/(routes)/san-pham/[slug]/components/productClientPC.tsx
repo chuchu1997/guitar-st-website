@@ -22,7 +22,6 @@ import { FormatUtils } from "@/utils/format";
 import { ImageLoader } from "@/components/ui/image-loader";
 import { ProductWidgets } from "@/components/ui/product/product";
 import EditorClientWrapper from "@/components/editor/editor-wrapper";
-import useCart from "@/hooks/use-cart";
 import { discountTypeEnum } from "@/types/promotion";
 import { AddToCartButton } from "@/components/ui/Cart/addToCartButton";
 
@@ -43,7 +42,6 @@ export const ProductClientPC = ({ product }: propsProductClientPC) => {
   const [quantity, setQuantity] = useState(1);
   const [activeTab, setActiveTab] = useState("description");
   const [isWishlisted, setIsWishlisted] = useState(false);
-  const cartObject = useCart();
 
   const promotion = product.promotionProducts[0];
 
@@ -91,9 +89,7 @@ export const ProductClientPC = ({ product }: propsProductClientPC) => {
 
     return product.price - promotionProductFlashSale.discount;
   };
-  const addProductToCart = (product: ProductInterface) => {
-    cartObject.addItem(product, quantity);
-  };
+
   const renderRatingStars = (rating: number) => {
     return Array.from({ length: 5 }, (_, i) => (
       <Star

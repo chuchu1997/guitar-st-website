@@ -5,7 +5,6 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
-import useCart from "@/hooks/use-cart";
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import CartComponent from "./cart";
@@ -15,27 +14,9 @@ const GioHangClient = () => {
   const router = useRouter();
   const [isMounted, setIsMounted] = useState(false);
 
-  const cart = useCart();
-
-  const selectedCartItems = cart.items.filter(
-    (item) => item.isSelect // Kiểm tra xem sản phẩm có được chọn hay không
-  );
-
-  const toggleSelectItem = (id: number) => {
-    cart.toggleSelectItem(id);
-  };
   useEffect(() => {
     setIsMounted(true);
   }, []);
-
-  // useEffect(() => {
-  //   // Debug log to track the current cart items
-  //   console.log("Giỏ hàng hiện tại:", productCart);
-  // }, [productCart]);
-
-  const onCheckout = async () => {
-    router.push(`/checkout`);
-  };
 
   if (!isMounted) return null;
 

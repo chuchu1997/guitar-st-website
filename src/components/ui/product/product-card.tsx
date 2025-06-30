@@ -20,7 +20,6 @@ import { BadgeFreeship } from "../Badge/freeship";
 import { DiscountComponent } from "../Discount/discount";
 import { BadgeFlashSale } from "../Badge/flashsale";
 import { discountTypeEnum, PromotionInterface } from "@/types/promotion";
-import useCart from "@/hooks/use-cart";
 
 export const RenderGiftItems = ({
   gift,
@@ -68,8 +67,6 @@ export const ProductCard = ({
   promotion,
   isSingleColumn = false,
 }: ProductCardProps) => {
-  const cart = useCart();
-
   const promotionProduct = product.promotionProducts;
   const showLineThroughPrice = promotion
     ? product.price
@@ -95,19 +92,19 @@ export const ProductCard = ({
   // Single Column Layout (Mobile-like horizontal layout)
   if (isSingleColumn) {
     return (
-      <Link href={`/san-pham/${product.slug}`} className="block">
-        <div className="flex flex-row relative bg-white rounded-md shadow-lg border border-gray-100 overflow-hidden transition-all duration-700 hover:shadow-2xl hover:shadow-gray-900/15 hover:-translate-y-3 hover:border-gray-200">
-          {/* Product Image */}
-          <div className="relative aspect-square min-w-[160px] bg-gradient-to-br from-gray-50 to-gray-100 overflow-hidden">
-            {/* Main Product Image */}
+      <Link href={`/san-pham/${product.slug}`} className="block group">
+        <div className="flex flex-row relative bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden transition-all duration-300 hover:shadow-lg hover:shadow-gray-900/10 hover:-translate-y-1 hover:border-gray-200">
+          {/* Product Image Container - Scaled down for mobile */}
+          <div className="relative w-30 h-30 sm:w-24 sm:h-24 md:w-28 md:h-28 bg-gradient-to-br from-gray-50 to-gray-100 overflow-hidden flex-shrink-0">
             <ImageLoader
               src={product.images[0].url}
               alt={product.name}
               fill
-              className="rounded-sm object-cover"
+              className="w-full h-full object-cover"
             />
 
-            <div className="absolute bottom-0 left-0">
+            {/* Simplified promotional badges */}
+            <div className="absolute bottom-0 left-0 right-0">
               <div className="flex rounded-r-4xl overflow-hidden">
                 <div className="flex flex-col justify-center p-2 bg-gradient-to-r from-cyan-400 via-cyan-300 to-cyan-600 text-white scale-60 -translate-x-5 translate-y-3">
                   <span className="text-xs font-bold italic">XTRA</span>
@@ -124,74 +121,76 @@ export const ProductCard = ({
             </div>
           </div>
 
-          {/* Product Information */}
-          <div className="p-6 pt-4 space-y-1 flex flex-col justify-between w-full">
-            <div className="top-info space-y-1">
-              <div className="flex items-center">
-                <span className="inline-flex transform scale-75 origin-left">
-                  <Badge className="bg-gradient-to-r from-green-600 via-green-500 to-green-400 text-white">
+          {/* Product Information - Better proportioned */}
+          <div className="flex-1 p-3 sm:p-4 flex flex-col justify-between min-w-0">
+            {/* Top Section */}
+            <div className="space-y-2">
+              {/* Badges and Title */}
+              <div className="space-y-1">
+                <div className="flex flex-wrap items-center gap-1">
+                  <Badge className="bg-green-500 text-white text-[10px] px-1 py-0.5">
                     HÀNG VIỆT
                   </Badge>
-                </span>
-                <h3 className="max-w-[150px] ml-[-12px] font-semibold text-sm text-gray-900 leading-tight overflow-hidden text-ellipsis whitespace-nowrap group-hover:text-blue-600 transition-colors duration-300">
+                  <Badge className="bg-cyan-50 text-cyan-600 text-[10px] px-1 py-0.5 border border-cyan-200">
+                    Freeship
+                  </Badge>
+                </div>
+
+                <h3 className="font-semibold text-sm sm:text-base text-gray-900 leading-tight line-clamp-2 group-hover:text-blue-600 transition-colors duration-300">
                   {product.name}
                 </h3>
               </div>
-              <span className="inline-flex transform scale-90 origin-left">
-                <Badge className="bg-[#def6f6] text-[#248f8d]">Freeship</Badge>
-              </span>
-              <div className="rating flex gap-x-2">
-                <div className="flex items-center gap-1">
+
+              {/* Rating - Scaled down */}
+              <div className="flex items-center gap-2">
+                <div className="flex items-center gap-0.5">
                   {[...Array(5)].map((_, i) => (
                     <Star
                       key={i}
-                      className={`w-3 h-3 text-yellow-400 fill-current`}
+                      className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-yellow-400 fill-current"
                     />
                   ))}
                 </div>
-                <div>
-                  <p className="text-gray-400 text-[11px]">
-                    5 | Bán 19.3k trực tuyến
-                  </p>
-                </div>
+                <p className="text-gray-500 text-[10px] sm:text-xs">
+                  5.0 | 19.3k bán
+                </p>
               </div>
+
+              {/* Gift indicator */}
+              {hasGifts && (
+                <div className="text-xs text-orange-600 font-medium">
+                  🎁 Có quà tặng
+                </div>
+              )}
             </div>
 
-            <div className="bottom-info space-y-1">
-              {/* Pricing */}
-              <div className="space-y-1">
-                <div className="flex items-center justify-between">
-                  <div className="flex flex-col gap-1">
-                    <span className="text-base font-bold text-[#fb2150] tracking-tight">
-                      {FormatUtils.formatPriceVND(discountedPrice)}
-                    </span>
-                    {showLineThroughPrice && (
-                      <span className="text-sm text-gray-400 line-through font-semibold">
-                        {FormatUtils.formatPriceVND(showLineThroughPrice)}
-                      </span>
-                    )}
-                  </div>
+            {/* Bottom Section - Pricing and Action */}
+            <div className="flex items-end justify-between gap-2 mt-2">
+              <div className="flex flex-col min-w-0">
+                <span className="text-sm sm:text-base font-bold text-red-500 tracking-tight">
+                  {FormatUtils.formatPriceVND(discountedPrice)}
+                </span>
+                {showLineThroughPrice && (
+                  <span className="text-xs text-gray-400 line-through">
+                    {FormatUtils.formatPriceVND(showLineThroughPrice)}
+                  </span>
+                )}
+              </div>
 
-                  <div className="rounded-sm overflow-hidden flex">
-                    <button className="px-2 py-1 bg-[#fde6ee]">
-                      <ShoppingBasket className="text-[#ec5073]" size={20} />
-                    </button>
-                    <div className="px-4 bg-[#fe2b54] text-white text-sm font-bold flex items-center">
-                      <span>Mua</span>
-                    </div>
-                  </div>
-                </div>
+              {/* Compact Action Button */}
+              <div className="flex rounded-md overflow-hidden shadow-sm flex-shrink-0">
+                <button className="px-2 py-1.5 bg-red-50 hover:bg-red-100 transition-colors duration-200">
+                  <ShoppingBasket className="text-red-500" size={14} />
+                </button>
+                <button className="px-3 py-1.5 bg-red-500 hover:bg-red-600 text-white text-xs font-semibold transition-colors duration-200">
+                  Mua
+                </button>
               </div>
             </div>
-            {hasGifts && (
-              <div className="font-semibold capitalize text-xs">
-                🎁 Có Quà tặng
-              </div>
-            )}
           </div>
 
-          {/* Hover border effect */}
-          <div className="absolute inset-0 rounded-3xl border-2 border-transparent group-hover:border-gradient-to-r group-hover:from-blue-500/30 group-hover:to-purple-500/30 transition-all duration-500 pointer-events-none"></div>
+          {/* Simplified hover effect */}
+          <div className="absolute inset-0 rounded-lg border border-transparent group-hover:border-blue-200 transition-all duration-300 pointer-events-none"></div>
         </div>
       </Link>
     );
@@ -200,14 +199,14 @@ export const ProductCard = ({
   // Grid Layout (Original card design)
   return (
     <Link href={`/san-pham/${product.slug}`} className="block h-full">
-      <Card className="group relative h-full overflow-hidden bg-white border-0 shadow-sm hover:shadow-xl transition-all duration-500 hover:-translate-y-2 flex flex-col">
+      <Card className="group relative h-full   overflow-hidden bg-white shadow-sm hover:shadow-xl transition-all duration-500 hover:-translate-y-2 flex flex-col">
         {/* Premium background gradient */}
         <div className="absolute inset-0 bg-gradient-to-br from-blue-50/30 via-white to-purple-50/30 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
         {/* Image Section */}
-        <CardHeader className="p-0 relative">
+        <CardHeader className=" relative ">
           <div className="relative overflow-hidden rounded-t-lg">
-            <div className="relative aspect-square bg-gray-100">
+            <div className="relative aspect-square bg-gray-100 border border-red-500 ">
               <ImageLoader
                 src={product.images[0].url}
                 alt={product.name}
@@ -231,14 +230,14 @@ export const ProductCard = ({
         </CardHeader>
 
         {/* Content Section */}
-        <CardContent className="p-4 flex-1 flex flex-col space-y-3">
+        <CardContent className="p-4 flex-1 flex flex-col space-y-1">
           {/* Product Title */}
-          <CardTitle className="line-clamp-2 text-sm sm:text-base font-bold text-gray-900 group-hover:text-blue-600 transition-colors duration-300 leading-tight min-h-[2.5rem]">
+          <CardTitle className="line-clamp-2 text-sm sm:text-base font-bold text-gray-900 group-hover:text-blue-600 transition-colors duration-300 leading-tight min-h-[1.5rem]">
             {product.name}
           </CardTitle>
 
           {/* Description - Hidden on mobile */}
-          <CardDescription className="hidden sm:block line-clamp-2 text-xs text-gray-600 min-h-[2rem]">
+          <CardDescription className="hidden sm:block line-clamp-2 text-xs text-gray-600 min-h-[1rem]">
             {product.shortDescription}
           </CardDescription>
 

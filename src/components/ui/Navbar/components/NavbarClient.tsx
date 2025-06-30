@@ -10,7 +10,7 @@ import { usePathname } from "next/navigation";
 import MenuBar from "./Menubar";
 import { ProductAPI } from "@/api/products/product.api";
 import { ProductInterface } from "@/types/product";
-import useCart from "@/hooks/use-cart";
+import { useCartStore } from "@/hooks/use-cart";
 
 // TypeScript Interfaces
 interface NavbarProps {
@@ -319,7 +319,6 @@ const NavbarClient: React.FC<NavbarProps> = ({ categories }) => {
   const [activeDropdown, setActiveDropdown] = useState<number | null>(null);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
   const [isScrolled, setIsScrolled] = useState<boolean>(false);
-  const cartObject = useCart();
 
   const [isDesktopSearchOpen, setIsDesktopSearchOpen] =
     useState<boolean>(false);
@@ -327,6 +326,8 @@ const NavbarClient: React.FC<NavbarProps> = ({ categories }) => {
 
   const dropdownTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const pathname = usePathname();
+
+  const cartStore = useCartStore();
 
   // Create a map of all categories for easy lookup
   const categoryMap = new Map<number, CategoryInterface>();
@@ -527,9 +528,9 @@ const NavbarClient: React.FC<NavbarProps> = ({ categories }) => {
             </div>
 
             {/* User */}
-            <button className="p-2 text-gray-500 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-all duration-200">
+            {/* <button className="p-2 text-gray-500 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-all duration-200">
               <User className="h-5 w-5" />
-            </button>
+            </button> */}
 
             {/* Shopping bag */}
 
@@ -537,9 +538,9 @@ const NavbarClient: React.FC<NavbarProps> = ({ categories }) => {
               href="/gio-hang"
               className="relative p-2 text-gray-500 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-all duration-200">
               <ShoppingBag className="h-5 w-5" />
-              <span className="absolute -top-1 -right-1 h-4 w-4 bg-red-500 text-white rounded-full text-xs flex items-center justify-center">
-                {cartObject.items.length}
-              </span>
+              {/* <span className="absolute -top-1 -right-1 h-4 w-4 bg-red-500 text-white rounded-full text-xs flex items-center justify-center">
+                {cartStore.quantity}
+              </span> */}
             </Link>
             {/* <button className=""></button> */}
           </div>

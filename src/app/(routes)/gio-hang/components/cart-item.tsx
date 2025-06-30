@@ -2,7 +2,6 @@
 
 import FlashSaleComponent from "@/components/ui/Flashsale/flashsale";
 import { RenderGiftItems } from "@/components/ui/product/product-card";
-import { CartStore } from "@/hooks/use-cart";
 import { cn } from "@/lib/utils";
 import { CartItemType } from "@/types/cart";
 import { ProductInterface } from "@/types/product";
@@ -17,6 +16,7 @@ export function CartItem({
   isShowDelete = true,
   hiddenUpdateQuantity = false,
   onUpdateQuantity,
+  onDeleteCartItem,
   className,
 }: {
   product: ProductInterface;
@@ -24,6 +24,7 @@ export function CartItem({
   isShowDelete?: boolean;
   hiddenUpdateQuantity?: boolean;
   className?: string;
+  onDeleteCartItem: (id: number) => void;
   onUpdateQuantity: (id: number, newQuantity: number, stock: number) => void;
 }) {
   const getDiscountedPrice = (item: ProductInterface) => {
@@ -137,7 +138,9 @@ export function CartItem({
             {/* Delete Button */}
             {isShowDelete && (
               <button
-                onClick={() => {}}
+                onClick={() => {
+                  onDeleteCartItem(product.id);
+                }}
                 className="flex items-center gap-1 px-3 py-2 text-red-500 hover:text-red-700 hover:bg-red-50 rounded-lg transition-all duration-200 text-sm font-medium">
                 <Trash2 size={16} />
                 <span className="hidden sm:inline">Xóa</span>

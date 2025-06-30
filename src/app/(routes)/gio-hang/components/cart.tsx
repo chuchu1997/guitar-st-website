@@ -1,7 +1,6 @@
 /** @format */
 "use client";
 
-import useCart from "@/hooks/use-cart";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { ShoppingBag } from "lucide-react";
@@ -168,6 +167,13 @@ const CartComponent = () => {
                     quantity={item.quantity}
                     product={item.product}
                     onUpdateQuantity={onUpdateQuantity}
+                    onDeleteCartItem={(productID) => {
+                      const updatedItems = cartItems.filter(
+                        (item) => item.product.id !== productID
+                      );
+                      setCartItems(updatedItems);
+                      debouncedUpdateRef.current(updatedItems); // Truyền trực tiếp
+                    }}
                   />
                 </div>
               </motion.div>

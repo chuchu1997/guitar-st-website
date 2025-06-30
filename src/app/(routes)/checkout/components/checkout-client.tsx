@@ -15,7 +15,6 @@ import {
   X,
   Check,
 } from "lucide-react";
-import useCart from "@/hooks/use-cart";
 import CustomerInfoLocalStorage from "@/utils/customer-info";
 import { OrderSummary } from "./order-summary";
 import { CustomerInfoModal } from "./customer-info-model";

@@ -18,15 +18,18 @@ import { ImageLoader } from "@/components/ui/image-loader";
 import { ProductWidgets } from "@/components/ui/product/product";
 import EditorClientWrapper from "@/components/editor/editor-wrapper";
 import { discountTypeEnum } from "@/types/promotion";
-import useCart from "@/hooks/use-cart";
 import { useRouter } from "next/navigation";
 import { AddToCartButton } from "@/components/ui/Cart/addToCartButton";
+import { UserCartAPI } from "@/api/cart/cart.api";
+import { CartItemSSR } from "@/app/(routes)/gio-hang/components/cart";
+import toast from "react-hot-toast";
+import { useCookies } from "react-cookie";
 interface propsProductMobile {
   product: ProductInterface;
 }
 export default function ProductMobile({ product }: propsProductMobile) {
-  const cart = useCart();
   const router = useRouter();
+  const [cookies, setCookie] = useCookies(["userInfo"]);
 
   const promotion = product.promotionProducts[0];
   const discountPercentage = (() => {
@@ -89,10 +92,58 @@ export default function ProductMobile({ product }: propsProductMobile) {
         {/* Buy Now Button */}
         <button
           className="flex-1 bg-red-500 hover:bg-red-600 text-white font-medium py-3 px-6 rounded-lg transition-colors"
-          onClick={() => {
-            cart.cleanSelectedItems();
+          onClick={async () => {
+            const userID = cookies.userInfo.id;
 
-            cart.addItem(product, 1);
+            if (userID) {
+              const res = await UserCartAPI.getAllCartItemsOfUser(userID);
+              const currentItems = Array.isArray(res.data?.cart?.items)
+                ? res.data.cart.items
+                : [];
+
+              // Tìm xem sản phẩm đã có trong giỏ chưa
+              const existingIndex = currentItems.findIndex(
+                (item: any) => item.product.id === product.id
+              );
+
+              let updatedItems: CartItemSSR[] = [];
+
+              if (existingIndex !== -1) {
+                // ✅ Nếu đã tồn tại, cập nhật quantity
+                updatedItems = currentItems.map((item: any, index: number) =>
+                  index === existingIndex
+                    ? {
+                        ...item,
+                        quantity: item.quantity + 1,
+                        isSelect: true,
+                      }
+                    : item
+                );
+              } else {
+                // ✅ Nếu chưa có, thêm mới
+                updatedItems = [
+                  ...currentItems,
+                  {
+                    isSelect: true,
+                    product,
+                    quantity: 1,
+                  },
+                ];
+              }
+
+              // Gửi dữ liệu lên server
+              await UserCartAPI.updateCartItems(
+                userID,
+                res.data.cart.id,
+                updatedItems
+              );
+
+              toast.success("Đã thêm sản phẩm vào giỏ hàng");
+            }
+
+            // cart.cleanSelectedItems();
+
+            // cart.addItem(product, 1);
             router.push("/checkout");
           }}>
           Mua Ngay
