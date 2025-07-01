@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation";
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import CartComponent from "./cart";
+import OrderHistory from "./order-history";
 // import OrderHistory from "./order-history";
 
 const GioHangClient = () => {
@@ -53,8 +54,7 @@ const GioHangClient = () => {
 
             <TabsContent value="orders">
               <div className="rounded-lg p-6  animate-fade-in-up">
-                order history
-                {/* <OrderHistory /> */}
+                <OrderHistory />
               </div>
             </TabsContent>
           </div>

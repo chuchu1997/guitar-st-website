@@ -12,6 +12,7 @@ import { FormatUtils } from "@/utils/format";
 import { CartItem } from "./cart-item";
 import { ProductInterface } from "@/types/product";
 import { UserCartAPI } from "@/api/cart/cart.api";
+import { discountTypeEnum } from "@/types/promotion";
 
 export type CartItemSSR = {
   id?: number;
@@ -64,7 +65,24 @@ const CartComponent = () => {
     cartItems.forEach((item) => {
       if (item.isSelect) {
         totalQuantity += item.quantity;
-        totalBill += item.quantity * item.product.price;
+        const price = item.product.price;
+
+        const promotion = item.product.promotionProducts?.[0];
+
+        let finalPrice = item.product.price;
+        if (promotion) {
+          const { discountType, discount } = promotion;
+
+          if (discountType === discountTypeEnum.PERCENT) {
+            finalPrice = price - (price * discount) / 100;
+          } else if (discountType === "FIXED") {
+            finalPrice = price - discount;
+          }
+
+          // Đảm bảo không có giá âm
+          finalPrice = Math.max(finalPrice, 0);
+        }
+        totalBill += item.quantity * finalPrice;
       }
     });
 

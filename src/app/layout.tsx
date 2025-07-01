@@ -137,7 +137,9 @@ export default function RootLayout({
               <Toaster position="top-center" reverseOrder={false} />
               <div className="flex flex-col  w-full">
                 <Navbar />
-                <BodyContainer className="mt-[110px]">{children}</BodyContainer>
+                <BodyContainer className="mt-[110px] sm:mt-[80px]">
+                  {children}
+                </BodyContainer>
                 {/* <BlockSidebar />
                 <MobileGroupButton /> */}
 

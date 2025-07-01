@@ -28,7 +28,7 @@ const Navbar = async () => {
   //LẤY TẤT CẢ CATEGORIES BAO GỒM CẢ CATEGORY CON!!
 
   return (
-    <nav className="bg-white ">
+    <nav className=" ">
       <NavbarClient categories={categories} />
       {/* <AppSidebar categories={getCategories} />
       <MainNavbar data={categories} /> */}

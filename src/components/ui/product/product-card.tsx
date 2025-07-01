@@ -206,7 +206,7 @@ export const ProductCard = ({
         {/* Image Section */}
         <CardHeader className=" relative ">
           <div className="relative overflow-hidden rounded-t-lg">
-            <div className="relative aspect-square bg-gray-100 border border-red-500 ">
+            <div className="relative aspect-square bg-gray-100  ">
               <ImageLoader
                 src={product.images[0].url}
                 alt={product.name}

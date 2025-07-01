@@ -28,6 +28,8 @@ import { CartItemSSR } from "../../gio-hang/components/cart";
 import { UserCartAPI } from "@/api/cart/cart.api";
 import { useCookies } from "react-cookie";
 import authApi, { BaseInfoUser } from "@/api/auth";
+import { OrderAPI } from "@/api/orders/order.api";
+import { discountTypeEnum } from "@/types/promotion";
 
 // Validation utilities
 const validateCustomerInfo = (
@@ -149,34 +151,6 @@ export default function CheckoutForm() {
       });
       setCustomerData(payload);
     }
-
-    // if (user && user.name && user.phone && user.address) {
-    //   const payload: CustomerData = {
-    //     name: user.name,
-    //     phone: user.phone,
-    //     address: user.address,
-    //     note: user.note || "",
-    //   };
-
-    //   form.reset({
-    //     ...payload,
-    //     paymentMethod: "cod", // <- THÊM DÒNG NÀY
-    //   });
-    //   setCustomerData(payload);
-    // } else {
-    //   // Reset to empty state if no valid user info
-    //   const emptyData: CustomerData = {
-    //     name: "",
-    //     phone: "",
-    //     address: "",
-    //     note: "",
-    //   };
-    //   form.reset({
-    //     ...emptyData,
-    //     paymentMethod: "cod", // <- THÊM DÒNG NÀY
-    //   });
-    //   setCustomerData(undefined);
-    // }
   };
 
   const fetchSelectedItemCart = async () => {
@@ -193,7 +167,6 @@ export default function CheckoutForm() {
             product: item.product,
           }));
 
-          console.log("CALL FETCH SELECTED", mappedItems);
           setCartItems(mappedItems);
         }
       } catch (error) {
@@ -259,11 +232,75 @@ export default function CheckoutForm() {
         });
 
         const user = cookies["userInfo"];
-        if (user) {
-          let res = await authApi.updateUserProfile(user.id, {
+        if (user && user.id) {
+          await authApi.updateUserProfile(user.id, {
             name: data.name,
             phone: data.phone,
             address: data.address,
+          });
+
+          let total = 0;
+          const items = cartItems.map((item) => {
+            const product = item.product;
+            const quantity = item.quantity;
+            const originalPrice = product.price;
+            const promotion = product.promotionProducts?.[0]; // Chỉ lấy 1 khuyến mãi đầu
+            let discountValue = 0;
+            let discountType: discountTypeEnum | undefined;
+            let promotionName: String = "";
+
+            if (promotion) {
+              if (promotion?.promotion?.name) {
+                promotionName = promotion.promotion.name;
+              }
+
+              discountType = promotion.discountType;
+              if (discountType === discountTypeEnum.PERCENT) {
+                discountValue = (originalPrice * promotion.discount) / 100;
+              } else {
+                discountValue = promotion.discount;
+              }
+            }
+
+            const unitPrice = originalPrice - discountValue;
+            const subtotal = unitPrice * quantity;
+            total += subtotal;
+            let giftItems = product.giftProducts?.length
+              ? product.giftProducts.map((giftProduct) => {
+                  const gift = giftProduct.gift;
+                  return {
+                    giftName: gift.name,
+                    giftImage: gift.images[0].url,
+                    giftQuantity: 1,
+                  };
+                })
+              : [];
+
+            console.log("GIFT ITEMS", giftItems);
+
+            return {
+              productId: product.id,
+              unitPrice,
+              subtotal,
+              promotionName,
+
+              discountType,
+              discountValue,
+              quantity,
+              giftItems,
+            };
+          });
+          await OrderAPI.createOrder({
+            storeId: 0,
+            address: data.address,
+            userId: Number(user.id) ?? 0,
+            total: total,
+            items: items,
+            payment: {
+              method: "COD",
+              status: "PENDING",
+              isPaid: false,
+            },
           });
         }
 

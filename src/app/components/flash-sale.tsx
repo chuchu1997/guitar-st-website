@@ -25,16 +25,16 @@ export const FlashSaleComponentView = () => {
 
   // Fetch flash sale
   const fetchFlashSale = async () => {
-    // const res = await PromotionAPI.getAllPromotionsFromStore({
-    //   limit: 1,
-    //   promotionType: PromotionTypeEnum.FLASHSALE,
-    // });
-    // if (res.status === 200 && res.data.length > 0) {
-    //   const promotion = res.data[0] as PromotionInterface;
-    //   console.log("PROMOTION", promotion);
-    //   setFlashSale(promotion);
-    //   setPromotionProducts(promotion.promotionProducts);
-    // }
+    const res = await PromotionAPI.getAllPromotionsFromStore({
+      limit: 1,
+      promotionType: PromotionTypeEnum.FLASHSALE,
+    });
+    if (res.status === 200 && res.data.length > 0) {
+      const promotion = res.data[0] as PromotionInterface;
+      console.log("PROMOTION", promotion);
+      setFlashSale(promotion);
+      setPromotionProducts(promotion.promotionProducts);
+    }
   };
 
   useEffect(() => {
@@ -50,7 +50,7 @@ export const FlashSaleComponentView = () => {
         <SectionHeader
           title={
             <div className="flex items-center gap-x-2">
-              <div className="relative h-[30px] w-[110px] sm:w-[130px]">
+              <div className="relative h-[25px] w-[100px] sm:w-[130px]">
                 <ImageLoader
                   src={"/images/flashsale/flashsale.png"}
                   alt={"flash-sale"}
@@ -62,7 +62,7 @@ export const FlashSaleComponentView = () => {
               </div>
               <FlashSaleCountDown
                 promotion={flashSale}
-                className="text-lg border border-gray-500 px-2 rounded-sm"
+                className="text-lg px-2 rounded-sm bg-gray-900 text-white font-mono font-bold tracking-wider"
               />
             </div>
           }

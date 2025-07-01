@@ -35,8 +35,11 @@ export const AddToCartButton = ({ product, quantity = 1 }: propsCart) => {
   const addNewItemToCart = async () => {
     const userID = cookies.userInfo.id;
 
+    console.log("ALL", userID);
+
     if (userID) {
       const res = await UserCartAPI.getAllCartItemsOfUser(userID);
+
       const currentItems = Array.isArray(res.data?.cart?.items)
         ? res.data.cart.items
         : [];
