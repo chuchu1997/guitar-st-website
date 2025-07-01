@@ -36,7 +36,7 @@ interface SearchComponentProps {
   variant: "desktop" | "mobile";
 }
 
-// Enhanced Search Component with Beautiful Design
+// Reusable Search Component
 const SearchComponent: React.FC<SearchComponentProps> = ({
   isOpen,
   onClose,
@@ -45,9 +45,9 @@ const SearchComponent: React.FC<SearchComponentProps> = ({
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
   const [isSearching, setIsSearching] = useState<boolean>(false);
-  const [showNoResults, setShowNoResults] = useState<boolean>(false);
 
   const pathname = usePathname();
+
   const searchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const searchInputRef = useRef<HTMLInputElement | null>(null);
   const searchContainerRef = useRef<HTMLDivElement | null>(null);
@@ -56,36 +56,33 @@ const SearchComponent: React.FC<SearchComponentProps> = ({
   const performSearch = useCallback(async (query: string) => {
     if (!query.trim()) {
       setSearchResults([]);
-      setShowNoResults(false);
       return;
     }
 
     setIsSearching(true);
-    setShowNoResults(false);
-
     try {
       const response = await ProductAPI.getProductByName(query);
 
       if (response.status === 200) {
         const data = (await response.data.products) as ProductInterface[];
-        const mappedResults = data.map((item) => ({
-          id: item.id,
-          name: item.name,
-          slug: item.slug,
-          imageUrl: item.images[0]?.url,
-          type: "product" as const,
-        }));
 
-        setSearchResults(mappedResults);
-        setShowNoResults(mappedResults.length === 0);
+        setSearchResults(
+          data.map((item) => ({
+            id: item.id,
+            name: item.name,
+            slug: item.slug,
+            imageUrl: item.images[0].url,
+            // các trường khác nếu cần
+          }))
+        );
+        // setSearchResults(data.results || []);
       } else {
-        setSearchResults([]);
-        setShowNoResults(true);
+        // console.error("Search API error:", response.statusText);
+        // setSearchResults([]);
       }
     } catch (error) {
       console.error("Search error:", error);
       setSearchResults([]);
-      setShowNoResults(true);
     } finally {
       setIsSearching(false);
     }
@@ -117,18 +114,8 @@ const SearchComponent: React.FC<SearchComponentProps> = ({
     onClose();
     setSearchQuery("");
     setSearchResults([]);
-    setShowNoResults(false);
-    window.location.href = `/san-pham/${result.slug}`;
-  };
 
-  // Handle Enter key press
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter" && searchResults.length > 0) {
-      handleSearchResultClick(searchResults[0]);
-    }
-    if (e.key === "Escape") {
-      onClose();
-    }
+    window.location.href = `/san-pham/${result.slug}`;
   };
 
   // Reset search when closed
@@ -136,18 +123,16 @@ const SearchComponent: React.FC<SearchComponentProps> = ({
     if (!isOpen) {
       setSearchQuery("");
       setSearchResults([]);
-      setShowNoResults(false);
       if (searchTimeoutRef.current) {
         clearTimeout(searchTimeoutRef.current);
       }
     }
   }, [isOpen]);
-
   useEffect(() => {
     if (pathname) {
       onClose();
     }
-  }, [pathname, onClose]);
+  }, [pathname]);
 
   // Close search when clicking outside (desktop only)
   useEffect(() => {
@@ -175,10 +160,7 @@ const SearchComponent: React.FC<SearchComponentProps> = ({
   // Focus search input when opened
   useEffect(() => {
     if (isOpen && searchInputRef.current) {
-      const timer = setTimeout(() => {
-        searchInputRef.current?.focus();
-      }, 100);
-      return () => clearTimeout(timer);
+      searchInputRef.current.focus();
     }
   }, [isOpen]);
 
@@ -189,115 +171,65 @@ const SearchComponent: React.FC<SearchComponentProps> = ({
     return (
       <div
         ref={searchContainerRef}
-        className="absolute right-0 top-full mt-3 w-96 bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden z-[9999] animate-in slide-in-from-top-2 duration-200">
-        {/* Search Input Section */}
-        <div className="p-6 bg-gradient-to-r from-gray-50 to-gray-100 border-b border-gray-200">
+        className="absolute right-0 top-full mt-2 w-80 bg-white rounded-xl shadow-2xl border border-gray-200 overflow-hidden z-[9999]">
+        <div className="p-4 border-b border-gray-100">
           <div className="relative">
-            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5 pointer-events-none z-10" />
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4 pointer-events-none z-10" />
             <input
               ref={searchInputRef}
               type="text"
               value={searchQuery}
               onChange={handleSearchChange}
-              onKeyDown={handleKeyDown}
-              placeholder="Tìm kiếm sản phẩm..."
-              className="w-full pl-12 pr-12 py-3 border-0 bg-white rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none text-sm shadow-sm placeholder-gray-400 transition-all duration-200"
+              placeholder="Tìm kiếm sản phẩm, danh mục..."
+              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none text-sm relative z-20"
             />
             {isSearching && (
-              <div className="absolute right-4 top-1/2 transform -translate-y-1/2 pointer-events-none">
-                <div className="animate-spin rounded-full h-5 w-5 border-2 border-indigo-500 border-t-transparent"></div>
+              <div className="absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none">
+                <div className="animate-spin rounded-full h-4 w-4 border-2 border-indigo-500 border-t-transparent"></div>
               </div>
             )}
           </div>
         </div>
 
-        {/* Results Section */}
-        <div className="max-h-96 overflow-y-auto overscroll-contain">
-          {/* Loading State */}
-          {isSearching && searchQuery.trim() && (
-            <div className="p-6 text-center">
-              <div className="flex items-center justify-center space-x-2 text-gray-500">
-                <div className="animate-spin rounded-full h-4 w-4 border-2 border-indigo-500 border-t-transparent"></div>
-                <span className="text-sm">Đang tìm kiếm...</span>
-              </div>
+        <div className="max-h-80 overflow-y-auto relative z-30">
+          {searchQuery.trim() && !isSearching && searchResults.length === 0 && (
+            <div className="p-4 text-center text-gray-500 text-sm">
+              Không tìm thấy kết quả nào
             </div>
           )}
 
-          {/* No Results */}
-          {showNoResults && searchQuery.trim() && !isSearching && (
-            <div className="p-8 text-center">
-              <div className="w-16 h-16 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
-                <Search className="h-6 w-6 text-gray-400" />
-              </div>
-              <h3 className="text-sm font-medium text-gray-900 mb-2">
-                Không tìm thấy kết quả
-              </h3>
-              <p className="text-xs text-gray-500">
-                Thử tìm kiếm với từ khóa khác
-              </p>
-            </div>
-          )}
-
-          {/* Search Results */}
-          {searchResults.length > 0 && !isSearching && (
-            <div className="py-2">
-              <div className="px-4 py-2 text-xs font-medium text-gray-500 uppercase tracking-wider bg-gray-50 border-b border-gray-100">
-                Sản phẩm ({searchResults.length})
-              </div>
-              {searchResults.map((result, index) => (
-                <button
-                  key={`${result.type}-${result.id}`}
-                  onClick={() => handleSearchResultClick(result)}
-                  className="w-full p-4 hover:bg-gradient-to-r hover:from-indigo-50 hover:to-blue-50 border-b border-gray-50 last:border-b-0 text-left transition-all duration-200 group">
-                  <div className="flex items-center space-x-4">
-                    {result.imageUrl ? (
-                      <div className="flex-shrink-0 w-12 h-12 rounded-xl overflow-hidden bg-gray-100 ring-2 ring-gray-100 group-hover:ring-indigo-200 transition-all duration-200">
-                        <img
-                          src={result.imageUrl}
-                          alt={result.name}
-                          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
-                        />
-                      </div>
-                    ) : (
-                      <div className="flex-shrink-0 w-12 h-12 rounded-xl bg-gradient-to-br from-gray-200 to-gray-300 flex items-center justify-center">
-                        <Search className="h-5 w-5 text-gray-500" />
-                      </div>
-                    )}
-                    <div className="flex-1 min-w-0">
-                      <h4 className="font-medium text-gray-900 text-sm truncate group-hover:text-indigo-600 transition-colors duration-200">
-                        {result.name}
-                      </h4>
-                      {result.description && (
-                        <p className="text-xs text-gray-500 truncate mt-1 group-hover:text-gray-600">
-                          {result.description}
-                        </p>
-                      )}
-                      <div className="flex items-center mt-2">
-                        <span className="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-indigo-100 text-indigo-800 group-hover:bg-indigo-200">
-                          Sản phẩm
-                        </span>
-                      </div>
-                    </div>
+          {searchResults.map((result) => (
+            <Link
+              key={`${result.type}-${result.id}`}
+              href={`/san-pham/${result.slug}`}
+              className="w-full p-3 border-b border-gray-100 last:border-b-0 text-left transition-colors duration-200 cursor-pointer relative z-40"
+              type="button">
+              <div className="flex items-center space-x-3">
+                {result.imageUrl && (
+                  <div className="flex-shrink-0 w-10 h-10 rounded-lg overflow-hidden bg-gray-100">
+                    <img
+                      src={result.imageUrl}
+                      alt={result.name}
+                      className="w-full h-full object-cover"
+                    />
                   </div>
-                </button>
-              ))}
-            </div>
-          )}
-
-          {/* Empty State */}
-          {!searchQuery.trim() && !isSearching && (
-            <div className="p-8 text-center">
-              <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-indigo-100 to-blue-100 rounded-full flex items-center justify-center">
-                <Search className="h-6 w-6 text-indigo-600" />
+                )}
+                <div className="flex-1 min-w-0">
+                  <div className="font-medium text-gray-900 text-sm truncate">
+                    {result.name}
+                  </div>
+                  {result.description && (
+                    <div className="text-xs text-gray-500 truncate mt-1">
+                      {result.description}
+                    </div>
+                  )}
+                  <div className="text-xs text-indigo-600 mt-1 capitalize">
+                    Sản phẩm
+                  </div>
+                </div>
               </div>
-              <h3 className="text-sm font-medium text-gray-900 mb-2">
-                Tìm kiếm sản phẩm
-              </h3>
-              <p className="text-xs text-gray-500">
-                Nhập từ khóa để bắt đầu tìm kiếm
-              </p>
-            </div>
-          )}
+            </Link>
+          ))}
         </div>
       </div>
     );
@@ -308,116 +240,73 @@ const SearchComponent: React.FC<SearchComponentProps> = ({
     if (!isOpen) return null;
 
     return (
-      <div className="fixed inset-0 bg-white z-[70] flex flex-col">
-        {/* Header */}
-        <div className="flex items-center p-4 border-b border-gray-200 bg-white shadow-sm">
+      <div ref={searchContainerRef} className="fixed inset-0 bg-white z-[70]">
+        <div className="flex items-center p-4 border-b border-gray-200">
           <button
             onClick={onClose}
-            className="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-colors duration-200 mr-3">
-            <X className="h-6 w-6" />
+            className="p-2 text-gray-500 hover:text-gray-700 mr-2">
+            <X className="h-5 w-5" />
           </button>
           <div className="flex-1 relative">
-            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
             <input
               ref={searchInputRef}
               type="text"
               value={searchQuery}
               onChange={handleSearchChange}
-              onKeyDown={handleKeyDown}
-              placeholder="Tìm kiếm sản phẩm..."
-              className="w-full pl-12 pr-12 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none bg-gray-50 focus:bg-white transition-all duration-200"
+              placeholder="Tìm kiếm sản phẩm, danh mục..."
+              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none"
             />
             {isSearching && (
-              <div className="absolute right-4 top-1/2 transform -translate-y-1/2">
-                <div className="animate-spin rounded-full h-5 w-5 border-2 border-indigo-500 border-t-transparent"></div>
+              <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
+                <div className="animate-spin rounded-full h-4 w-4 border-2 border-indigo-500 border-t-transparent"></div>
               </div>
             )}
           </div>
         </div>
 
-        {/* Content */}
-        <div className="flex-1 overflow-y-auto overscroll-contain bg-gray-50">
-          {/* Loading State */}
-          {isSearching && searchQuery.trim() && (
-            <div className="p-8 text-center">
-              <div className="flex items-center justify-center space-x-3 text-gray-500">
-                <div className="animate-spin rounded-full h-6 w-6 border-2 border-indigo-500 border-t-transparent"></div>
-                <span>Đang tìm kiếm...</span>
-              </div>
+        <div className="overflow-y-auto">
+          {searchQuery.trim() && !isSearching && searchResults.length === 0 && (
+            <div className="p-4 text-center text-gray-500">
+              Không tìm thấy kết quả nào
             </div>
           )}
 
-          {/* No Results */}
-          {showNoResults && searchQuery.trim() && !isSearching && (
-            <div className="p-8 text-center">
-              <div className="w-20 h-20 mx-auto mb-4 bg-white rounded-full flex items-center justify-center shadow-sm">
-                <Search className="h-8 w-8 text-gray-400" />
-              </div>
-              <h3 className="text-lg font-medium text-gray-900 mb-2">
-                Không tìm thấy kết quả
-              </h3>
-              <p className="text-gray-500">Thử tìm kiếm với từ khóa khác</p>
-            </div>
-          )}
-
-          {/* Search Results */}
-          {searchResults.length > 0 && !isSearching && (
-            <div className="py-4">
-              <div className="px-4 py-3 text-sm font-medium text-gray-600 bg-white border-b border-gray-200">
-                Tìm thấy {searchResults.length} sản phẩm
-              </div>
-              {searchResults.map((result, index) => (
-                <button
-                  key={`${result.type}-${result.id}`}
-                  onClick={() => handleSearchResultClick(result)}
-                  className="w-full p-4 bg-white hover:bg-gradient-to-r hover:from-indigo-50 hover:to-blue-50 border-b border-gray-100 text-left transition-all duration-200 group">
-                  <div className="flex items-center space-x-4">
-                    {result.imageUrl ? (
-                      <div className="flex-shrink-0 w-16 h-16 rounded-xl overflow-hidden bg-gray-100 ring-2 ring-gray-100 group-hover:ring-indigo-200 transition-all duration-200">
-                        <img
-                          src={result.imageUrl}
-                          alt={result.name}
-                          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
-                        />
-                      </div>
-                    ) : (
-                      <div className="flex-shrink-0 w-16 h-16 rounded-xl bg-gradient-to-br from-gray-200 to-gray-300 flex items-center justify-center">
-                        <Search className="h-6 w-6 text-gray-500" />
-                      </div>
-                    )}
-                    <div className="flex-1 min-w-0">
-                      <h4 className="font-medium text-gray-900 text-base truncate group-hover:text-indigo-600 transition-colors duration-200">
-                        {result.name}
-                      </h4>
-                      {result.description && (
-                        <p className="text-sm text-gray-500 truncate mt-1 group-hover:text-gray-600">
-                          {result.description}
-                        </p>
-                      )}
-                      <div className="flex items-center mt-2">
-                        <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800 group-hover:bg-indigo-200">
-                          Sản phẩm
-                        </span>
-                      </div>
-                    </div>
+          {searchResults.map((result) => (
+            <Link
+              key={`${result.type}-${result.id}`}
+              href={`/san-pham/${result.slug}`}
+              className="w-full p-4 hover:bg-gray-50 border-b border-gray-100 text-left transition-colors duration-200">
+              <div className="flex items-center space-x-3">
+                {result.imageUrl && (
+                  <div className="flex-shrink-0 w-12 h-12 rounded-lg overflow-hidden bg-gray-100">
+                    <img
+                      src={result.imageUrl}
+                      alt={result.name}
+                      className="w-full h-full object-cover"
+                    />
                   </div>
-                </button>
-              ))}
-            </div>
-          )}
-
-          {/* Empty State */}
-          {!searchQuery.trim() && !isSearching && (
-            <div className="p-8 text-center">
-              <div className="w-20 h-20 mx-auto mb-6 bg-gradient-to-br from-indigo-100 to-blue-100 rounded-full flex items-center justify-center">
-                <Search className="h-8 w-8 text-indigo-600" />
+                )}
+                <div className="flex-1 min-w-0">
+                  <div className="font-medium text-gray-900 truncate">
+                    {result.name}
+                  </div>
+                  {result.description && (
+                    <div className="text-sm text-gray-500 truncate mt-1">
+                      {result.description}
+                    </div>
+                  )}
+                  <div className="text-sm text-indigo-600 mt-1 capitalize">
+                    {result.type === "product"
+                      ? "Sản phẩm"
+                      : result.type === "category"
+                      ? "Danh mục"
+                      : "Bài viết"}
+                  </div>
+                </div>
               </div>
-              <h3 className="text-lg font-medium text-gray-900 mb-2">
-                Tìm kiếm sản phẩm
-              </h3>
-              <p className="text-gray-500">Nhập từ khóa để bắt đầu tìm kiếm</p>
-            </div>
-          )}
+            </Link>
+          ))}
         </div>
       </div>
     );
@@ -437,6 +326,7 @@ const NavbarClient: React.FC<NavbarProps> = ({ categories }) => {
 
   const dropdownTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const pathname = usePathname();
+
   const cartStore = useCartStore();
 
   // Create a map of all categories for easy lookup
@@ -547,9 +437,13 @@ const NavbarClient: React.FC<NavbarProps> = ({ categories }) => {
     );
   };
 
+  const toggleMobileMenu = (): void => {
+    setIsMobileMenuOpen(!isMobileMenuOpen);
+  };
+
   return (
     <nav
-      className={`fixed bg-white top-0 left-0 right-0 z-50 transition-all duration-300 ${
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         isScrolled
           ? "bg-white/95 backdrop-blur-lg shadow-lg border-b border-gray-100"
           : "bg-white shadow-sm"
@@ -570,9 +464,9 @@ const NavbarClient: React.FC<NavbarProps> = ({ categories }) => {
           {/* Mobile Search Button */}
           <button
             onClick={() => setIsMobileSearchOpen(true)}
-            className="flex sm:hidden bg-gradient-to-r from-gray-50 to-gray-100 flex-1 p-3 mx-4 items-center gap-x-3 rounded-xl cursor-pointer hover:from-indigo-50 hover:to-blue-50 transition-all duration-200 border border-gray-200">
-            <Search className="h-5 w-5 text-gray-500" />
-            <span className="text-gray-500 font-medium">Tìm kiếm sản phẩm</span>
+            className="flex sm:hidden bg-[#f2f2f2] flex-1 p-2 items-center gap-x-2 rounded-lg cursor-pointer">
+            <Search className="h-5 w-5" />
+            <span className="text-[#9b9b9b]">Tìm kiếm</span>
           </button>
 
           {/* Desktop Navigation - Centered */}
@@ -628,17 +522,27 @@ const NavbarClient: React.FC<NavbarProps> = ({ categories }) => {
 
               <SearchComponent
                 isOpen={isDesktopSearchOpen}
-                onClose={() => {}}
+                onClose={() => setIsDesktopSearchOpen(false)}
                 variant="desktop"
               />
             </div>
 
+            {/* User */}
+            {/* <button className="p-2 text-gray-500 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-all duration-200">
+              <User className="h-5 w-5" />
+            </button> */}
+
             {/* Shopping bag */}
+
             <Link
               href="/gio-hang"
               className="relative p-2 text-gray-500 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-all duration-200">
               <ShoppingBag className="h-5 w-5" />
+              {/* <span className="absolute -top-1 -right-1 h-4 w-4 bg-red-500 text-white rounded-full text-xs flex items-center justify-center">
+                {cartStore.quantity}
+              </span> */}
             </Link>
+            {/* <button className=""></button> */}
           </div>
         </div>
       </div>
@@ -646,7 +550,7 @@ const NavbarClient: React.FC<NavbarProps> = ({ categories }) => {
       {/* Mobile Search */}
       <SearchComponent
         isOpen={isMobileSearchOpen}
-        onClose={() => {}}
+        onClose={() => setIsMobileSearchOpen(false)}
         variant="mobile"
       />
 
