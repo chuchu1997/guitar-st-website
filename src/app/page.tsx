@@ -1,31 +1,49 @@
+/** @format */
 
+import React, { useState, useEffect } from "react";
+import {
+  ChevronRight,
+  Star,
+  ShoppingCart,
+  Clock,
+  Zap,
+  Music,
+  Guitar,
+  Drum,
+} from "lucide-react";
+import Banner from "./components/banner";
+import { FlashSaleComponentView } from "./components/flash-sale";
+import { SectionHeader } from "@/components/ui/section/section-header";
+import { ProductQuickView } from "@/types/product";
+import { ProductWidgets } from "@/components/ui/product/product";
+import FeatureProducts from "./components/feature-products";
+import { Metadata } from "next";
+import { StoreAPI } from "@/api/stores/store.api";
+import { StoreInterface } from "@/types/store";
+import { generateSeoForPage } from "@/seo-ssr/seo-ssr";
+import { SeoInterface } from "@/types/seo";
 
+export async function generateMetadata(): Promise<Metadata> {
+  const store = (await StoreAPI.getStoreInfo()).data.store as StoreInterface;
 
-import React, { useState, useEffect } from 'react';
-import { ChevronRight, Star, ShoppingCart, Clock, Zap, Music, Guitar, Drum } from 'lucide-react';
-import Banner from './components/banner';
-import { FlashSaleComponentView } from './components/flash-sale';
-import { SectionHeader } from '@/components/ui/section/section-header';
-import { ProductQuickView } from '@/types/product';
-import { ProductWidgets } from '@/components/ui/product/product';
-import FeatureProducts from './components/feature-products';
+  if (store.seo && typeof store.seo === "object") {
+    return generateSeoForPage(store.seo as SeoInterface);
+  }
 
+  return {};
+}
 
 const MusicStoreLanding: React.FC = () => {
-
-
-
- 
   return (
     <div className="min-h-screen bg-gradient-to-br from-amber-50 via-yellow-50 to-orange-50">
       {/* Banner Section */}
-      <Banner/>
+      <Banner />
 
       {/* Flash Sale Section */}
-      <FlashSaleComponentView/>
+      <FlashSaleComponentView />
 
       {/* Featured Products */}
-      <FeatureProducts/>
+      <FeatureProducts />
 
       {/* Guitars */}
       {/* <section className="py-16 bg-gradient-to-r from-amber-100 to-yellow-100">
