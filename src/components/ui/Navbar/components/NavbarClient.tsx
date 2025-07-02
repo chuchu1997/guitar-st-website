@@ -384,7 +384,11 @@ const Navbar: React.FC = () => {
               </button>
 
               {/* Cart */}
-              <button className="p-2 text-gray-600 hover:text-blue-600 hover:bg-gray-100 rounded-lg transition-colors duration-200 relative">
+              <button
+                onClick={() => {
+                  router.push("/gio-hang");
+                }}
+                className="p-2 text-gray-600 hover:text-blue-600 hover:bg-gray-100 rounded-lg transition-colors duration-200 relative">
                 <ShoppingCart className="h-5 w-5" />
                 <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
                   3

@@ -80,7 +80,7 @@ const OrderHistory: React.FC = () => {
       setLoading(true);
       const user = cookies.userInfo;
       let res = await OrderAPI.getOrdersWithUserID(Number(user.id));
-      console.log("RTES", res);
+   
       const orders: OrderInterface[] = res.data.orders;
       // Simulate API call
 

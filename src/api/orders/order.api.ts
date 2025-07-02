@@ -24,6 +24,8 @@ export const OrderAPI = {
       url: url,
       params: {
         userId: userID,
+        limit: 100,
+        currentPage: 1,
       },
     });
   },
