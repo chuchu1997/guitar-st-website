@@ -130,7 +130,7 @@ export default async function RootLayout({
               <Toaster position="top-center" reverseOrder={false} />
               <div className="flex flex-col  w-full">
                 <Navbar />
-                <BodyContainer className="mt-[110px] sm:mt-[80px]">
+                <BodyContainer className="mt-[80px] sm:mt-[65px]">
                   {children}
                 </BodyContainer>
                 {/* <BlockSidebar />

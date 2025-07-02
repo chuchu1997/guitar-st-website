@@ -1,4 +1,5 @@
 import { ProductPromotion } from "./promotion";
+import { SeoInterface } from "./seo";
 
 
 
@@ -33,6 +34,8 @@ interface ProductBase {
     categoryId:number;
     reviews:[]
     sku:string;
+
+    seo?:SeoInterface
     
 
     promotionProducts:ProductPromotion[]

@@ -35,7 +35,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
 const MusicStoreLanding: React.FC = () => {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-amber-50 via-yellow-50 to-orange-50">
+    <div className="min-h-screen bg-gradient-to-br from-yellow-50 to-white">
       {/* Banner Section */}
       <Banner />
 

@@ -4,6 +4,7 @@ import { useState } from "react";
 import { ProductInterface } from "@/types/product";
 import { ProductCard } from "./product-card";
 import { PromotionInterface } from "@/types/promotion";
+import Link from "next/link";
 
 interface propsInterface {
   products: ProductInterface[];
@@ -127,6 +128,23 @@ const ProductWrapperCard = ({ products }: propsInterface) => {
           <p className="text-gray-600">
             Danh mục này hiện chưa có sản phẩm nào. Hãy quay lại sau nhé!
           </p>
+          <Link
+            href="/"
+            className="inline-flex items-center gap-2 bg-blue-600 text-white px-6 py-3 rounded-xl hover:bg-blue-700 transition-colors duration-200 font-medium">
+            <svg
+              className="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24">
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
+              />
+            </svg>
+            Về trang chủ
+          </Link>
         </div>
       )}
     </>

@@ -1,50 +1,37 @@
 /** @format */
 
+import { Metadata } from "next";
+
+import { SeoInterface } from "@/types/seo";
+import { generateProductSchema, generateSeoForPage } from "@/seo-ssr/seo-ssr";
+import SanPhamPageWithSlug from "./san-pham-slug";
 import { ProductAPI } from "@/api/products/product.api";
-import { ImageInterface, ProductInterface } from "@/types/product";
+import { ProductInterface } from "@/types/product";
+export async function generateMetadata(
+  props: Promise<{ params: { slug: string } }>
+): Promise<Metadata> {
+  const { params } = await props;
+  const { slug } = await params; // 👈 params cũng cần được await
+  try {
+    const res = await ProductAPI.getProductBySlug(slug);
+    const product = res.data.product as ProductInterface;
 
-import { useState } from "react";
-import { ProductClient } from "./components/productClient";
+    if (product.seo && typeof product.seo === "object") {
+      return generateSeoForPage(product.seo as SeoInterface);
+    }
 
-interface SanPhamPageWithProps {
-  params: Promise<{ slug: string }>;
+    return {
+      title: "Sản phẩm",
+      description: "",
+    };
+  } catch (error) {
+    console.error("Error generating metadata for category:", error);
+
+    return {
+      title: "Sản phẩm ",
+      description: "Mô tả sản phẩm ",
+    };
+  }
 }
-
-const SanPhamPageWithSlug = async (props: SanPhamPageWithProps) => {
-  const { params } = props;
-  const { slug } = await params;
-
-  let product: ProductInterface | null = null;
-
-  const response = await ProductAPI.getProductBySlug(slug);
-  if (response.status === 200) {
-    product = response.data.product as ProductInterface;
-  }
-
-  if (!product) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="text-center">
-          <h2 className="text-2xl font-semibold text-gray-700 mb-2">
-            Sản phẩm không tồn tại
-          </h2>
-          <p className="text-gray-500">Vui lòng kiểm tra lại đường dẫn</p>
-        </div>
-      </div>
-    );
-  }
-
-  return (
-    <div className="min-h-screen ">
-      <ProductClient product={product} />
-
-      {/* Mobile Header */}
-    </div>
-  );
-};
-
-// Mobile Header Component
-
-// Utility Functions
 
 export default SanPhamPageWithSlug;

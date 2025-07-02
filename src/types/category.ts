@@ -1,4 +1,5 @@
 import { ProductInterface } from "./product";
+import { SeoInterface } from "./seo";
 
 
 
@@ -30,6 +31,7 @@ interface CategoryBase {
     parentId?:number|null;
     variant?:CategoryVariant;
     products?:ProductInterface[]
+    seo?:SeoInterface
     createdAt?:Date;
     updatedAt?:Date;
 

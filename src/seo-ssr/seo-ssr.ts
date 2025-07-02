@@ -1,15 +1,18 @@
+/** @format */
+
 import { SeoInterface } from "@/types/seo";
 import { Metadata } from "next";
 
-
-
-export const generateSeoForPage = (seo:SeoInterface) : Metadata=>{
-
+export const generateSeoForPage = (seo: SeoInterface): Metadata => {
   return {
     title: seo.title,
     description: seo.description,
+
     keywords: seo.keywords, // <-- dùng trực tiếp chuỗi từ khóa
-    robots: `${seo.robotsIndex ? "index" : "noindex"}, ${seo.robotsFollow ? "follow" : "nofollow"}`,
+    robots: {
+      index: true,
+      follow: true,
+    },
     openGraph: {
       title: seo.ogTitle || seo.title,
       description: seo.ogDescription || seo.description,
@@ -21,13 +24,9 @@ export const generateSeoForPage = (seo:SeoInterface) : Metadata=>{
       canonical: seo.canonicalUrl,
     },
   };
+};
 
-}
-
-
-export const generateProductSchema = (
-    
-    product: {
+export const generateProductSchema = (product: {
   name: string;
   description: string;
   slug: string;
@@ -48,7 +47,7 @@ export const generateProductSchema = (
     sku: product.sku ?? undefined,
     brand: {
       "@type": "Brand",
-      name: product.brand || "Không xác định"
+      name: product.brand || "Không xác định",
     },
     offers: {
       "@type": "Offer",
@@ -56,10 +55,11 @@ export const generateProductSchema = (
       priceCurrency: product.currency || "VND",
       price: product.price.toString(),
       priceValidUntil: product.priceValidUntil || "2025-12-31",
-      availability: product.inStock === false
-        ? "https://schema.org/OutOfStock"
-        : "https://schema.org/InStock",
-      itemCondition: "https://schema.org/NewCondition"
-    }
+      availability:
+        product.inStock === false
+          ? "https://schema.org/OutOfStock"
+          : "https://schema.org/InStock",
+      itemCondition: "https://schema.org/NewCondition",
+    },
   };
 };

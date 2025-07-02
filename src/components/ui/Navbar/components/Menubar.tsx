@@ -26,14 +26,7 @@ const Menubar = () => {
       >
         Sản phẩm
       </Link>
-      <Link
-        href="/danh-muc"
-        className={`flex-1 p-4 text-center border-b-2 font-semibold cursor-pointer ${
-          isActive("/danh-muc") ? "border-black text-black " : "border-transparent text-gray-500"
-        }`}
-      >
-        Danh mục
-      </Link>
+    
     </div>
   );
 };
