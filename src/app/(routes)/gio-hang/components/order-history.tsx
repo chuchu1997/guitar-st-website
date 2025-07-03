@@ -32,28 +32,11 @@ import {
 } from "@/types/order";
 import { FormatUtils } from "@/utils/format";
 import { discountTypeEnum } from "@/types/promotion";
+import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
+import { Button } from "@/components/ui/button";
 
-// Type Definitions
-
-interface ShippingInfo {
-  address: string;
-  method: string;
-  fee: number;
-}
-
-interface Order {
-  id: string;
-  date: string;
-  status: OrderStatus;
-  total: number;
-  items: OrderItemDetail[];
-  shipping: ShippingInfo;
-  payment: string;
-  trackingNumber: string;
-  estimatedDelivery: string;
-}
-
-type FilterType = "all" | OrderStatus;
+type FilterType = "all" | keyof typeof OrderStatus;
 
 interface StatusInfo {
   label: string;
@@ -73,6 +56,7 @@ const OrderHistory: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [filter, setFilter] = useState<FilterType>("all");
   const [cookies] = useCookies(["userInfo"]);
+  const router = useRouter();
 
   // Mock data - replace with your actual API call
   useEffect(() => {
@@ -80,7 +64,7 @@ const OrderHistory: React.FC = () => {
       setLoading(true);
       const user = cookies.userInfo;
       let res = await OrderAPI.getOrdersWithUserID(Number(user.id));
-   
+
       const orders: OrderInterface[] = res.data.orders;
       // Simulate API call
 
@@ -101,14 +85,14 @@ const OrderHistory: React.FC = () => {
         progress: 25,
       },
 
-      SHIPPING: {
+      ON_SHIP: {
         label: "Đang giao hàng",
         color: "bg-purple-100 text-purple-800 border-purple-200",
         icon: Truck,
         progress: 75,
       },
       COMPLETED: {
-        label: "Đã giao hàng",
+        label: "Đã giao hàng thành công",
         color: "bg-green-100 text-green-800 border-green-200",
         icon: Package,
         progress: 100,
@@ -157,8 +141,8 @@ const OrderHistory: React.FC = () => {
   const filterTabs: FilterTab[] = [
     { key: "all", label: "Tất cả" },
     { key: "ORDERED", label: "Đang xử lý" },
-    { key: "SHIPPING", label: "Đang giao" },
-    { key: "COMPLETED", label: "Đã giao" },
+    { key: "ON_SHIP", label: "Đang giao hàng" },
+    { key: "COMPLETED", label: "Đã giao hàng thành công" },
     { key: "CANCELED", label: "Đã hủy" },
   ];
 
@@ -453,7 +437,7 @@ const OrderHistory: React.FC = () => {
                                 <div className="flex items-center gap-2">
                                   <Package className="w-4 h-4 text-gray-400" />
                                   <span className="text-gray-600">
-                                    Mã vận đơn: {order.trackingNumber}
+                                    Mã vận đơn: {order.trackingCode}
                                   </span>
                                 </div>
                               </div>
@@ -486,18 +470,24 @@ const OrderHistory: React.FC = () => {
 
                           {/* Action Buttons */}
                           <div className="flex gap-3 pt-4 border-t">
-                            <button className="flex-1 bg-accent/10 text-accent border border-accent/20 py-2 px-4 rounded-lg hover:bg-accent/20 transition-colors">
-                              Theo dõi đơn hàng
-                            </button>
-                            <button className="flex-1 bg-gray-50 text-gray-700 border border-gray-200 py-2 px-4 rounded-lg hover:bg-gray-100 transition-colors">
+                            <Button variant={"secondary"} className="flex-1">
                               Liên hệ hỗ trợ
-                            </button>
-                            {/* {order.status === "delivered" && (
-                              <button className="flex items-center gap-2 bg-yellow-50 text-yellow-700 border border-yellow-200 py-2 px-4 rounded-lg hover:bg-yellow-100 transition-colors">
-                                <Star className="w-4 h-4" />
-                                Đánh giá
-                              </button>
-                            )} */}
+                            </Button>
+
+                            <Button
+                              disabled={
+                                order.status === OrderStatus.CANCELED ||
+                                order.status === OrderStatus.COMPLETED
+                              }
+                              className="flex-1"
+                              variant={"destructive"}
+                              onClick={async () => {
+                                // await OrderAPI.onCancelOrder(order.id);
+                                // toast.success("Đã hủy đơn hàng ");
+                                // router.refresh();
+                              }}>
+                              Hủy đơn hàng
+                            </Button>
                           </div>
                         </div>
                       </motion.div>

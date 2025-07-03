@@ -10,6 +10,7 @@ import { CategoryAPI } from "@/api/categories/category.api";
 import { CategoryInterface } from "@/types/category";
 import { usePathname, useRouter } from "next/navigation";
 import { RecursiveCategoryTree } from "./RecursiveCategoryTree";
+import { useCartContext } from "@/context/cart-context";
 
 // TypeScript interfaces
 
@@ -84,6 +85,8 @@ const Navbar: React.FC = () => {
   const debouncedSearchQuery = useDebounce(searchQuery, 300);
 
   const router = useRouter();
+
+  const { cartQuantity } = useCartContext();
 
   // Mock search API function
   const searchAPI = async (query: string): Promise<SearchResult[]> => {
@@ -342,17 +345,17 @@ const Navbar: React.FC = () => {
                 </div>
 
                 <a
-                  href="#"
+                  href="/gioi-thieu"
                   className="text-gray-900 hover:text-blue-600 px-3 py-2 text-sm font-medium transition-colors duration-200">
                   Giới thiệu
                 </a>
                 <a
-                  href="#"
+                  href="/lien-he"
                   className="text-gray-900 hover:text-blue-600 px-3 py-2 text-sm font-medium transition-colors duration-200">
                   Liên hệ
                 </a>
                 <a
-                  href="#"
+                  href="/tin-tuc"
                   className="text-gray-900 hover:text-blue-600 px-3 py-2 text-sm font-medium transition-colors duration-200">
                   Tin tức
                 </a>
@@ -391,7 +394,7 @@ const Navbar: React.FC = () => {
                 className="p-2 text-gray-600 hover:text-blue-600 hover:bg-gray-100 rounded-lg transition-colors duration-200 relative">
                 <ShoppingCart className="h-5 w-5" />
                 <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
-                  3
+                  {cartQuantity}
                 </span>
               </button>
             </div>
@@ -411,7 +414,7 @@ const Navbar: React.FC = () => {
 
                 {/* About Link */}
                 <a
-                  href="#"
+                  href="/gioi-thieu"
                   className="flex items-center px-4 py-3 text-gray-900 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all duration-200 font-medium">
                   <div className="w-8 h-8 bg-gradient-to-br from-orange-500 to-orange-600 rounded-lg flex items-center justify-center mr-3">
                     <span className="text-white text-sm">ℹ️</span>
@@ -421,7 +424,7 @@ const Navbar: React.FC = () => {
 
                 {/* Contact Link */}
                 <a
-                  href="#"
+                  href="/lien-he"
                   className="flex items-center px-4 py-3 text-gray-900 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all duration-200 font-medium">
                   <div className="w-8 h-8 bg-gradient-to-br from-red-500 to-red-600 rounded-lg flex items-center justify-center mr-3">
                     <span className="text-white text-sm">📞</span>
@@ -429,7 +432,7 @@ const Navbar: React.FC = () => {
                   Liên hệ
                 </a>
                 <a
-                  href="#"
+                  href="/tin-tuc"
                   className="flex items-center px-4 py-3 text-gray-900 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all duration-200 font-medium">
                   <div className="w-8 h-8 bg-gradient-to-br from-red-500 to-red-600 rounded-lg flex items-center justify-center mr-3">
                     <span className="text-white text-sm">📞</span>

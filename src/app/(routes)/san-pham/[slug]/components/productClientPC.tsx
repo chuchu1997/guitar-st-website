@@ -24,6 +24,7 @@ import { ProductWidgets } from "@/components/ui/product/product";
 import EditorClientWrapper from "@/components/editor/editor-wrapper";
 import { discountTypeEnum } from "@/types/promotion";
 import { AddToCartButton } from "@/components/ui/Cart/addToCartButton";
+import ProductSuggess from "./productSuggest";
 
 interface propsProductClientPC {
   product: ProductInterface;
@@ -102,7 +103,7 @@ export const ProductClientPC = ({ product }: propsProductClientPC) => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen ">
       {/* Breadcrumb */}
       <div className="bg-white border-b">
         <div className="container mx-auto px-4 py-3">
@@ -174,7 +175,7 @@ export const ProductClientPC = ({ product }: propsProductClientPC) => {
               </div>
               {product.stock < 10 && (
                 <p className="text-orange-600 font-medium">
-                  Only {product.stock} left in stock!
+                  Chỉ còn {product.stock} sản phẩm trong shop !!
                 </p>
               )}
             </div>
@@ -462,6 +463,8 @@ export const ProductClientPC = ({ product }: propsProductClientPC) => {
               </div>
             )}
           </div>
+
+          <ProductSuggess product={product} />
         </div>
       </div>
     </div>

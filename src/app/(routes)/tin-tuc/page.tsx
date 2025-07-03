@@ -1,88 +1,52 @@
+import { StoreAPI } from "@/api/stores/store.api";
+import NewsPage from "./tin-tuc-page";
+
+
 /** @format */
 
-import React from "react";
+import { Metadata } from "next";
+import { StoreInterface } from "@/types/store";
 
-type NewsItem = {
-  id: number;
-  title: string;
-  excerpt: string;
-  date: string;
-  imageUrl: string;
-  slug: string;
-};
+export async function generateMetadata(
+ 
+): Promise<Metadata> {
 
-const newsList: NewsItem[] = [
-  {
-    id: 1,
-    title: "Top 5 cây guitar acoustic tốt nhất cho người mới bắt đầu",
-    excerpt:
-      "Khám phá những mẫu guitar acoustic chất lượng, dễ chơi và giá hợp lý dành cho người mới bắt đầu.",
-    date: "2025-06-15",
-    imageUrl: "/images/news-acoustic.jpg",
-    slug: "top-5-guitar-acoustic-cho-nguoi-moi",
-  },
-  {
-    id: 2,
-    title: "Lợi ích của việc học chơi guitar đối với sức khỏe tinh thần",
-    excerpt:
-      "Chơi guitar không chỉ giúp giải trí mà còn mang lại nhiều lợi ích về mặt cảm xúc và tinh thần.",
-    date: "2025-06-10",
-    imageUrl: "/images/news-guitar-health.jpg",
-    slug: "loi-ich-choi-guitar",
-  },
-  {
-    id: 3,
-    title: "Guitar điện hay guitar cổ điển – lựa chọn nào phù hợp với bạn?",
-    excerpt:
-      "So sánh ưu nhược điểm của các dòng guitar phổ biến để chọn ra cây đàn phù hợp với phong cách của bạn.",
-    date: "2025-06-01",
-    imageUrl: "/images/news-compare.jpg",
-    slug: "nen-chon-guitar-nao",
-  },
-];
 
-const NewsPage: React.FC = () => {
-  return (
-    <div className="bg-white text-gray-800 container mx-auto">
-      {/* Header */}
-      <div className="bg-gradient-to-br from-yellow-50 to-white py-16 px-6 md:px-16 text-center">
-        <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
-          Tin Tức & Blog
-        </h1>
-        <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-          Cập nhật những tin tức mới nhất, bài viết hữu ích và kinh nghiệm chơi
-          nhạc cụ từ Guitar Sài Thành.
-        </p>
-      </div>
+  const res = await StoreAPI.getStoreInfo();
+  const store = res.data.store as StoreInterface;
+  const storeName = store.name;
+  const website_domain = process.env.NEXT_PUBLIC_BASE_URL || ""
+    return {
+    title: ` ${storeName} | Tin tức nhạc cụ, guitar mới nhất `,
+    description: `${storeName} cập nhật nhanh các tin tức, xu hướng mới nhất về nhạc cụ, đặc biệt là guitar, phụ kiện và các sự kiện âm nhạc.`,
+    keywords: [
+      "tin tức guitar",
+      "tin tức nhạc cụ",
+      "guitar sài thành",
+      "cửa hàng guitar",
+      "phụ kiện guitar",
+      "tin tức âm nhạc",
+      "guitar mới",
+    ],
+    openGraph: {
+      title: `Tin tức nhạc cụ & guitar mới nhất | ${storeName}`,
+      description:
+        "Theo dõi các xu hướng, mẹo vặt, đánh giá và sự kiện về guitar & nhạc cụ tại Guitar Sài Thành.",
+      type: "website",
+      url: `${website_domain}/tin-tuc`,
+      siteName: storeName,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `Tin tức về guitar & nhạc cụ mới nhất | ${storeName}`,
+      description:
+        "Tổng hợp thông tin hữu ích về guitar, phụ kiện, xu hướng và các dòng sản phẩm mới.",
+    },
+    alternates: {
+      canonical: `${website_domain}/tin-tuc`,
+    },
+  };
 
-      {/* News List */}
-      <section className="py-12 px-6 md:px-16 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        {newsList.map((item) => (
-          <a
-            key={item.id}
-            href={`/tin-tuc/${item.slug}`}
-            className="bg-white rounded-xl shadow-md hover:shadow-lg transition overflow-hidden">
-            <img
-              src={item.imageUrl}
-              alt={item.title}
-              className="w-full h-48 object-cover"
-            />
-            <div className="p-4 space-y-2">
-              <h2 className="text-lg font-semibold text-gray-800 line-clamp-2">
-                {item.title}
-              </h2>
-              <p className="text-sm text-gray-600 line-clamp-3">
-                {item.excerpt}
-              </p>
-              <p className="text-xs text-gray-400">
-                {new Date(item.date).toLocaleDateString("vi-VN")}
-              </p>
-            </div>
-          </a>
-        ))}
-      </section>
-    </div>
-  );
-};
+}
 
 export default NewsPage;

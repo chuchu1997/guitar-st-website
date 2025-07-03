@@ -1,6 +1,6 @@
 /** @format */
 
-import { CreateOrderInterface } from "@/types/order";
+import { CreateOrderInterface, OrderStatus } from "@/types/order";
 import api from "../interceptor";
 const storeID = process.env.STORE_ID || 1;
 
@@ -14,6 +14,17 @@ export const OrderAPI = {
       data: {
         ...data,
         storeId: storeID,
+      },
+    });
+  },
+
+  onCancelOrder: async (orderID: number) => {
+    return await api({
+      method: "Patch",
+      url: `${url}/${orderID}`,
+      data: {
+        status: OrderStatus.CANCELED,
+        updateAt: new Date(),
       },
     });
   },

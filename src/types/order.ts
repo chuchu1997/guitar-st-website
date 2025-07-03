@@ -42,7 +42,12 @@ interface OrderGiftItemDto {
   giftQuantity: number;
 }
 
-export type OrderStatus = "ORDERED" | "SHIPPING" | "COMPLETED" | "CANCELED";
+export enum OrderStatus {
+  ORDERED = "ORDERED", // Đã đặt hàng
+  ON_SHIP = "ON_SHIP", // Đang giao
+  COMPLETED = "COMPLETED", // Đã thành công
+  CANCELED = "CANCELED", // Đã hủy
+}
 
 export interface OrderInterface {
   id: number;
@@ -53,7 +58,7 @@ export interface OrderInterface {
 
   status: OrderStatus;
   total: number;
-  trackingNumber?: number; // MÃ VẬN ĐƠN
+  trackingCode?: string; // MÃ VẬN ĐƠN
 
   items: OrderItemDetail[]; // Gồm cả giftItems và thông tin sản phẩm
 

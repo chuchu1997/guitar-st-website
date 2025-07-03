@@ -6,9 +6,9 @@ import Navbar from "@/components/ui/Navbar";
 import { BodyContainer } from "@/components/BodyContainer";
 import Footer from "@/components/layouts/Footer";
 import { SidebarProvider } from "@/components/ui/sidebar";
-import { CartProvider } from "@/provider/cart-provider";
 import { Toaster } from "react-hot-toast";
 import CookiesClientWrapper from "@/provider/cookie-provider-wrapper";
+import { CartProvider } from "@/context/cart-context";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 60;

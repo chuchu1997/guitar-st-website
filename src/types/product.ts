@@ -1,3 +1,4 @@
+import { CategoryInterface } from "./category";
 import { ProductPromotion } from "./promotion";
 import { SeoInterface } from "./seo";
 
@@ -32,6 +33,7 @@ interface ProductBase {
     stock:number;
     images:ImageInterface[],
     categoryId:number;
+    category?:CategoryInterface
     reviews:[]
     sku:string;
 

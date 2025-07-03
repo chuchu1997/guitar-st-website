@@ -13,6 +13,7 @@ import { CartItem } from "./cart-item";
 import { ProductInterface } from "@/types/product";
 import { UserCartAPI } from "@/api/cart/cart.api";
 import { discountTypeEnum } from "@/types/promotion";
+import { useCartContext } from "@/context/cart-context";
 
 export type CartItemSSR = {
   id?: number;
@@ -29,6 +30,7 @@ const CartComponent = () => {
   const [cookies] = useCookies(["userInfo"]);
   const cartIDRef = useRef<number>(0);
   const [cartItems, setCartItems] = useState<CartItemSSR[]>([]);
+  const { setCartQuantity, cartQuantity } = useCartContext();
 
   useEffect(() => {
     const user = cookies["userInfo"];
@@ -49,6 +51,7 @@ const CartComponent = () => {
         product: item.product,
       }));
       setCartItems(mappedItems);
+      setCartQuantity(mappedItems.length); // cập nhật lên context
     }
   };
 
@@ -189,7 +192,9 @@ const CartComponent = () => {
                       const updatedItems = cartItems.filter(
                         (item) => item.product.id !== productID
                       );
+
                       setCartItems(updatedItems);
+                      setCartQuantity(updatedItems.length);
                       debouncedUpdateRef.current(updatedItems); // Truyền trực tiếp
                     }}
                   />

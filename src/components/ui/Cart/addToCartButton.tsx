@@ -3,6 +3,7 @@
 import authApi from "@/api/auth";
 import { UserCartAPI } from "@/api/cart/cart.api";
 import { CartItemSSR } from "@/app/(routes)/gio-hang/components/cart";
+import { useCartContext } from "@/context/cart-context";
 import { ProductInterface } from "@/types/product";
 import { ShoppingCart } from "lucide-react";
 import { useCookies } from "react-cookie";
@@ -14,6 +15,7 @@ interface propsCart {
 }
 export const AddToCartButton = ({ product, quantity = 1 }: propsCart) => {
   const [cookies, setCookie] = useCookies(["userInfo"]);
+  const { setCartQuantity, cartQuantity } = useCartContext();
 
   const createNewUserInfo = async () => {
     let res = await authApi.createGuestUser({
@@ -34,8 +36,6 @@ export const AddToCartButton = ({ product, quantity = 1 }: propsCart) => {
 
   const addNewItemToCart = async () => {
     const userID = cookies.userInfo.id;
-
-    console.log("ALL", userID);
 
     if (userID) {
       const res = await UserCartAPI.getAllCartItemsOfUser(userID);
@@ -63,6 +63,7 @@ export const AddToCartButton = ({ product, quantity = 1 }: propsCart) => {
             : item
         );
       } else {
+        setCartQuantity(cartQuantity + 1);
         // ✅ Nếu chưa có, thêm mới
         updatedItems = [
           ...currentItems,
@@ -90,7 +91,7 @@ export const AddToCartButton = ({ product, quantity = 1 }: propsCart) => {
     rounded-lg font-semibold 
     text-sm sm:text-base        // nhỏ hơn ở mobile, bình thường ở sm trở lên
     hover:bg-gray-800 transition-colors 
-    flex items-center justify-center space-x-2
+    flex flex-col items-center justify-center space-x-2
 
   "
       onClick={async () => {

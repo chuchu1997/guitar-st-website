@@ -24,6 +24,7 @@ import { UserCartAPI } from "@/api/cart/cart.api";
 import { CartItemSSR } from "@/app/(routes)/gio-hang/components/cart";
 import toast from "react-hot-toast";
 import { useCookies } from "react-cookie";
+import ProductSuggess from "./productSuggest";
 interface propsProductMobile {
   product: ProductInterface;
 }
@@ -73,10 +74,6 @@ export default function ProductMobile({ product }: propsProductMobile) {
     <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-4 z-50">
       <div className="flex gap-3">
         {/* Store Button */}
-        <button className="flex-shrink-0 flex flex-col items-center justify-center w-16 h-12 border border-gray-300 rounded-lg">
-          <div className="w-6 h-6 bg-gray-300 rounded-full mb-1"></div>
-          <span className="text-xs text-gray-600">Cửa hàng</span>
-        </button>
 
         {/* Chat Button */}
         {/* <button
@@ -325,46 +322,13 @@ export default function ProductMobile({ product }: propsProductMobile) {
               Giới thiệu về sản phẩm này
             </h3>
             <EditorClientWrapper jsonString={product.description} />
-            <button className="text-blue-500 text-sm mt-1 flex items-center gap-1">
-              Xem thêm <ChevronDown size={14} />
-            </button>
           </div>
 
           <Separator />
 
           {/* Suggested Products */}
-          <div className="py-3 pb-20">
-            <h3 className="font-semibold text-sm mb-3">
-              Có thể bạn cũng thích
-            </h3>
-            <div className="grid grid-cols-2 gap-3">
-              {[1, 2].map((item) => (
-                <div
-                  key={item}
-                  className="bg-white border border-gray-200 rounded-lg overflow-hidden">
-                  <div className="aspect-square bg-gray-100">
-                    <img
-                      src={`https://images.unsplash.com/photo-${
-                        item === 1
-                          ? "1572635196184-84e35138cf62"
-                          : "1583394838701-5cd4b6b7f0c8"
-                      }?w=200&h=200&fit=crop`}
-                      alt={`Product ${item}`}
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                  <div className="p-3">
-                    <p className="text-xs text-gray-600 line-clamp-2 mb-1">
-                      Sản phẩm tương tự chất lượng cao
-                    </p>
-                    <p className="text-sm font-bold text-red-500">
-                      {FormatUtils.formatPriceVND(item === 1 ? 199000 : 249000)}
-                    </p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
+
+          <ProductSuggess product={product} />
         </div>
 
         <StickyBottomActions />

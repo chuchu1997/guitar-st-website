@@ -30,6 +30,7 @@ import { useCookies } from "react-cookie";
 import authApi, { BaseInfoUser } from "@/api/auth";
 import { OrderAPI } from "@/api/orders/order.api";
 import { discountTypeEnum } from "@/types/promotion";
+import { useRouter } from "next/navigation";
 
 // Validation utilities
 const validateCustomerInfo = (
@@ -120,6 +121,7 @@ export default function CheckoutForm() {
   const [customerData, setCustomerData] = useState<CustomerData | undefined>();
   const [cartItems, setCartItems] = useState<CartItemSSR[]>([]);
   const [cookies] = useCookies(["userInfo"]);
+  const router = useRouter();
 
   const form = useForm<CheckoutFormValues>({
     resolver: zodResolver(checkoutSchema),
@@ -276,8 +278,6 @@ export default function CheckoutForm() {
                 })
               : [];
 
-            console.log("GIFT ITEMS", giftItems);
-
             return {
               productId: product.id,
               unitPrice,
@@ -304,6 +304,7 @@ export default function CheckoutForm() {
           });
         }
 
+        router.push("/gio-hang");
         // Here you would typically:
         // 1. Call your order API
         // 2. Navigate to success page
