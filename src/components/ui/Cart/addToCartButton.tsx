@@ -46,11 +46,9 @@ export const AddToCartButton = ({ product, quantity = 1 }: propsCart) => {
     const userID = cookies.userInfo.id;
     if (userID) {
       const res = await UserCartAPI.getAllCartItemsOfUser(userID);
-      console.log("res", res);
       const currentItems = Array.isArray(res.data?.cart?.items)
         ? res.data.cart.items
         : [];
-      console.log("current ITEMS", currentItems);
 
       // Tìm xem sản phẩm đã có trong giỏ chưa
       const existingIndex = currentItems.findIndex(

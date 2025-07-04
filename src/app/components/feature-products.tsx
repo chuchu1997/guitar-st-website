@@ -14,6 +14,7 @@ const FeatureProducts = async () => {
 
   try {
     const response = await ProductAPI.getFeatureProducts({});
+    console.log("RESPONSE", response);
     featureProducts = response.data.products as ProductInterface[];
 
     const allProductPromotions: ProductPromotion[] = featureProducts.flatMap(
