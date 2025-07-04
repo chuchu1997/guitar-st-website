@@ -1,4 +1,7 @@
+
+"use client";
 import { ChevronRight } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 interface SectionHeaderProps {
   title: React.ReactNode;
@@ -6,7 +9,9 @@ interface SectionHeaderProps {
   icon?: React.ReactNode;
   showViewAll?: boolean;
   viewAllText?: string;
-  onViewAllClick?: () => void;
+  linkViewAll?:string;
+
+ 
   accent?: 'blue' | 'purple' | 'green' | 'orange' | 'red' | 'yellow';
   size?: 'sm' | 'md' | 'lg';
 }
@@ -17,10 +22,13 @@ export const SectionHeader: React.FC<SectionHeaderProps> = ({
   icon,
   showViewAll = true,
   viewAllText = "Xem tất cả",
-  onViewAllClick,
+  linkViewAll,
+
   accent = 'yellow',
   size = 'md'
 }) => {
+  const router = useRouter();
+
   // Accent color configurations
   const accentColors = {
     blue: {
@@ -159,7 +167,9 @@ export const SectionHeader: React.FC<SectionHeaderProps> = ({
         {/* Right side - View All button */}
         {showViewAll && (
           <button
-            onClick={onViewAllClick}
+            onClick={()=>{
+              router.push(linkViewAll ??"/")
+            }}
             className={`
             
               group relative overflow-hidden

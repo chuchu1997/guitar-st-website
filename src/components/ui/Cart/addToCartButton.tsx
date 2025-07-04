@@ -29,8 +29,16 @@ export const AddToCartButton = ({ product, quantity = 1 }: propsCart) => {
 
     if (res.status === 200) {
       let userInfo = res.data.userInfo;
-      console.log("USER INFO", userInfo);
-      setCookie("userInfo", { id: userInfo.id }, { path: "/" });
+
+      setCookie(
+        "userInfo",
+        { id: userInfo.id },
+        {
+          path: "/",
+          maxAge: 60 * 60 * 24 * 365 * 5, // 5 năm
+          sameSite: "lax",
+        }
+      );
     }
   };
 
@@ -91,7 +99,7 @@ export const AddToCartButton = ({ product, quantity = 1 }: propsCart) => {
     rounded-lg font-semibold 
     text-sm sm:text-base        // nhỏ hơn ở mobile, bình thường ở sm trở lên
     hover:bg-gray-800 transition-colors 
-    flex flex-col items-center justify-center space-x-2
+    flex flex-col sm:flex-row items-center justify-center space-x-2
 
   "
       onClick={async () => {

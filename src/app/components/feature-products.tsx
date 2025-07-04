@@ -37,6 +37,7 @@ const FeatureProducts = async () => {
     <section className="py-16">
       <div className="container mx-auto px-6">
         <SectionHeader
+          linkViewAll={`/danh-muc/san-pham`}
           title="Sản phẩm nổi bật"
           icon={<Star className="text-black" size={24} />}
         />

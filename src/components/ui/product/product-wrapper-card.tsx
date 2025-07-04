@@ -8,9 +8,13 @@ import Link from "next/link";
 
 interface propsInterface {
   products: ProductInterface[];
+  hiddenGridButton?: boolean;
 }
 
-const ProductWrapperCard = ({ products }: propsInterface) => {
+const ProductWrapperCard = ({
+  products,
+  hiddenGridButton = false,
+}: propsInterface) => {
   const [isGridLayout, setIsGridLayout] = useState(true);
 
   const toggleLayout = () => {
@@ -22,50 +26,52 @@ const ProductWrapperCard = ({ products }: propsInterface) => {
       {products && products.length > 0 ? (
         <>
           {/* Layout Toggle Button */}
-          <div className="flex sm:hidden justify-end mb-4">
-            <button
-              onClick={toggleLayout}
-              className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
-              aria-label={
-                isGridLayout
-                  ? "Switch to single column"
-                  : "Switch to grid layout"
-              }>
-              {isGridLayout ? (
-                <>
-                  <svg
-                    className="w-5 h-5"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24">
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M4 6h16M4 12h16M4 18h16"
-                    />
-                  </svg>
-                  <span className="text-sm">Danh sách</span>
-                </>
-              ) : (
-                <>
-                  <svg
-                    className="w-5 h-5"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24">
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"
-                    />
-                  </svg>
-                  <span className="text-sm">Lưới</span>
-                </>
-              )}
-            </button>
-          </div>
+          {!hiddenGridButton && (
+            <div className="flex sm:hidden justify-end mb-4">
+              <button
+                onClick={toggleLayout}
+                className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+                aria-label={
+                  isGridLayout
+                    ? "Switch to single column"
+                    : "Switch to grid layout"
+                }>
+                {isGridLayout ? (
+                  <>
+                    <svg
+                      className="w-5 h-5"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24">
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M4 6h16M4 12h16M4 18h16"
+                      />
+                    </svg>
+                    <span className="text-sm">Danh sách</span>
+                  </>
+                ) : (
+                  <>
+                    <svg
+                      className="w-5 h-5"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24">
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"
+                      />
+                    </svg>
+                    <span className="text-sm">Lưới</span>
+                  </>
+                )}
+              </button>
+            </div>
+          )}
 
           {/* Products Container */}
           <div
@@ -95,19 +101,9 @@ const ProductWrapperCard = ({ products }: propsInterface) => {
               );
             })}
           </div>
-
-          {/* Loading indicator for infinite scroll */}
-          {/* {loadingMore && <LoadingSpinner />} */}
-
-          {/* End of products message */}
-          {/* {products.length > 0 && (
-            <div className="text-center py-8">
-              <p className="text-gray-500">Đã hiển thị tất cả sản phẩm</p>
-            </div>
-          )} */}
         </>
       ) : (
-        <div className="text-center py-16 space-y-6">
+        <div className="text-center py-2 space-y-2">
           <div className="w-24 h-24 mx-auto bg-gray-100 rounded-full flex items-center justify-center">
             <svg
               className="w-12 h-12 text-gray-400"

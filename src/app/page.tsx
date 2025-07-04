@@ -22,6 +22,10 @@ import { StoreAPI } from "@/api/stores/store.api";
 import { StoreInterface } from "@/types/store";
 import { generateSeoForPage } from "@/seo-ssr/seo-ssr";
 import { SeoInterface } from "@/types/seo";
+import PhuKien from "./components/phu-kien";
+import GuitarAcoustic from "./components/guitar";
+import TrongKen from "./components/trong-ken";
+import SuggessProductHome from "./components/suggesstHome";
 
 export async function generateMetadata(): Promise<Metadata> {
   const store = (await StoreAPI.getStoreInfo()).data.store as StoreInterface;
@@ -44,6 +48,14 @@ const MusicStoreLanding: React.FC = () => {
 
       {/* Featured Products */}
       <FeatureProducts />
+
+      <GuitarAcoustic />
+
+      <PhuKien />
+
+      <TrongKen />
+
+      <SuggessProductHome />
 
       {/* Guitars */}
       {/* <section className="py-16 bg-gradient-to-r from-amber-100 to-yellow-100">

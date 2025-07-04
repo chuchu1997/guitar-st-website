@@ -53,7 +53,7 @@ interface FilterTab {
 const OrderHistory: React.FC = () => {
   const [orders, setOrders] = useState<OrderInterface[]>([]);
   const [expandedOrders, setExpandedOrders] = useState<Set<string>>(new Set());
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(false);
   const [filter, setFilter] = useState<FilterType>("all");
   const [cookies] = useCookies(["userInfo"]);
   const router = useRouter();
@@ -61,8 +61,9 @@ const OrderHistory: React.FC = () => {
   // Mock data - replace with your actual API call
   useEffect(() => {
     const fetchOrders = async (): Promise<void> => {
-      setLoading(true);
       const user = cookies.userInfo;
+      if (!user || !user.id) return;
+      setLoading(true);
       let res = await OrderAPI.getOrdersWithUserID(Number(user.id));
 
       const orders: OrderInterface[] = res.data.orders;
