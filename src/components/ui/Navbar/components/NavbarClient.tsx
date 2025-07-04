@@ -11,6 +11,9 @@ import { CategoryInterface } from "@/types/category";
 import { usePathname, useRouter } from "next/navigation";
 import { RecursiveCategoryTree } from "./RecursiveCategoryTree";
 import { useCartContext } from "@/context/cart-context";
+import { ProductAPI } from "@/api/products/product.api";
+import { ProductInterface } from "@/types/product";
+import { FormatUtils } from "@/utils/format";
 
 // TypeScript interfaces
 
@@ -65,7 +68,7 @@ const Navbar: React.FC = () => {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
+  const [searchResults, setSearchResults] = useState<ProductInterface[]>([]);
   const [isSearching, setIsSearching] = useState(false);
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
 
@@ -89,17 +92,15 @@ const Navbar: React.FC = () => {
   const { cartQuantity } = useCartContext();
 
   // Mock search API function
-  const searchAPI = async (query: string): Promise<SearchResult[]> => {
+  const searchAPI = async (query: string): Promise<ProductInterface[]> => {
     // Simulate API delay
     await new Promise((resolve) => setTimeout(resolve, 500));
 
     if (!query.trim()) return [];
 
-    return mockSearchResults.filter(
-      (item) =>
-        item.title.toLowerCase().includes(query.toLowerCase()) ||
-        item.description.toLowerCase().includes(query.toLowerCase())
-    );
+    let res = await ProductAPI.getProductByName(query);
+
+    return res.data.products;
   };
 
   // Effect for debounced search
@@ -120,6 +121,7 @@ const Navbar: React.FC = () => {
   }, [debouncedSearchQuery]);
   useEffect(() => {
     setIsMobileMenuOpen(false);
+    setIsSearchOpen(false);
   }, [pathname]);
   // Focus search input when dialog opens
   useEffect(() => {
@@ -403,7 +405,7 @@ const Navbar: React.FC = () => {
               </button>
             </div>
           </div>
-          <div className="sm:hidden border-t border-gray-300">
+          <div className="sm:hidden">
             <Menubar />
           </div>
 
@@ -420,9 +422,6 @@ const Navbar: React.FC = () => {
                 <a
                   href="/gioi-thieu"
                   className="flex items-center px-4 py-3 text-gray-900 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all duration-200 font-medium">
-                  <div className="w-8 h-8 bg-gradient-to-br from-orange-500 to-orange-600 rounded-lg flex items-center justify-center mr-3">
-                    <span className="text-white text-sm">ℹ️</span>
-                  </div>
                   Giới thiệu
                 </a>
 
@@ -430,17 +429,11 @@ const Navbar: React.FC = () => {
                 <a
                   href="/lien-he"
                   className="flex items-center px-4 py-3 text-gray-900 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all duration-200 font-medium">
-                  <div className="w-8 h-8 bg-gradient-to-br from-red-500 to-red-600 rounded-lg flex items-center justify-center mr-3">
-                    <span className="text-white text-sm">📞</span>
-                  </div>
                   Liên hệ
                 </a>
                 <a
                   href="/tin-tuc"
                   className="flex items-center px-4 py-3 text-gray-900 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all duration-200 font-medium">
-                  <div className="w-8 h-8 bg-gradient-to-br from-red-500 to-red-600 rounded-lg flex items-center justify-center mr-3">
-                    <span className="text-white text-sm">📞</span>
-                  </div>
                   Tin tức
                 </a>
 
@@ -463,7 +456,7 @@ const Navbar: React.FC = () => {
 
       {/* Search Dialog/Modal */}
       {isSearchOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-50 flex   justify-center p-4">
           {/* Background overlay */}
           <div
             className="absolute inset-0 bg-black/20 backdrop-blur-sm"
@@ -506,7 +499,7 @@ const Navbar: React.FC = () => {
             </div>
 
             {/* Search Results */}
-            <div className="max-h-96 overflow-y-auto">
+            <div className="max-h-96 overflow-y-auto ">
               {isSearching && (
                 <div className="flex flex-col items-center justify-center py-12">
                   <div className="animate-spin rounded-full h-8 w-8 border-2 border-blue-600 border-t-transparent mb-4"></div>
@@ -521,27 +514,39 @@ const Navbar: React.FC = () => {
                     {searchResults.length !== 1 ? "s" : ""} tìm thấy
                   </p>
                   {searchResults.map((result) => (
-                    <div
+                    <Link
+                      href={`/san-pham/${result.slug}`}
                       key={result.id}
                       className="group p-4 hover:bg-gray-50 rounded-xl cursor-pointer transition-all duration-200 border border-transparent hover:border-gray-200">
                       <div className="flex items-start justify-between">
                         <div className="flex-1">
-                          <h4 className="font-semibold text-gray-900 group-hover:text-blue-600 transition-colors duration-200">
-                            {result.title}
-                          </h4>
-                          <p className="text-gray-600 mt-1 text-sm leading-relaxed">
-                            {result.description}
-                          </p>
+                          <div className="flex gap-x-2 items-center">
+                            <ImageLoader
+                              height={60}
+                              width={60}
+                              src={result.images[0].url}
+                              alt={result.name}
+                              className="rounded-lg object-contain"
+                            />
+                            <div>
+                              <h4 className="font-semibold text-gray-900 group-hover:text-blue-600 transition-colors duration-200">
+                                {result.name}
+                              </h4>
+                              <p className="text-gray-600 mt-1 text-sm leading-relaxed">
+                                {result.shortDescription}
+                              </p>
+                            </div>
+                          </div>
                         </div>
                         {result.price && (
                           <div className="ml-4 flex-shrink-0">
                             <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold bg-blue-50 text-blue-700">
-                              ${result.price}
+                              {FormatUtils.formatPriceVND(result.price)}
                             </span>
                           </div>
                         )}
                       </div>
-                    </div>
+                    </Link>
                   ))}
                 </div>
               )}

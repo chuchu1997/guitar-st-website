@@ -271,11 +271,11 @@ export const ProductClientPC = ({ product }: propsProductClientPC) => {
                 <h3 className="font-semibold text-green-700 mb-2">
                   🎁 Quà tặng miễn phí kèm theo:
                 </h3>
-                <ul className="text-sm text-green-600 space-y-1">
+                <ul className="text-sm text-green-600 space-y-1 flex gap-x-2">
                   {product.giftProducts.map((giftContainer) => {
                     const gift: ProductInterface = giftContainer.gift;
                     return (
-                      <li key={gift.id}>
+                      <li key={gift.id} className=" max-w-[100px]">
                         <ProductWidgets.giftItem gift={gift} />
                       </li>
                     );

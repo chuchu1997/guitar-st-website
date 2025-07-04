@@ -296,6 +296,7 @@ export default function CheckoutForm() {
             userId: Number(user.id) ?? 0,
             total: total,
             items: items,
+            note: data.note ?? "",
             payment: {
               method: "COD",
               status: "PENDING",

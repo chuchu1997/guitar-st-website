@@ -42,7 +42,10 @@ const FeatureProducts = async () => {
           icon={<Star className="text-black" size={24} />}
         />
         <div className="">
-          <ProductWrapperCard products={featureProducts} />
+          <ProductWrapperCard
+            products={featureProducts}
+            hiddenGridButton={true}
+          />
 
           {/* {featureProducts.map((product) => {
             const matchedPromotion = product.promotionProducts.find((pp) =>

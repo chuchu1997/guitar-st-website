@@ -20,6 +20,8 @@ export interface CreateOrderInterface {
   storeId: number;
   address: string;
   total: number;
+  note?: string;
+
   items: OrderItem[];
   payment: PaymentInterface;
 }
