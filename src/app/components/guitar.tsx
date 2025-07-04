@@ -24,7 +24,7 @@ const GuitarAcoustic = async () => {
   };
 
   try {
-    const res = await CategoryAPI.getCategoryWithSlug("guitar-acoustic", 1, 4);
+    const res = await CategoryAPI.getCategoryWithSlug("guitar-acoustic", 1, 5);
     guitarProducts = res.data.products as ProductInterface[];
     category = res.data as CategoryInterface;
 

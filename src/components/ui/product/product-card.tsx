@@ -20,6 +20,12 @@ import { BadgeFreeship } from "../Badge/freeship";
 import { DiscountComponent } from "../Discount/discount";
 import { BadgeFlashSale } from "../Badge/flashsale";
 import { discountTypeEnum, PromotionInterface } from "@/types/promotion";
+import { useCookies } from "react-cookie";
+import { UserCartAPI } from "@/api/cart/cart.api";
+import { CartItemSSR } from "@/app/gio-hang/components/cart";
+import { useCartContext } from "@/context/cart-context";
+import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
 
 export const RenderGiftItems = ({
   gift,
@@ -67,6 +73,10 @@ export const ProductCard = ({
   promotion,
   isSingleColumn = false,
 }: ProductCardProps) => {
+  const [cookies, setCookie] = useCookies(["userInfo"]);
+  const { setCartQuantity, cartQuantity } = useCartContext();
+  const router = useRouter();
+
   const promotionProduct = product.promotionProducts;
   const showLineThroughPrice = promotion
     ? product.price
@@ -325,7 +335,68 @@ export const ProductCard = ({
           <div className="hidden md:flex opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-2 group-hover:translate-y-0 gap-2 mt-auto">
             <button
               className="flex-1 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white text-sm font-semibold py-2 rounded-lg transition-all duration-200 shadow-md hover:shadow-lg"
-              onClick={() => {}}>
+              onClick={async () => {
+                const userID = cookies.userInfo.id;
+
+                if (userID) {
+                  const res = await UserCartAPI.getAllCartItemsOfUser(userID);
+                  const currentItems = Array.isArray(res.data?.cart?.items)
+                    ? res.data.cart.items
+                    : [];
+
+                  // Tìm xem sản phẩm đã có trong giỏ chưa
+                  const existingIndex = currentItems.findIndex(
+                    (item: any) => item.product.id === product.id
+                  );
+
+                  let updatedItems: CartItemSSR[] = [];
+
+                  if (existingIndex !== -1) {
+                    // ✅ Nếu đã tồn tại, cập nhật quantity
+                    updatedItems = currentItems.map(
+                      (item: any, index: number) =>
+                        index === existingIndex
+                          ? {
+                              ...item,
+                              quantity: item.quantity + 1,
+                              isSelect: true,
+                            }
+                          : {
+                              ...item,
+                              isSelect: false,
+                            }
+                    );
+                  } else {
+                    // ✅ Nếu chưa có, thêm mới
+                    updatedItems = [
+                      ...currentItems.map((item: any) => ({
+                        ...item,
+                        isSelect: false,
+                      })),
+                      {
+                        isSelect: true,
+                        product,
+                        quantity: 1,
+                      },
+                    ];
+                  }
+
+                  // Gửi dữ liệu lên server
+                  await UserCartAPI.updateCartItems(
+                    userID,
+                    res.data.cart.id,
+                    updatedItems
+                  );
+
+                  setCartQuantity(updatedItems.length);
+                  toast.success("Đã thêm sản phẩm vào giỏ hàng");
+                  router.push("/checkout");
+                }
+
+                // cart.cleanSelectedItems();
+
+                // cart.addItem(product, 1);
+              }}>
               Mua ngay
             </button>
             <button className="px-4 bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm font-semibold py-2 rounded-lg transition-colors duration-200">

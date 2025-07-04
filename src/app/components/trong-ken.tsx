@@ -24,7 +24,7 @@ const TrongKen = async () => {
   };
 
   try {
-    const res = await CategoryAPI.getCategoryWithSlug("trong-ken", 1, 4);
+    const res = await CategoryAPI.getCategoryWithSlug("trong-ken", 1, 5);
 
     trongkenProducts = res.data.products as ProductInterface[];
 

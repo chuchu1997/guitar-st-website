@@ -77,7 +77,7 @@ const ProductWrapperCard = ({
           <div
             className={
               isGridLayout
-                ? "columns-2 md:columns-3 lg:columns-4 xl:columns-5 gap-2 space-y-2"
+                ? "grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2 space-y-2"
                 : "grid grid-cols-1 gap-4"
             }>
             {products.map((product, index) => {

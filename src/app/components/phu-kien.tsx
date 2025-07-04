@@ -24,7 +24,7 @@ const PhuKien = async () => {
   };
 
   try {
-    const res = await CategoryAPI.getCategoryWithSlug("phu-kien-guitar", 1, 4);
+    const res = await CategoryAPI.getCategoryWithSlug("phu-kien-guitar", 1, 5);
     phukienProducts = res.data.products as ProductInterface[];
     category = res.data as CategoryInterface;
 

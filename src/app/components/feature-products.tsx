@@ -13,8 +13,10 @@ const FeatureProducts = async () => {
   let promotions: PromotionInterface[] = [];
 
   try {
-    const response = await ProductAPI.getFeatureProducts({});
-    console.log("RESPONSE", response);
+    const response = await ProductAPI.getFeatureProducts({
+      limit: 5,
+    });
+
     featureProducts = response.data.products as ProductInterface[];
 
     const allProductPromotions: ProductPromotion[] = featureProducts.flatMap(
@@ -35,8 +37,8 @@ const FeatureProducts = async () => {
   }
 
   return (
-    <section className="py-16">
-      <div className="container mx-auto px-6">
+    <section className="py-10">
+      <div className="container mx-auto px-4 ">
         <SectionHeader
           linkViewAll={`/danh-muc/san-pham`}
           title="Sản phẩm nổi bật"
