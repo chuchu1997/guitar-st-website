@@ -40,7 +40,7 @@ const GuitarAcoustic = async () => {
   if (!category) return null;
 
   return (
-    <section className="py-16">
+    <section className="py-6">
       <div className="container mx-auto px-6">
         <div className="h-50 sm:h-100 w-full relative my-4 rounded-md overflow-hidden">
           <ImageLoader src={category.imageUrl} fill alt={category.name} />

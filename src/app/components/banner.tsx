@@ -35,7 +35,20 @@ const Banner = () => {
     return () => clearInterval(timer);
   }, [banners]);
 
-  if (!isMounted || banners.length === 0) return null;
+  if (!isMounted || banners.length === 0) {
+    return (
+      <section className="relative h-96 sm:h-[500px] bg-gray-100 flex items-center justify-center">
+        <div className="text-center px-6">
+          <h1 className="text-3xl md:text-4xl font-semibold text-gray-500 animate-pulse">
+            Đang tải banner...
+          </h1>
+          <p className="text-md text-gray-400 mt-2">
+            Vui lòng đợi trong giây lát.
+          </p>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section className="relative h-96 sm:h-[500px] overflow-hidden">

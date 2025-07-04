@@ -130,7 +130,7 @@ const CartComponent = () => {
   const debouncedUpdateRef = useRef(
     debounce((items: CartItemSSR[]) => {
       onUpdateCart(items);
-    }, 1000)
+    }, 300)
   );
 
   const toggleSelectItem = (id: number) => {
@@ -239,7 +239,7 @@ const CartComponent = () => {
 
               <Button
                 className="w-full py-6 text-lg text-accent transition-all duration-300 rounded-lg disabled:opacity-50"
-                disabled={cartItems.length === 0}
+                disabled={totalQuantity === 0}
                 onClick={onCheckout}>
                 Tiến hành thanh toán ({totalQuantity})
               </Button>

@@ -44,13 +44,13 @@ export const AddToCartButton = ({ product, quantity = 1 }: propsCart) => {
 
   const addNewItemToCart = async () => {
     const userID = cookies.userInfo.id;
-
     if (userID) {
       const res = await UserCartAPI.getAllCartItemsOfUser(userID);
-
+      console.log("res", res);
       const currentItems = Array.isArray(res.data?.cart?.items)
         ? res.data.cart.items
         : [];
+      console.log("current ITEMS", currentItems);
 
       // Tìm xem sản phẩm đã có trong giỏ chưa
       const existingIndex = currentItems.findIndex(
@@ -83,10 +83,18 @@ export const AddToCartButton = ({ product, quantity = 1 }: propsCart) => {
         ];
       }
 
+      try {
+        console.log("CART ID", res.data.cart.id);
+        console.log("UPDATE", updatedItems);
+        await UserCartAPI.updateCartItems(
+          userID,
+          res.data.cart.id,
+          updatedItems
+        );
+      } catch (err) {
+        console.log("err", err);
+      }
       // Gửi dữ liệu lên server
-      await UserCartAPI.updateCartItems(userID, res.data.cart.id, updatedItems);
-
-      toast.success("Đã thêm sản phẩm vào giỏ hàng");
     }
   };
   return (
@@ -107,8 +115,9 @@ export const AddToCartButton = ({ product, quantity = 1 }: propsCart) => {
         if (!user) {
           return await createNewUserInfo();
         } else {
-          addNewItemToCart();
+          await addNewItemToCart();
         }
+        toast.success("Đã thêm sản phẩm vào giỏ hàng");
       }}>
       <ShoppingCart className="w-4 h-4 sm:w-5 sm:h-5" />
       <span>Thêm vào giỏ hàng</span>

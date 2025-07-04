@@ -232,6 +232,7 @@ const Navbar: React.FC = () => {
             <div className="flex-shrink-0">
               <Link href="/">
                 <ImageLoader
+                  priority
                   alt="logo"
                   src="/logo.jpg"
                   width={55}
@@ -370,7 +371,7 @@ const Navbar: React.FC = () => {
               aria-label="Search">
               <div className="flex items-center gap-x-2">
                 <Search className="h-5 w-5" />
-                <span className="text-sm">Nhập tên sản phẩm tìm kiếm </span>
+                <span className="text-sm line-clamp-1">Tìm kiêm sản phẩm</span>
               </div>
             </button>
             {/* <button
@@ -496,7 +497,7 @@ const Navbar: React.FC = () => {
                 <input
                   ref={searchInputRef}
                   type="text"
-                  placeholder="Nhập tên sản phẩm cần tìm"
+                  placeholder={"Tìm kiếm ..."}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="w-full pl-12 pr-4 py-4 text-lg border-2 border-gray-200 rounded-xl focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-50 transition-all duration-200"

@@ -25,12 +25,14 @@ import { CartItemSSR } from "@/app/gio-hang/components/cart";
 import toast from "react-hot-toast";
 import { useCookies } from "react-cookie";
 import ProductSuggess from "./productSuggest";
+import { useCartContext } from "@/context/cart-context";
 interface propsProductMobile {
   product: ProductInterface;
 }
 export default function ProductMobile({ product }: propsProductMobile) {
   const router = useRouter();
   const [cookies, setCookie] = useCookies(["userInfo"]);
+  const { setCartQuantity, cartQuantity } = useCartContext();
 
   const promotion = product.promotionProducts[0];
   const discountPercentage = (() => {
@@ -114,12 +116,18 @@ export default function ProductMobile({ product }: propsProductMobile) {
                         quantity: item.quantity + 1,
                         isSelect: true,
                       }
-                    : item
+                    : {
+                        ...item,
+                        isSelect: false,
+                      }
                 );
               } else {
                 // ✅ Nếu chưa có, thêm mới
                 updatedItems = [
-                  ...currentItems,
+                  ...currentItems.map((item: any) => ({
+                    ...item,
+                    isSelect: false,
+                  })),
                   {
                     isSelect: true,
                     product,
@@ -134,6 +142,8 @@ export default function ProductMobile({ product }: propsProductMobile) {
                 res.data.cart.id,
                 updatedItems
               );
+
+              setCartQuantity(updatedItems.length);
 
               toast.success("Đã thêm sản phẩm vào giỏ hàng");
             }
