@@ -30,6 +30,8 @@ import SuggessProductHome from "./components/suggesstHome";
 export async function generateMetadata(): Promise<Metadata> {
   const store = (await StoreAPI.getStoreInfo()).data.store as StoreInterface;
 
+  if (!store) return {};
+
   if (store.seo && typeof store.seo === "object") {
     return generateSeoForPage(store.seo as SeoInterface);
   }

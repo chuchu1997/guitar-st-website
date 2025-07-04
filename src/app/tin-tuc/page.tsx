@@ -14,7 +14,7 @@ export async function generateMetadata(
 
   const res = await StoreAPI.getStoreInfo();
   const store = res.data.store as StoreInterface;
-  const storeName = store.name;
+  const storeName = store ? store.name :"Tên cửa hàng";
   const website_domain = process.env.NEXT_PUBLIC_BASE_URL || ""
     return {
     title: ` ${storeName} | Tin tức nhạc cụ, guitar mới nhất `,

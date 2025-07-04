@@ -196,6 +196,9 @@ const Navbar: React.FC = () => {
       justGetParent: true,
     });
     const cate = res.data.categories as CategoryInterface[];
+
+    if (!cate || cate.length <= 0) return;
+
     if (cate) {
       const mainCate = cate[0];
 

@@ -43,6 +43,8 @@ const CartComponent = () => {
     const res = await UserCartAPI.getAllCartItemsOfUser(userID);
     if (res.status === 200) {
       const resCart = res.data.cart;
+      if (!resCart) return;
+
       cartIDRef.current = resCart.id;
       const mappedItems: CartItemSSR[] = resCart.items.map((item: any) => ({
         id: item.id,
