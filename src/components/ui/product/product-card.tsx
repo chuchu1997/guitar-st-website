@@ -242,6 +242,14 @@ export const ProductCard = ({
         {/* Content Section */}
         <CardContent className="p-4 flex-1 flex flex-col space-y-1">
           {/* Product Title */}
+
+          {hasPromotion && (
+            <BadgeFlashSale
+              promotion={promotion}
+              className="scale-85 sm:scale-100 mb-2"
+            />
+          )}
+
           <CardTitle className="line-clamp-2 text-sm sm:text-base font-bold text-gray-900 group-hover:text-blue-600 transition-colors duration-300 leading-tight min-h-[1.5rem]">
             {product.name}
           </CardTitle>
@@ -282,12 +290,6 @@ export const ProductCard = ({
               <span className="text-lg sm:text-xl font-bold text-red-600">
                 {FormatUtils.formatPriceVND(discountedPrice)}
               </span>
-              {hasPromotion && (
-                <BadgeFlashSale
-                  promotion={promotion}
-                  className="scale-85 sm:scale-100"
-                />
-              )}
             </div>
 
             {showLineThroughPrice && (

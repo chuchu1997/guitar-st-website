@@ -48,6 +48,7 @@ export const FlashSaleComponentView = () => {
     <section className="py-16">
       <div className="container mx-auto px-6">
         <SectionHeader
+          showViewAll={false}
           title={
             <div className="flex items-center gap-x-2">
               <div className="relative h-[25px] w-[100px] sm:w-[130px]">
@@ -62,7 +63,7 @@ export const FlashSaleComponentView = () => {
               </div>
               <FlashSaleCountDown
                 promotion={flashSale}
-                className="text-lg px-2 rounded-sm bg-gray-900 text-white font-mono font-bold tracking-wider"
+                className="scale-80 sm:scale-100 text-lg px-2 rounded-sm bg-gray-900 text-white font-mono font-bold tracking-wider"
               />
             </div>
           }
