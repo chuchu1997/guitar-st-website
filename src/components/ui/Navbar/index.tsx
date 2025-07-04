@@ -29,7 +29,7 @@ const Navbar = async () => {
 
   return (
     <nav className=" ">
-      <NavbarClient categories={categories} />
+      <NavbarClient />
       {/* <AppSidebar categories={getCategories} />
       <MainNavbar data={categories} /> */}
       {/* This is navbar */}
