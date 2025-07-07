@@ -1,4 +1,5 @@
 import { CategoryInterface } from "./category";
+import { FakeComment } from "./fakecomment";
 import { ProductPromotion } from "./promotion";
 import { SeoInterface } from "./seo";
 
@@ -34,7 +35,9 @@ interface ProductBase {
     images:ImageInterface[],
     categoryId:number;
     category?:CategoryInterface
-    reviews:[]
+    reviews:[];
+    fakeComments:FakeComment[]
+    
     sku:string;
 
     seo?:SeoInterface

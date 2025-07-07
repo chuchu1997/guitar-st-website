@@ -25,6 +25,7 @@ import EditorClientWrapper from "@/components/editor/editor-wrapper";
 import { discountTypeEnum } from "@/types/promotion";
 import { AddToCartButton } from "@/components/ui/Cart/addToCartButton";
 import ProductSuggess from "./productSuggest";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 interface propsProductClientPC {
   product: ProductInterface;
@@ -363,44 +364,43 @@ export const ProductClientPC = ({ product }: propsProductClientPC) => {
                   <h3 className="text-xl font-semibold">
                     Đánh giá của khách hàng
                   </h3>
-                  <button className="bg-black text-white px-4 py-2 rounded-lg hover:bg-gray-800 transition-colors">
-                    Viết review về sản phẩm
-                  </button>
                 </div>
+                {product.fakeComments.map((fakeComment) => (
+                  <div
+                    className="bg-gray-50 p-6 rounded-lg shadow-sm"
+                    key={fakeComment.id}>
+                    {/* Header: Avatar + Tên + Rating */}
+                    <div className="flex items-center space-x-4 mb-4">
+                      {/* Avatar */}
 
-                <div className="bg-gray-50 p-6 rounded-lg">
-                  <div className="flex items-center space-x-4 mb-4">
-                    <div className="text-4xl font-bold">4.0</div>
-                    <div>
-                      <div className="flex items-center space-x-1 mb-1">
-                        {renderRatingStars(4)}
-                      </div>
-                      <p className="text-sm text-gray-600">
-                        Based on {product.ratingCount} reviews
-                      </p>
-                    </div>
-                  </div>
-                </div>
+                      <Avatar>
+                        <AvatarImage src={fakeComment.avatarUrl} />
+                        <AvatarFallback>
+                          {fakeComment.authorName.charAt(0)}
+                        </AvatarFallback>
+                      </Avatar>
 
-                <div className="space-y-4">
-                  {/* Sample review */}
-                  <div className="border-b border-gray-200 pb-4">
-                    <div className="flex items-center space-x-2 mb-2">
-                      <div className="flex items-center space-x-1">
-                        {renderRatingStars(5)}
+                      <div className="flex-1">
+                        <div className="text-base font-semibold text-gray-800">
+                          {fakeComment.authorName}
+                        </div>
+
+                        {/* Rating stars */}
+                        <div className="flex items-center space-x-1">
+                          {renderRatingStars(fakeComment.ratingCount)}
+                          <span className="ml-2 text-sm text-gray-600">
+                            {fakeComment.ratingCount}.0 sao
+                          </span>
+                        </div>
                       </div>
-                      <span className="font-medium">John D.</span>
-                      <span className="text-sm text-gray-500">
-                        Verified Purchase
-                      </span>
                     </div>
-                    <p className="text-gray-700">
-                      Excellent product quality and fast shipping. Highly
-                      recommended!
+
+                    {/* Nội dung bình luận */}
+                    <p className="text-gray-700 leading-relaxed">
+                      {fakeComment.content}
                     </p>
-                    <p className="text-sm text-gray-500 mt-2">2 days ago</p>
                   </div>
-                </div>
+                ))}
               </div>
             )}
 

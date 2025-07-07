@@ -26,6 +26,7 @@ import toast from "react-hot-toast";
 import { useCookies } from "react-cookie";
 import ProductSuggess from "./productSuggest";
 import { useCartContext } from "@/context/cart-context";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 interface propsProductMobile {
   product: ProductInterface;
 }
@@ -277,8 +278,9 @@ export default function ProductMobile({ product }: propsProductMobile) {
           <div className="py-3 space-y-3">
             <div className="flex items-center justify-between">
               <p className="font-semibold text-sm">
-                Đánh giá của khách hàng (1000)
+                Đánh giá của khách hàng ({product.fakeComments.length})
               </p>
+
               <div className="flex items-center gap-1 text-gray-500 text-sm">
                 <span>Xem thêm</span>
                 <ChevronRight size={16} />
@@ -302,25 +304,32 @@ export default function ProductMobile({ product }: propsProductMobile) {
 
             {/* Sample Reviews */}
             <div className="space-y-3 pt-2">
-              <div className="bg-gray-50 p-3 rounded-lg">
-                <div className="flex items-center gap-2 mb-2">
-                  <div className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center text-white text-xs">
-                    H
+              {product.fakeComments.map((fakeComment) => (
+                <div className="bg-gray-50 p-3 rounded-lg" key={fakeComment.id}>
+                  <div className="flex items-center gap-2 mb-2">
+                    <Avatar>
+                      <AvatarImage src={fakeComment.avatarUrl} />
+                      <AvatarFallback>
+                        {fakeComment.authorName.charAt(0)}
+                      </AvatarFallback>
+                    </Avatar>
+                    <span className="text-sm font-medium">
+                      {fakeComment.authorName}
+                    </span>
+                    <div className="flex">
+                      {Array.from({ length: fakeComment.ratingCount }).map(
+                        (_, i) => (
+                          <Star
+                            key={i}
+                            className="w-3 h-3 text-yellow-400 fill-current"
+                          />
+                        )
+                      )}
+                    </div>
                   </div>
-                  <span className="text-sm font-medium">Hương</span>
-                  <div className="flex">
-                    {Array.from({ length: 5 }).map((_, i) => (
-                      <Star
-                        key={i}
-                        className="w-3 h-3 text-yellow-400 fill-current"
-                      />
-                    ))}
-                  </div>
+                  <p className="text-sm text-gray-700">{fakeComment.content}</p>
                 </div>
-                <p className="text-sm text-gray-700">
-                  Sản phẩm rất tốt, âm thanh trong, pin trâu. Giao hàng nhanh!
-                </p>
-              </div>
+              ))}
             </div>
           </div>
 
