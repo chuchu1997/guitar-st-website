@@ -49,12 +49,6 @@ export const OrderSummary = ({
     { totalPrice: 0, totalQuantity: 0 }
   );
 
-  useEffect(() => {
-    if (totals.totalPrice === 0) {
-      router.push("/");
-    }
-  }, [totals.totalPrice]);
-
   // const totals = items.reduce(
   //   (acc, item) => {
   //     const price = getDiscountedPrice(item); // 👉 dùng hàm khuyến mãi
