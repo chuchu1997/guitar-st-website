@@ -9,7 +9,10 @@ import { FormatUtils } from "@/utils/format";
 import { RenderGiftItems } from "@/components/ui/product/product-card";
 import { Separator } from "@radix-ui/react-separator";
 import { discountTypeEnum } from "@/types/promotion";
+
 import { CartItemSSR } from "../../gio-hang/components/cart";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 interface OrderSummaryProps {
   items: CartItemSSR[];
   onCheckout: () => void;
@@ -21,6 +24,8 @@ export const OrderSummary = ({
   onCheckout,
   isLoading = false,
 }: OrderSummaryProps) => {
+  const router = useRouter();
+
   const getDiscountedPrice = (item: any) => {
     const promotion = item.promotionProducts?.[0];
     if (!promotion) return item.price;
@@ -43,6 +48,12 @@ export const OrderSummary = ({
     },
     { totalPrice: 0, totalQuantity: 0 }
   );
+
+  useEffect(() => {
+    if (totals.totalPrice === 0) {
+      router.push("/");
+    }
+  }, [totals.totalPrice]);
 
   // const totals = items.reduce(
   //   (acc, item) => {

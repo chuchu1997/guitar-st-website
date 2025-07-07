@@ -485,7 +485,7 @@ const OrderHistory: React.FC = () => {
                               onClick={async () => {
                                 await OrderAPI.onCancelOrder(order.id);
                                 toast.success("Đã hủy đơn hàng ");
-                                router.back();
+                                router.push("/");
                               }}>
                               Hủy đơn hàng
                             </Button>
