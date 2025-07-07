@@ -483,9 +483,9 @@ const OrderHistory: React.FC = () => {
                               className="flex-1"
                               variant={"destructive"}
                               onClick={async () => {
-                                // await OrderAPI.onCancelOrder(order.id);
-                                // toast.success("Đã hủy đơn hàng ");
-                                // router.refresh();
+                                await OrderAPI.onCancelOrder(order.id);
+                                toast.success("Đã hủy đơn hàng ");
+                                router.back();
                               }}>
                               Hủy đơn hàng
                             </Button>
