@@ -14,6 +14,7 @@ import { useCartContext } from "@/context/cart-context";
 import { ProductAPI } from "@/api/products/product.api";
 import { ProductInterface } from "@/types/product";
 import { FormatUtils } from "@/utils/format";
+import Image from "next/image";
 
 // TypeScript interfaces
 
@@ -233,7 +234,7 @@ const Navbar: React.FC = () => {
             </div>
             <div className="flex-shrink-0">
               <Link href="/">
-                <ImageLoader
+                <Image
                   priority
                   alt="logo"
                   src="/logo.jpg"
